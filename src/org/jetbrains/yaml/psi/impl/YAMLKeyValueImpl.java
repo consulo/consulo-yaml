@@ -1,5 +1,19 @@
 package org.jetbrains.yaml.psi.impl;
 
+import javax.swing.Icon;
+
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.yaml.YAMLElementGenerator;
+import org.jetbrains.yaml.YAMLTokenTypes;
+import org.jetbrains.yaml.YAMLUtil;
+import org.jetbrains.yaml.psi.YAMLCompoundValue;
+import org.jetbrains.yaml.psi.YAMLFile;
+import org.jetbrains.yaml.psi.YAMLKeyValue;
+import org.jetbrains.yaml.psi.YAMLMapping;
+import org.jetbrains.yaml.psi.YAMLScalar;
+import org.jetbrains.yaml.psi.YAMLValue;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.text.StringUtil;
@@ -8,16 +22,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.PlatformIcons;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.yaml.YAMLElementGenerator;
-import org.jetbrains.yaml.YAMLTokenTypes;
-import org.jetbrains.yaml.YAMLUtil;
-import org.jetbrains.yaml.psi.*;
-
-import javax.swing.*;
+import consulo.ide.IconDescriptorUpdaters;
 
 /**
  * @author oleg
@@ -138,12 +143,6 @@ public class YAMLKeyValueImpl extends YAMLPsiElementImpl implements YAMLKeyValue
     }
   }
 
-  @NotNull
-  @Override
-  protected Icon getElementIcon(@IconFlags int flags) {
-    return PlatformIcons.PROPERTY_ICON;
-  }
-
   @Override
   public ItemPresentation getPresentation() {
     final YAMLFile yamlFile = (YAMLFile)getContainingFile();
@@ -161,7 +160,7 @@ public class YAMLKeyValueImpl extends YAMLPsiElementImpl implements YAMLKeyValue
       }
 
       public Icon getIcon(boolean open) {
-        return YAMLKeyValueImpl.this.getIcon(0);
+        return IconDescriptorUpdaters.getIcon(YAMLKeyValueImpl.this, 0);
       }
     };
   }

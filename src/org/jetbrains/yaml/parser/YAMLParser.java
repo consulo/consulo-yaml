@@ -1,15 +1,16 @@
 package org.jetbrains.yaml.parser;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.yaml.YAMLElementTypes;
+import org.jetbrains.yaml.YAMLTokenTypes;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.Stack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.yaml.YAMLElementTypes;
-import org.jetbrains.yaml.YAMLTokenTypes;
+import consulo.lang.LanguageVersion;
 
 /**
  * @author oleg
@@ -25,7 +26,7 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
   private final Stack<TokenSet> myStopTokensStack = new Stack<>();
 
   @NotNull
-  public ASTNode parse(@NotNull final IElementType root, @NotNull final PsiBuilder builder) {
+  public ASTNode parse(@NotNull final IElementType root, @NotNull final PsiBuilder builder, @NotNull LanguageVersion languageVersion) {
     myBuilder = builder;
     myStopTokensStack.clear();
     final PsiBuilder.Marker fileMarker = mark();

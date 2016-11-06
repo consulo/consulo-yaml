@@ -1,17 +1,27 @@
 package org.jetbrains.yaml.structureView;
 
-import com.intellij.ide.structureView.StructureViewTreeElement;
-import com.intellij.navigation.ItemPresentation;
-import com.intellij.util.PlatformIcons;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.yaml.psi.*;
-
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import javax.swing.Icon;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.yaml.psi.YAMLDocument;
+import org.jetbrains.yaml.psi.YAMLFile;
+import org.jetbrains.yaml.psi.YAMLKeyValue;
+import org.jetbrains.yaml.psi.YAMLMapping;
+import org.jetbrains.yaml.psi.YAMLPsiElement;
+import org.jetbrains.yaml.psi.YAMLScalar;
+import org.jetbrains.yaml.psi.YAMLSequence;
+import org.jetbrains.yaml.psi.YAMLSequenceItem;
+import org.jetbrains.yaml.psi.YAMLValue;
+import com.intellij.ide.structureView.StructureViewTreeElement;
+import com.intellij.navigation.ItemPresentation;
+import com.intellij.util.PlatformIcons;
+import consulo.ide.IconDescriptorUpdaters;
 
 /**
  * @author oleg
@@ -82,7 +92,7 @@ public class YAMLStructureViewElement implements StructureViewTreeElement {
 
         public Icon getIcon(boolean open) {
           final YAMLValue value = kv.getValue();
-          return value instanceof YAMLScalar ? kv.getIcon(0) : PlatformIcons.XML_TAG_ICON;
+          return value instanceof YAMLScalar ? IconDescriptorUpdaters.getIcon(kv, 0) : PlatformIcons.XML_TAG_ICON;
         }
       };
     }

@@ -1,35 +1,35 @@
 package org.jetbrains.yaml;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.yaml.lexer.YAMLFlexLexer;
+import org.jetbrains.yaml.parser.YAMLParser;
+import org.jetbrains.yaml.psi.impl.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;
 import com.intellij.lexer.Lexer;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.yaml.lexer.YAMLFlexLexer;
-import org.jetbrains.yaml.parser.YAMLParser;
-import org.jetbrains.yaml.psi.impl.*;
+import consulo.lang.LanguageVersion;
 
 /**
  * @author oleg
  */
 public class YAMLParserDefinition implements ParserDefinition, YAMLElementTypes {
-  private static final TokenSet myCommentTokens = TokenSet.create(YAMLTokenTypes.COMMENT);
+  private static final TokenSet ourCommentTokens = TokenSet.create(YAMLTokenTypes.COMMENT);
 
   @NotNull
-  public Lexer createLexer(final Project project) {
+  public Lexer createLexer(LanguageVersion languageVersion) {
     return new YAMLFlexLexer();
   }
 
   @Nullable
-  public PsiParser createParser(final Project project) {
+  public PsiParser createParser(LanguageVersion languageVersion) {
     return new YAMLParser();
   }
 
@@ -38,17 +38,17 @@ public class YAMLParserDefinition implements ParserDefinition, YAMLElementTypes 
   }
 
   @NotNull
-  public TokenSet getWhitespaceTokens() {
+  public TokenSet getWhitespaceTokens(LanguageVersion languageVersion) {
     return TokenSet.create(YAMLTokenTypes.WHITESPACE);
   }
 
   @NotNull
-  public TokenSet getCommentTokens() {
-    return myCommentTokens;
+  public TokenSet getCommentTokens(LanguageVersion languageVersion) {
+    return ourCommentTokens;
   }
 
   @NotNull
-  public TokenSet getStringLiteralElements() {
+  public TokenSet getStringLiteralElements(LanguageVersion languageVersion) {
     return TokenSet.create(YAMLTokenTypes.SCALAR_STRING, YAMLTokenTypes.SCALAR_DSTRING, YAMLTokenTypes.TEXT);
   }
 

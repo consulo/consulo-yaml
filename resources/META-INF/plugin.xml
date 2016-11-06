@@ -35,5 +35,7 @@
 
 		<lang.elementManipulator forClass="org.jetbrains.yaml.psi.impl.YAMLScalarImpl"
 								 implementationClass="org.jetbrains.yaml.psi.impl.YAMLScalarElementManipulator"/>
+
+		<iconDescriptorUpdater implementation="consulo.yaml.YAMLIconDescriptorUpdater"/>
 	</extensions>
 </idea-plugin>
