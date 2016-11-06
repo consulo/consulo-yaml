@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ModuleManager">
+    <modules>
+      <module name="consulo-yaml" dirurl="file://$PROJECT_DIR$" current-layer="Default">
+        <module-layer name="Default">
+          <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo SNAPSHOT" />
+          <extension id="java" sdk-module-name="" sdk-name="1.8" language-level-module-name="" language-level-name="" special-dir-location="SOURCE_DIR" bytecode-version="1.8" />
+          <content url="file://$MODULE_DIR$">
+            <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/gen">
+              <property key="is-generated-root" value="true" />
+            </content-folder>
+            <content-folder type="PRODUCTION_RESOURCE" url="file://$MODULE_DIR$/resources" />
+            <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src" />
+          </content>
+          <orderEntry type="module-extension-sdk" extension-id="java" />
+          <orderEntry type="module-extension-sdk" extension-id="consulo-plugin" />
+          <orderEntry type="sourceFolder" />
+          <orderEntry type="library" name="consulo-plugin: com.intellij.xml" level="project" />
+          <orderEntry type="library" name="consulo-plugin: com.intellij.spellchecker" level="project" />
+        </module-layer>
+      </module>
+    </modules>
+  </component>
+</project>
