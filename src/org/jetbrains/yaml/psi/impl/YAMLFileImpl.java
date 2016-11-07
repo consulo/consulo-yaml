@@ -1,21 +1,18 @@
 package org.jetbrains.yaml.psi.impl;
 
-import com.intellij.extapi.psi.PsiFileBase;
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.TokenSet;
-import org.jetbrains.annotations.NotNull;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jetbrains.yaml.YAMLElementTypes;
-import org.jetbrains.yaml.YAMLFileType;
 import org.jetbrains.yaml.YAMLLanguage;
 import org.jetbrains.yaml.psi.YAMLDocument;
 import org.jetbrains.yaml.psi.YAMLFile;
 import org.jetbrains.yaml.psi.YAMLPsiElement;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.intellij.extapi.psi.PsiFileBase;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.TokenSet;
 
 /**
  * @author oleg
@@ -23,11 +20,6 @@ import java.util.List;
 public class YAMLFileImpl extends PsiFileBase implements YAMLFile {
   public YAMLFileImpl(FileViewProvider viewProvider) {
     super(viewProvider, YAMLLanguage.INSTANCE);
-  }
-
-  @NotNull
-  public FileType getFileType() {
-    return YAMLFileType.YML;
   }
 
   @Override
