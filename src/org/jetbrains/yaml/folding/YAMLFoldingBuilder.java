@@ -32,7 +32,7 @@ import consulo.annotations.RequiredReadAction;
  */
 public class YAMLFoldingBuilder extends FoldingBuilderEx implements DumbAware
 {
-	private static final int PLACEHOLDER_LEN = 10;
+	private static final int PLACEHOLDER_LEN = 20;
 
 	@RequiredReadAction
 	@NotNull
@@ -122,6 +122,7 @@ public class YAMLFoldingBuilder extends FoldingBuilderEx implements DumbAware
 		return "...";
 	}
 
+	@RequiredReadAction
 	public boolean isCollapsedByDefault(@NotNull ASTNode node)
 	{
 		return false;
@@ -138,6 +139,6 @@ public class YAMLFoldingBuilder extends FoldingBuilderEx implements DumbAware
 		{
 			return text;
 		}
-		return text.substring(0, Math.min(text.length(), PLACEHOLDER_LEN)) + "...";
+		return StringUtil.trimMiddle(text, PLACEHOLDER_LEN);
 	}
 }
