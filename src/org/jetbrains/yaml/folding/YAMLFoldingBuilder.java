@@ -1,6 +1,6 @@
 package org.jetbrains.yaml.folding;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +24,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.SourceTreeToPsiMap;
-import com.intellij.psi.util.PsiTreeUtil;
 import consulo.annotations.RequiredReadAction;
 
 /**
@@ -39,7 +38,7 @@ public class YAMLFoldingBuilder extends FoldingBuilderEx implements DumbAware
 	@Override
 	public FoldingDescriptor[] buildFoldRegions(@NotNull PsiElement root, @NotNull Document document, boolean quick)
 	{
-		List<FoldingDescriptor> descriptors = new LinkedList<>();
+		List<FoldingDescriptor> descriptors = new ArrayList<>();
 		collectDescriptors(root, descriptors);
 		return descriptors.toArray(new FoldingDescriptor[descriptors.size()]);
 	}
@@ -55,7 +54,21 @@ public class YAMLFoldingBuilder extends FoldingBuilderEx implements DumbAware
 
 		if(element instanceof YAMLDocument)
 		{
-			if(PsiTreeUtil.findChildrenOfAnyType(element.getParent(), YAMLDocument.class).size() > 1)
+			int i = 0;
+			PsiElement parent = element.getParent();
+			for(PsiElement child = parent.getFirstChild(); child != null; child = child.getNextSibling())
+			{
+				if(child instanceof YAMLDocument)
+				{
+					i++;
+					if(i > 1)
+					{
+						break;
+					}
+				}
+			}
+
+			if(i > 1)
 			{
 				descriptors.add(new FoldingDescriptor(element, nodeTextRange));
 			}
