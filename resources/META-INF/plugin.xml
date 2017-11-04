@@ -4,12 +4,7 @@
 	<vendor>JetBrains</vendor>
 	<version>SPANSHOT</version>
 	<description>YAML support</description>
-	<depends optional="true">com.intellij.xml</depends>
 	<depends optional="true">com.intellij.spellchecker</depends>
-
-	<extensions defaultExtensionNs="com.intellij.xml">
-		<breadcrumbsInfoProvider implementation="org.jetbrains.yaml.breadcrumbs.YAMLBreadcrumbsInfoProvider"/>
-	</extensions>
 
 	<extensions defaultExtensionNs="com.intellij.spellchecker">
 		<support language="yaml" implementationClass="org.jetbrains.yaml.YAMLSpellcheckerStrategy"/>
@@ -37,5 +32,7 @@
 								 implementationClass="org.jetbrains.yaml.psi.impl.YAMLScalarElementManipulator"/>
 
 		<iconDescriptorUpdater implementation="consulo.yaml.YAMLIconDescriptorUpdater"/>
+
+		<breadcrumbsInfoProvider implementation="org.jetbrains.yaml.breadcrumbs.YAMLBreadcrumbsInfoProvider"/>
 	</extensions>
 </idea-plugin>

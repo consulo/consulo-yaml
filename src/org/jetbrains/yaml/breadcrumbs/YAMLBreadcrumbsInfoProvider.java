@@ -29,9 +29,9 @@ import org.jetbrains.yaml.psi.YAMLSequenceItem;
 import com.intellij.lang.Language;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import com.intellij.xml.breadcrumbs.BreadcrumbsInfoProvider;
+import com.intellij.ui.breadcrumbs.BreadcrumbsProvider;
 
-public class YAMLBreadcrumbsInfoProvider extends BreadcrumbsInfoProvider
+public class YAMLBreadcrumbsInfoProvider implements BreadcrumbsProvider
 {
 	private final static int SCALAR_MAX_LENGTH = 20;
 
@@ -81,13 +81,6 @@ public class YAMLBreadcrumbsInfoProvider extends BreadcrumbsInfoProvider
 			return StringUtil.first(((YAMLScalar) e).getTextValue(), SCALAR_MAX_LENGTH, true);
 		}
 		throw new IllegalArgumentException("This element should not pass #acceptElement");
-	}
-
-	@Nullable
-	@Override
-	public String getElementTooltip(@NotNull PsiElement e)
-	{
-		return null;
 	}
 
 	@NotNull
