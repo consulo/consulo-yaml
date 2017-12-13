@@ -1,13 +1,13 @@
 package org.jetbrains.yaml;
 
+import javax.swing.JLabel;
+
+import org.jetbrains.annotations.NotNull;
 import com.intellij.application.options.IndentOptionsEditor;
 import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationBundle;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
 
 /**
  * @author oleg
@@ -60,5 +60,4 @@ public class YAMLLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
       // Do nothing
     }
   }
-
 }
