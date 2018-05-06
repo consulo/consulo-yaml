@@ -15,15 +15,16 @@
  */
 package org.jetbrains.yaml;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.spellchecker.tokenizer.SpellcheckingStrategy;
 import com.intellij.spellchecker.tokenizer.Tokenizer;
-import org.jetbrains.annotations.NotNull;
 
 public class YAMLSpellcheckerStrategy extends SpellcheckingStrategy {
-  @NotNull
+  @Nonnull
   @Override
   public Tokenizer getTokenizer(final PsiElement element) {
     final ASTNode node = element.getNode();

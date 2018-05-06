@@ -3,7 +3,7 @@ package org.jetbrains.yaml.psi.impl;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.jetbrains.yaml.YAMLElementGenerator;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.psi.YAMLFile;
@@ -14,12 +14,12 @@ import org.jetbrains.yaml.psi.YAMLMapping;
  * @author oleg
  */
 public class YAMLHashImpl extends YAMLMappingImpl implements YAMLMapping {
-  public YAMLHashImpl(@NotNull final ASTNode node) {
+  public YAMLHashImpl(@Nonnull final ASTNode node) {
     super(node);
   }
 
   @Override
-  protected void addNewKey(@NotNull YAMLKeyValue key) {
+  protected void addNewKey(@Nonnull YAMLKeyValue key) {
     PsiElement anchor = null;
     for (PsiElement child = getLastChild(); child != null; child = child.getPrevSibling()) {
       final IElementType type = child.getNode().getElementType();

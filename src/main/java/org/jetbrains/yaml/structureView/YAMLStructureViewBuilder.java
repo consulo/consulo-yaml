@@ -5,8 +5,8 @@ import com.intellij.ide.structureView.StructureViewModelBase;
 import com.intellij.ide.structureView.TreeBasedStructureViewBuilder;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
 import com.intellij.openapi.editor.Editor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.jetbrains.yaml.psi.YAMLDocument;
 import org.jetbrains.yaml.psi.YAMLFile;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
@@ -17,12 +17,12 @@ import org.jetbrains.yaml.psi.YAMLKeyValue;
 public class YAMLStructureViewBuilder extends TreeBasedStructureViewBuilder {
   private final YAMLFile myPsiFile;
 
-  public YAMLStructureViewBuilder(@NotNull final YAMLFile psiFile) {
+  public YAMLStructureViewBuilder(@Nonnull final YAMLFile psiFile) {
     myPsiFile = psiFile;
   }
 
   @Override
-  @NotNull
+  @Nonnull
   public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
     return new StructureViewModelBase(myPsiFile, editor, new YAMLStructureViewElement(myPsiFile))
       .withSorters(Sorter.ALPHA_SORTER)

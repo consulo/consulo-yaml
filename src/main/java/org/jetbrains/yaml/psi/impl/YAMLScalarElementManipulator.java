@@ -6,7 +6,7 @@ import com.intellij.psi.AbstractElementManipulator;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.jetbrains.yaml.YAMLElementGenerator;
 import org.jetbrains.yaml.psi.YAMLFile;
 import org.jetbrains.yaml.psi.YAMLScalar;
@@ -15,9 +15,9 @@ import java.util.List;
 
 public class YAMLScalarElementManipulator extends AbstractElementManipulator<YAMLScalarImpl> {
 
-  @NotNull
+  @Nonnull
   @Override
-  public TextRange getRangeInElement(@NotNull YAMLScalarImpl element) {
+  public TextRange getRangeInElement(@Nonnull YAMLScalarImpl element) {
     final List<TextRange> ranges = element.getContentRanges();
     if (ranges.isEmpty()) {
       return TextRange.EMPTY_RANGE;
@@ -27,7 +27,7 @@ public class YAMLScalarElementManipulator extends AbstractElementManipulator<YAM
   }
 
   @Override
-  public YAMLScalarImpl handleContentChange(@NotNull YAMLScalarImpl element, @NotNull TextRange range, String newContent)
+  public YAMLScalarImpl handleContentChange(@Nonnull YAMLScalarImpl element, @Nonnull TextRange range, String newContent)
     throws IncorrectOperationException {
     
     try {

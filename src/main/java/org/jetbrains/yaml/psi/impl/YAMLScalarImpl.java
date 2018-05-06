@@ -9,7 +9,7 @@ import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.jetbrains.yaml.lexer.YAMLGrammarCharUtil;
 import org.jetbrains.yaml.psi.YAMLScalar;
 
@@ -19,25 +19,25 @@ import java.util.List;
 public abstract class YAMLScalarImpl extends YAMLValueImpl implements YAMLScalar {
   protected static final int MAX_SCALAR_LENGTH_PREDEFINED = 60;
   
-  public YAMLScalarImpl(@NotNull ASTNode node) {
+  public YAMLScalarImpl(@Nonnull ASTNode node) {
     super(node);
   }
 
-  @NotNull
+  @Nonnull
   public abstract List<TextRange> getContentRanges();
 
-  @NotNull
-  protected abstract String getRangesJoiner(@NotNull CharSequence text, @NotNull List<TextRange> contentRanges, int indexBefore);
+  @Nonnull
+  protected abstract String getRangesJoiner(@Nonnull CharSequence text, @Nonnull List<TextRange> contentRanges, int indexBefore);
   
-  protected List<Pair<TextRange, String>> getDecodeReplacements(@NotNull CharSequence input) {
+  protected List<Pair<TextRange, String>> getDecodeReplacements(@Nonnull CharSequence input) {
     return Collections.emptyList();
   }
   
-  protected List<Pair<TextRange, String>> getEncodeReplacements(@NotNull CharSequence input) throws IllegalArgumentException {
+  protected List<Pair<TextRange, String>> getEncodeReplacements(@Nonnull CharSequence input) throws IllegalArgumentException {
     throw new IllegalArgumentException("Not implemented");
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getTextValue() {
     final String text = getText();
@@ -65,7 +65,7 @@ public abstract class YAMLScalarImpl extends YAMLValueImpl implements YAMLScalar
     return references.length == 1 ? references[0] : null;
   }
 
-  @NotNull
+  @Nonnull
   public PsiReference[] getReferences() {
     return ReferenceProvidersRegistry.getReferencesFromProviders(this);
   }
@@ -76,19 +76,19 @@ public abstract class YAMLScalarImpl extends YAMLValueImpl implements YAMLScalar
   }
 
   @Override
-  public PsiLanguageInjectionHost updateText(@NotNull String text) {
+  public PsiLanguageInjectionHost updateText(@Nonnull String text) {
     return ElementManipulators.getManipulator(this).handleContentChange(this, text);
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public LiteralTextEscaper<? extends PsiLanguageInjectionHost> createLiteralTextEscaper() {
     return new MyLiteralTextEscaper(this);
   }
   
-  @NotNull 
-  static String processReplacements(@NotNull CharSequence input, 
-                                            @NotNull List<Pair<TextRange, String>> replacements) throws IndexOutOfBoundsException {
+  @Nonnull
+  static String processReplacements(@Nonnull CharSequence input,
+                                            @Nonnull List<Pair<TextRange, String>> replacements) throws IndexOutOfBoundsException {
     StringBuilder result = new StringBuilder();
     int currentOffset = 0;
     for (Pair<TextRange, String> replacement : replacements) {
@@ -111,13 +111,13 @@ public abstract class YAMLScalarImpl extends YAMLValueImpl implements YAMLScalar
     }
 
     @Override
-    public boolean decode(@NotNull TextRange rangeInsideHost, @NotNull StringBuilder outChars) {
+    public boolean decode(@Nonnull TextRange rangeInsideHost, @Nonnull StringBuilder outChars) {
       outChars.append(myHost.getTextValue());
       return true;
     }
 
     @Override
-    public int getOffsetInHost(int offsetInDecoded, @NotNull TextRange rangeInsideHost) {
+    public int getOffsetInHost(int offsetInDecoded, @Nonnull TextRange rangeInsideHost) {
       final String text = myHost.getText();
       final List<TextRange> contentRanges = myHost.getContentRanges();
       

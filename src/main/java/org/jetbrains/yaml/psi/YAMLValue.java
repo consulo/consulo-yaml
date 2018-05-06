@@ -1,7 +1,8 @@
 package org.jetbrains.yaml.psi;
 
+import javax.annotation.Nullable;
+
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.Nullable;
 
 public interface YAMLValue extends YAMLPsiElement {
   @Nullable

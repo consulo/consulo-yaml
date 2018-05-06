@@ -1,10 +1,10 @@
 package org.jetbrains.yaml.psi;
 
 import com.intellij.psi.PsiLanguageInjectionHost;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public interface YAMLScalar extends YAMLValue, PsiLanguageInjectionHost {
-  @NotNull
+  @Nonnull
   String getTextValue();
 
   boolean isMultiline();

@@ -20,7 +20,7 @@ import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.jetbrains.yaml.lexer.YAMLFlexLexer;
 
 import java.util.HashMap;
@@ -54,12 +54,12 @@ public class YAMLSyntaxHighlighter extends SyntaxHighlighterBase implements YAML
   }
 
 
-  @NotNull
+  @Nonnull
   public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
     return SyntaxHighlighterBase.pack(ATTRIBUTES.get(tokenType));
   }
 
-  @NotNull
+  @Nonnull
   public Lexer getHighlightingLexer() {
     return new YAMLFlexLexer();
   }

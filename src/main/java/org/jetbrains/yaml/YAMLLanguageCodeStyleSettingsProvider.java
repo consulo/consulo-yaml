@@ -1,8 +1,8 @@
 package org.jetbrains.yaml;
 
+import javax.annotation.Nonnull;
 import javax.swing.JLabel;
 
-import org.jetbrains.annotations.NotNull;
 import com.intellij.application.options.IndentOptionsEditor;
 import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationBundle;
@@ -27,14 +27,14 @@ public class YAMLLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
     return new YAMLIndentOptionsEditor();
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public Language getLanguage() {
     return YAMLLanguage.INSTANCE;
   }
 
   @Override
-  public String getCodeSample(@NotNull SettingsType settingsType) {
+  public String getCodeSample(@Nonnull SettingsType settingsType) {
     return "product: \n" + "  name: RubyMine\n" + "  version: 8\n" + "  vendor: JetBrains\n" + "  url: \"https://www.jetbrains.com/ruby\"";
   }
 

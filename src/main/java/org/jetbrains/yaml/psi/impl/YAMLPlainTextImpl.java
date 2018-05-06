@@ -4,7 +4,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.YAMLUtil;
 import org.jetbrains.yaml.lexer.YAMLGrammarCharUtil;
@@ -14,11 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class YAMLPlainTextImpl extends YAMLScalarImpl implements YAMLScalar {
-  public YAMLPlainTextImpl(@NotNull ASTNode node) {
+  public YAMLPlainTextImpl(@Nonnull ASTNode node) {
     super(node);
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public List<TextRange> getContentRanges() {
     final int myStart = getTextOffset();
@@ -42,9 +42,9 @@ public class YAMLPlainTextImpl extends YAMLScalarImpl implements YAMLScalar {
     return result;
   }
 
-  @NotNull
+  @Nonnull
   @Override
-  protected String getRangesJoiner(@NotNull CharSequence text, @NotNull List<TextRange> contentRanges, int indexBefore) {
+  protected String getRangesJoiner(@Nonnull CharSequence text, @Nonnull List<TextRange> contentRanges, int indexBefore) {
     if (isNewline(text, contentRanges.get(indexBefore)) || isNewline(text, contentRanges.get(indexBefore + 1))) {
       return "";
     }
@@ -53,12 +53,12 @@ public class YAMLPlainTextImpl extends YAMLScalarImpl implements YAMLScalar {
     }
   }
   
-  private static boolean isNewline(@NotNull CharSequence text, @NotNull TextRange range) {
+  private static boolean isNewline(@Nonnull CharSequence text, @Nonnull TextRange range) {
     return range.getLength() == 1 && text.charAt(range.getStartOffset()) == '\n';
   }
 
   @Override
-  protected List<Pair<TextRange, String>> getEncodeReplacements(@NotNull CharSequence input) throws IllegalArgumentException {
+  protected List<Pair<TextRange, String>> getEncodeReplacements(@Nonnull CharSequence input) throws IllegalArgumentException {
     checkForConsistency(input);
 
     final int indent = YAMLUtil.getIndentToThisElement(this);
@@ -86,7 +86,7 @@ public class YAMLPlainTextImpl extends YAMLScalarImpl implements YAMLScalar {
     return result;
   }
 
-  private static void checkForConsistency(@NotNull CharSequence input) throws IllegalArgumentException {
+  private static void checkForConsistency(@Nonnull CharSequence input) throws IllegalArgumentException {
     if (input.length() == 0) {
       throw new IllegalArgumentException("Cannot be empty");
     }

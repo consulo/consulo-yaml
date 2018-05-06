@@ -7,7 +7,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.HashMap;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.YAMLUtil;
 import org.jetbrains.yaml.lexer.YAMLGrammarCharUtil;
@@ -20,12 +20,12 @@ import java.util.Map;
 public class YAMLQuotedTextImpl extends YAMLScalarImpl implements YAMLQuotedText {
   private final boolean myIsSingleQuoted;
 
-  public YAMLQuotedTextImpl(@NotNull ASTNode node) {
+  public YAMLQuotedTextImpl(@Nonnull ASTNode node) {
     super(node);
     myIsSingleQuoted = getNode().getFirstChildNode().getElementType() == YAMLTokenTypes.SCALAR_STRING;
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public List<TextRange> getContentRanges() {
     List<TextRange> result = new ArrayList<>();
@@ -63,9 +63,9 @@ public class YAMLQuotedTextImpl extends YAMLScalarImpl implements YAMLQuotedText
     return result;
   }
 
-  @NotNull
+  @Nonnull
   @Override
-  protected String getRangesJoiner(@NotNull CharSequence text, @NotNull List<TextRange> contentRanges, int indexBefore) {
+  protected String getRangesJoiner(@Nonnull CharSequence text, @Nonnull List<TextRange> contentRanges, int indexBefore) {
     final TextRange leftRange = contentRanges.get(indexBefore);
     if (leftRange.isEmpty() || !isSingleQuote() && text.charAt(leftRange.getEndOffset() - 1) == '\\') {
       return "\n";
@@ -80,7 +80,7 @@ public class YAMLQuotedTextImpl extends YAMLScalarImpl implements YAMLQuotedText
 
   @SuppressWarnings("AssignmentToForLoopParameter")
   @Override
-  protected List<Pair<TextRange, String>> getDecodeReplacements(@NotNull CharSequence input) {
+  protected List<Pair<TextRange, String>> getDecodeReplacements(@Nonnull CharSequence input) {
     List<Pair<TextRange, String>> result = new ArrayList<>();
     
     for (int i = 0; i + 1 < input.length(); ++i) {
@@ -106,7 +106,7 @@ public class YAMLQuotedTextImpl extends YAMLScalarImpl implements YAMLQuotedText
   }
 
   @Override
-  protected List<Pair<TextRange, String>> getEncodeReplacements(@NotNull CharSequence input) throws IllegalArgumentException {
+  protected List<Pair<TextRange, String>> getEncodeReplacements(@Nonnull CharSequence input) throws IllegalArgumentException {
     // check for consistency
     if (isSingleQuote()) {
       for (int i = 0; i < input.length(); ++i) {
@@ -210,7 +210,7 @@ public class YAMLQuotedTextImpl extends YAMLScalarImpl implements YAMLQuotedText
     };
     
     private static final NotNullLazyValue<Map<Integer, Integer>> ESC_TO_CODE = new NotNullLazyValue<Map<Integer, Integer>>() {
-      @NotNull
+      @Nonnull
       @Override
       protected Map<Integer, Integer> compute() {
         final HashMap<Integer, Integer> map = new HashMap<>(ONE_LETTER_CONVERSIONS.length);
@@ -222,7 +222,7 @@ public class YAMLQuotedTextImpl extends YAMLScalarImpl implements YAMLQuotedText
     };
 
     private static final NotNullLazyValue<Map<Integer, Integer>> CODE_TO_ESC = new NotNullLazyValue<Map<Integer, Integer>>() {
-      @NotNull
+      @Nonnull
       @Override
       protected Map<Integer, Integer> compute() {
         final HashMap<Integer, Integer> map = new HashMap<>(ONE_LETTER_CONVERSIONS.length);
@@ -233,7 +233,7 @@ public class YAMLQuotedTextImpl extends YAMLScalarImpl implements YAMLQuotedText
       }
     };
     
-    static int findEscapementLength(@NotNull CharSequence text, int pos) {
+    static int findEscapementLength(@Nonnull CharSequence text, int pos) {
       if (pos + 1 >= text.length() || text.charAt(pos) != '\\') {
         throw new IllegalArgumentException("This is not an escapement start");
       }
@@ -253,7 +253,7 @@ public class YAMLQuotedTextImpl extends YAMLScalarImpl implements YAMLQuotedText
       }
     }
     
-    static int toUnicodeChar(@NotNull CharSequence text, int pos, int length) {
+    static int toUnicodeChar(@Nonnull CharSequence text, int pos, int length) {
       if (length > 1) {
         CharSequence s = text.subSequence(pos + 2, Math.min(text.length(), pos + length + 1));
         try {

@@ -3,7 +3,7 @@ package org.jetbrains.yaml.psi.impl;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.jetbrains.yaml.psi.YAMLPsiElement;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.List;
  * @author oleg
  */
 public class YAMLPsiElementImpl extends ASTWrapperPsiElement implements YAMLPsiElement {
-  public YAMLPsiElementImpl(@NotNull final ASTNode node) {
+  public YAMLPsiElementImpl(@Nonnull final ASTNode node) {
     super(node);
   }
 

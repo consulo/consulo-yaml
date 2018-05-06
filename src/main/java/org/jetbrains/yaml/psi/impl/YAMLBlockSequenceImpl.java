@@ -1,10 +1,11 @@
 package org.jetbrains.yaml.psi.impl;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.ASTNode;
-import org.jetbrains.annotations.NotNull;
 
 public class YAMLBlockSequenceImpl extends YAMLSequenceImpl {
-  public YAMLBlockSequenceImpl(@NotNull ASTNode node) {
+  public YAMLBlockSequenceImpl(@Nonnull ASTNode node) {
     super(node);
   }
 }

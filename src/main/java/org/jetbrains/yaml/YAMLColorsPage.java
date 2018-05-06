@@ -21,8 +21,8 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import javax.swing.*;
 import java.util.HashMap;
@@ -66,32 +66,32 @@ public class YAMLColorsPage implements ColorSettingsPage {
     return ADDITIONAL_HIGHLIGHT_DESCRIPTORS;
   }
 
-  @NotNull
+  @Nonnull
   public String getDisplayName() {
     return YAMLBundle.message("color.settings.yaml.name");
   }
 
-  @NotNull
+  @Nonnull
   public Icon getIcon() {
     return AllIcons.Nodes.DataTables;
   }
 
-  @NotNull
+  @Nonnull
   public AttributesDescriptor[] getAttributeDescriptors() {
     return ATTRS;
   }
 
-  @NotNull
+  @Nonnull
   public ColorDescriptor[] getColorDescriptors() {
     return ColorDescriptor.EMPTY_ARRAY;
   }
 
-  @NotNull
+  @Nonnull
   public SyntaxHighlighter getHighlighter() {
     return new YAMLSyntaxHighlighter();
   }
 
-  @NotNull
+  @Nonnull
   public String getDemoText() {
     return DEMO_TEXT;
   }

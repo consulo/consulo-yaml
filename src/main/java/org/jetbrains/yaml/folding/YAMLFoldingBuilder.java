@@ -3,8 +3,8 @@ package org.jetbrains.yaml.folding;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.jetbrains.yaml.psi.YAMLCompoundValue;
 import org.jetbrains.yaml.psi.YAMLDocument;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
@@ -34,9 +34,9 @@ public class YAMLFoldingBuilder extends FoldingBuilderEx implements DumbAware
 	private static final int PLACEHOLDER_LEN = 20;
 
 	@RequiredReadAction
-	@NotNull
+	@Nonnull
 	@Override
-	public FoldingDescriptor[] buildFoldRegions(@NotNull PsiElement root, @NotNull Document document, boolean quick)
+	public FoldingDescriptor[] buildFoldRegions(@Nonnull PsiElement root, @Nonnull Document document, boolean quick)
 	{
 		List<FoldingDescriptor> descriptors = new ArrayList<>();
 		collectDescriptors(root, descriptors);
@@ -44,7 +44,7 @@ public class YAMLFoldingBuilder extends FoldingBuilderEx implements DumbAware
 	}
 
 	@RequiredReadAction
-	private static void collectDescriptors(@NotNull final PsiElement element, @NotNull final List<FoldingDescriptor> descriptors)
+	private static void collectDescriptors(@Nonnull final PsiElement element, @Nonnull final List<FoldingDescriptor> descriptors)
 	{
 		final TextRange nodeTextRange = element.getTextRange();
 		if(nodeTextRange.getLength() < 2)
@@ -86,12 +86,12 @@ public class YAMLFoldingBuilder extends FoldingBuilderEx implements DumbAware
 
 	@RequiredReadAction
 	@Nullable
-	public String getPlaceholderText(@NotNull ASTNode node)
+	public String getPlaceholderText(@Nonnull ASTNode node)
 	{
 		return getPlaceholderText(SourceTreeToPsiMap.treeElementToPsi(node));
 	}
 
-	@NotNull
+	@Nonnull
 	private static String getPlaceholderText(@Nullable PsiElement psiElement)
 	{
 		if(psiElement instanceof YAMLDocument)
@@ -136,7 +136,7 @@ public class YAMLFoldingBuilder extends FoldingBuilderEx implements DumbAware
 	}
 
 	@RequiredReadAction
-	public boolean isCollapsedByDefault(@NotNull ASTNode node)
+	public boolean isCollapsedByDefault(@Nonnull ASTNode node)
 	{
 		return false;
 	}

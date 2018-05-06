@@ -1,11 +1,11 @@
 package org.jetbrains.yaml.psi;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author oleg
  */
 public interface YAMLCompoundValue extends YAMLValue {
-  @NotNull
+  @Nonnull
   String getTextValue();
 }

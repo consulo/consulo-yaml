@@ -10,7 +10,7 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.LocalTimeCounter;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.jetbrains.yaml.psi.YAMLFile;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.impl.YAMLQuotedTextImpl;
@@ -31,8 +31,8 @@ public class YAMLElementGenerator {
     return ServiceManager.getService(project, YAMLElementGenerator.class);
   }
   
-  @NotNull
-  public static String createChainedKey(@NotNull List<String> keyComponents, int indentAddition) {
+  @Nonnull
+  public static String createChainedKey(@Nonnull List<String> keyComponents, int indentAddition) {
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < keyComponents.size(); ++i) {
       if (i > 0) {
@@ -46,31 +46,31 @@ public class YAMLElementGenerator {
     return sb.toString();
   }
 
-  @NotNull
-  public YAMLKeyValue createYamlKeyValue(@NotNull String keyName, @NotNull String valueText) {
+  @Nonnull
+  public YAMLKeyValue createYamlKeyValue(@Nonnull String keyName, @Nonnull String valueText) {
     final PsiFile tempFile = createDummyYamlWithText(keyName +  ": " + valueText);
     return PsiTreeUtil.collectElementsOfType(tempFile, YAMLKeyValue.class).iterator().next();
   }
   
-  @NotNull
+  @Nonnull
   public YAMLQuotedTextImpl createYamlDoubleQuotedString() {
     final YAMLFile tempFile = createDummyYamlWithText("\"foo\"");
     return PsiTreeUtil.collectElementsOfType(tempFile, YAMLQuotedTextImpl.class).iterator().next();
   }
 
-  @NotNull
-  public YAMLFile createDummyYamlWithText(@NotNull String text) {
+  @Nonnull
+  public YAMLFile createDummyYamlWithText(@Nonnull String text) {
     return (YAMLFile) PsiFileFactory.getInstance(myProject)
       .createFileFromText("temp." + YAMLFileType.YML.getDefaultExtension(), YAMLFileType.YML, text, LocalTimeCounter.currentTime(), true);
   }
   
-  @NotNull
+  @Nonnull
   public PsiElement createEol() {
     final YAMLFile file = createDummyYamlWithText("\n");
     return PsiTreeUtil.getDeepestFirst(file);
   }
   
-  @NotNull
+  @Nonnull
   public PsiElement createSpace() {
     final YAMLKeyValue keyValue = createYamlKeyValue("foo", "bar");
     final ASTNode whitespaceNode = keyValue.getNode().findChildByType(TokenType.WHITE_SPACE);
@@ -78,13 +78,13 @@ public class YAMLElementGenerator {
     return whitespaceNode.getPsi();
   }
   
-  @NotNull
+  @Nonnull
   public PsiElement createIndent(int size) {
     final YAMLFile file = createDummyYamlWithText(StringUtil.repeatSymbol(' ', size));
     return PsiTreeUtil.getDeepestFirst(file);
   }
   
-  @NotNull
+  @Nonnull
   public PsiElement createColon() {
     final YAMLFile file = createDummyYamlWithText("? foo : bar");
     final PsiElement at = file.findElementAt("? foo ".length());

@@ -1,7 +1,8 @@
 package org.jetbrains.yaml;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.jetbrains.yaml.lexer.YAMLFlexLexer;
 import org.jetbrains.yaml.parser.YAMLParser;
 import org.jetbrains.yaml.psi.impl.*;
@@ -23,7 +24,7 @@ import consulo.lang.LanguageVersion;
 public class YAMLParserDefinition implements ParserDefinition, YAMLElementTypes {
   private static final TokenSet ourCommentTokens = TokenSet.create(YAMLTokenTypes.COMMENT);
 
-  @NotNull
+  @Nonnull
   public Lexer createLexer(LanguageVersion languageVersion) {
     return new YAMLFlexLexer();
   }
@@ -37,22 +38,22 @@ public class YAMLParserDefinition implements ParserDefinition, YAMLElementTypes 
     return FILE;
   }
 
-  @NotNull
+  @Nonnull
   public TokenSet getWhitespaceTokens(LanguageVersion languageVersion) {
     return TokenSet.create(YAMLTokenTypes.WHITESPACE);
   }
 
-  @NotNull
+  @Nonnull
   public TokenSet getCommentTokens(LanguageVersion languageVersion) {
     return ourCommentTokens;
   }
 
-  @NotNull
+  @Nonnull
   public TokenSet getStringLiteralElements(LanguageVersion languageVersion) {
     return TokenSet.create(YAMLTokenTypes.SCALAR_STRING, YAMLTokenTypes.SCALAR_DSTRING, YAMLTokenTypes.TEXT);
   }
 
-  @NotNull
+  @Nonnull
   public PsiElement createElement(final ASTNode node) {
     final IElementType type = node.getElementType();
     if (type == DOCUMENT){

@@ -17,7 +17,8 @@ package org.jetbrains.yaml.breadcrumbs;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import org.jetbrains.yaml.YAMLLanguage;
 import org.jetbrains.yaml.psi.YAMLDocument;
 import org.jetbrains.yaml.psi.YAMLFile;
@@ -34,7 +35,7 @@ public class YAMLBreadcrumbsInfoProvider implements BreadcrumbsProvider
 {
 	private final static int SCALAR_MAX_LENGTH = 20;
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Language getLanguage()
 	{
@@ -42,14 +43,14 @@ public class YAMLBreadcrumbsInfoProvider implements BreadcrumbsProvider
 	}
 
 	@Override
-	public boolean acceptElement(@NotNull PsiElement e)
+	public boolean acceptElement(@Nonnull PsiElement e)
 	{
 		return e instanceof YAMLScalar || e instanceof YAMLKeyValue || e instanceof YAMLSequenceItem || e instanceof YAMLDocument;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public String getElementInfo(@NotNull PsiElement e)
+	public String getElementInfo(@Nonnull PsiElement e)
 	{
 		if(e instanceof YAMLDocument)
 		{
@@ -82,8 +83,8 @@ public class YAMLBreadcrumbsInfoProvider implements BreadcrumbsProvider
 		throw new IllegalArgumentException("This element should not pass #acceptElement");
 	}
 
-	@NotNull
-	private static String getIndexOf(@NotNull List<?> list, Object o)
+	@Nonnull
+	private static String getIndexOf(@Nonnull List<?> list, Object o)
 	{
 		return String.valueOf(1 + list.indexOf(o)) + '/' + list.size();
 	}

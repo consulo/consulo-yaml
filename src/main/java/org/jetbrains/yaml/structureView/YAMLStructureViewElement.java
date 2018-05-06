@@ -5,10 +5,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 import org.jetbrains.yaml.psi.YAMLDocument;
 import org.jetbrains.yaml.psi.YAMLFile;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
@@ -33,7 +33,7 @@ public class YAMLStructureViewElement implements StructureViewTreeElement {
     myElement = element;
   }
 
-  @NotNull
+  @Nonnull
   public StructureViewTreeElement[] getChildren() {
     final Collection<? extends YAMLPsiElement> children;
     if (myElement instanceof YAMLFile) {
@@ -59,7 +59,7 @@ public class YAMLStructureViewElement implements StructureViewTreeElement {
     return structureElements.toArray(new StructureViewTreeElement[structureElements.size()]);
   }
   
-  @NotNull
+  @Nonnull
   private static Collection<? extends YAMLPsiElement> getChildrenForValue(@Nullable YAMLPsiElement element) {
     if (element instanceof YAMLMapping) {
       return ((YAMLMapping)element).getKeyValues();
@@ -72,7 +72,7 @@ public class YAMLStructureViewElement implements StructureViewTreeElement {
   
 
 
-  @NotNull
+  @Nonnull
   public ItemPresentation getPresentation() {
     if (myElement instanceof YAMLKeyValue){
       final YAMLKeyValue kv = (YAMLKeyValue)myElement;

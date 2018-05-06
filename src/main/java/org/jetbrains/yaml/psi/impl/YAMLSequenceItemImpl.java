@@ -2,8 +2,8 @@ package org.jetbrains.yaml.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLMapping;
 import org.jetbrains.yaml.psi.YAMLSequenceItem;
@@ -16,7 +16,7 @@ import java.util.Collections;
  * @author oleg
  */
 public class YAMLSequenceItemImpl extends YAMLPsiElementImpl implements YAMLSequenceItem {
-  public YAMLSequenceItemImpl(@NotNull final ASTNode node) {
+  public YAMLSequenceItemImpl(@Nonnull final ASTNode node) {
     super(node);
   }
 
@@ -26,7 +26,7 @@ public class YAMLSequenceItemImpl extends YAMLPsiElementImpl implements YAMLSequ
     return PsiTreeUtil.findChildOfType(this, YAMLValue.class);
   }
 
-  @NotNull
+  @Nonnull
   public Collection<YAMLKeyValue> getKeysValues() {
     final YAMLMapping mapping = PsiTreeUtil.findChildOfType(this, YAMLMapping.class);
     if (mapping == null) {

@@ -1,6 +1,6 @@
 package org.jetbrains.yaml.psi;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.List;
 
@@ -8,6 +8,6 @@ import java.util.List;
  * A collection representing a sequence of items
  */
 public interface YAMLSequence extends YAMLCompoundValue {
-  @NotNull
+  @Nonnull
   List<YAMLSequenceItem> getItems();
 }

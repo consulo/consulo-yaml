@@ -2,7 +2,7 @@ package org.jetbrains.yaml.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.jetbrains.yaml.psi.YAMLCompoundValue;
 import org.jetbrains.yaml.psi.YAMLScalar;
 
@@ -10,7 +10,7 @@ import org.jetbrains.yaml.psi.YAMLScalar;
  * @author oleg
  */
 public class YAMLCompoundValueImpl extends YAMLValueImpl implements YAMLCompoundValue {
-  public YAMLCompoundValueImpl(@NotNull final ASTNode node) {
+  public YAMLCompoundValueImpl(@Nonnull final ASTNode node) {
     super(node);
   }
 
@@ -19,7 +19,7 @@ public class YAMLCompoundValueImpl extends YAMLValueImpl implements YAMLCompound
     return "YAML compound value";
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getTextValue() {
     PsiElement element = getTag() != null ? getTag().getNextSibling() : getFirstChild();

@@ -15,7 +15,8 @@
  */
 package org.jetbrains.yaml.lexer;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
+
 import com.intellij.lexer.FlexLexer;
 import com.intellij.lexer.LexerBase;
 import com.intellij.openapi.diagnostic.Logger;
@@ -46,7 +47,7 @@ public class FlexAdapter extends LexerBase
 
 	private boolean myFailed;
 
-	public FlexAdapter(@NotNull FlexLexer flex)
+	public FlexAdapter(@Nonnull FlexLexer flex)
 	{
 		myFlex = flex;
 	}
@@ -57,7 +58,7 @@ public class FlexAdapter extends LexerBase
 	}
 
 	@Override
-	public void start(@NotNull final CharSequence buffer, int startOffset, int endOffset, final int initialState)
+	public void start(@Nonnull final CharSequence buffer, int startOffset, int endOffset, final int initialState)
 	{
 		myText = buffer;
 		myTokenStart = myTokenEnd = startOffset;
@@ -101,7 +102,7 @@ public class FlexAdapter extends LexerBase
 		myTokenType = null;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public CharSequence getBufferSequence()
 	{

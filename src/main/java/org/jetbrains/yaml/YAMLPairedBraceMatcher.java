@@ -4,8 +4,8 @@ import com.intellij.lang.BracePair;
 import com.intellij.lang.PairedBraceMatcher;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author oleg
@@ -16,12 +16,12 @@ public class YAMLPairedBraceMatcher implements PairedBraceMatcher, YAMLTokenType
             new BracePair(LBRACKET, RBRACKET, true),
     };
 
-    @NotNull
+    @Nonnull
     public BracePair[] getPairs() {
         return PAIRS;
     }
 
-    public boolean isPairedBracesAllowedBeforeType(@NotNull IElementType iElementType, @Nullable IElementType iElementType1) {
+    public boolean isPairedBracesAllowedBeforeType(@Nonnull IElementType iElementType, @Nullable IElementType iElementType1) {
         return true;
     }
 

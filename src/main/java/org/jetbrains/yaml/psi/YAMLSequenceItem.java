@@ -1,7 +1,7 @@
 package org.jetbrains.yaml.psi;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.Collection;
 
@@ -11,6 +11,6 @@ import java.util.Collection;
 public interface YAMLSequenceItem extends YAMLPsiElement {
   @Nullable
   YAMLValue getValue();
-  @NotNull
+  @Nonnull
   Collection<YAMLKeyValue> getKeysValues();
 }

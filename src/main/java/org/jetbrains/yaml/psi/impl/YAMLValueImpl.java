@@ -2,13 +2,14 @@ package org.jetbrains.yaml.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.psi.YAMLValue;
 
 abstract class YAMLValueImpl extends YAMLPsiElementImpl implements YAMLValue {
-  public YAMLValueImpl(@NotNull ASTNode node) {
+  public YAMLValueImpl(@Nonnull ASTNode node) {
     super(node);
   }
 

@@ -3,7 +3,7 @@ package org.jetbrains.yaml;
 import com.intellij.CommonBundle;
 import com.intellij.reference.SoftReference;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.jetbrains.annotations.PropertyKey;
 
 import java.lang.ref.Reference;
@@ -14,7 +14,7 @@ import java.util.ResourceBundle;
  */
 public class YAMLBundle {
 
-  public static String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, @NotNull Object... params) {
+  public static String message(@Nonnull @PropertyKey(resourceBundle = BUNDLE) String key, @Nonnull Object... params) {
     return CommonBundle.message(getBundle(), key, params);
   }
 

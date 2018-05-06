@@ -5,8 +5,8 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.YAMLUtil;
 
@@ -17,11 +17,11 @@ import java.util.List;
 public abstract class YAMLBlockScalarImpl extends YAMLScalarImpl {
   protected static final int DEFAULT_CONTENT_INDENT = 2;
   
-  public YAMLBlockScalarImpl(@NotNull ASTNode node) {
+  public YAMLBlockScalarImpl(@Nonnull ASTNode node) {
     super(node);
   }
 
-  @NotNull
+  @Nonnull
   protected abstract IElementType getContentType();
 
   @Override
@@ -29,7 +29,7 @@ public abstract class YAMLBlockScalarImpl extends YAMLScalarImpl {
     return true;
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public List<TextRange> getContentRanges() {
     final int myStart = getTextOffset();

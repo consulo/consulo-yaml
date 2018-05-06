@@ -2,7 +2,7 @@ package org.jetbrains.yaml.lexer;
 
 import java.io.Reader;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import com.intellij.lexer.MergingLexerAdapter;
 import com.intellij.psi.tree.TokenSet;
@@ -31,7 +31,7 @@ public class YAMLFlexLexer extends MergingLexerAdapter
 		}
 
 		@Override
-		public void start(@NotNull CharSequence buffer, int startOffset, int endOffset, int initialState)
+		public void start(@Nonnull CharSequence buffer, int startOffset, int endOffset, int initialState)
 		{
 			if(initialState != DIRTY_STATE)
 			{

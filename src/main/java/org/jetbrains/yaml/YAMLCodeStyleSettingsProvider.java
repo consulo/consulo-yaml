@@ -6,13 +6,13 @@ import com.intellij.application.options.TabbedLanguageCodeStylePanel;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsProvider;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * @author oleg
  */
 public class YAMLCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
-  @NotNull
+  @Nonnull
   @Override
   public Configurable createSettingsPage(final CodeStyleSettings settings, final CodeStyleSettings originalSettings) {
     return new CodeStyleAbstractConfigurable(settings, originalSettings, YAMLLanguage.INSTANCE.getDisplayName()) {

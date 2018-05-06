@@ -7,8 +7,8 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ObjectUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.jetbrains.yaml.psi.*;
 
 import java.util.Arrays;
@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class YAMLUtil {
 
-  @NotNull
+  @Nonnull
   public static String getFullKey(final YAMLKeyValue yamlKeyValue) {
     final StringBuilder builder = new StringBuilder();
     YAMLKeyValue element = yamlKeyValue;
@@ -37,7 +37,7 @@ public class YAMLUtil {
     return builder.toString();
   }
   
-  @NotNull
+  @Nonnull
   public static Collection<YAMLKeyValue> getTopLevelKeys(final YAMLFile file) {
     final YAMLValue topLevelValue = file.getDocuments().get(0).getTopLevelValue();
     if (topLevelValue instanceof YAMLMapping) {
@@ -54,7 +54,7 @@ public class YAMLUtil {
   }
 
   @Nullable
-  public static YAMLKeyValue getQualifiedKeyInDocument(@NotNull YAMLDocument document, @NotNull List<String> key) {
+  public static YAMLKeyValue getQualifiedKeyInDocument(@Nonnull YAMLDocument document, @Nonnull List<String> key) {
     assert key.size() != 0;
 
     YAMLMapping mapping = ObjectUtils.tryCast(document.getTopLevelValue(), YAMLMapping.class);
@@ -79,7 +79,7 @@ public class YAMLUtil {
   }
 
   @Nullable
-  public static YAMLKeyValue findKeyInProbablyMapping(@Nullable YAMLValue node, @NotNull String keyText) {
+  public static YAMLKeyValue findKeyInProbablyMapping(@Nullable YAMLValue node, @Nonnull String keyText) {
     if (!(node instanceof YAMLMapping)) {
       return null;
     }
@@ -253,7 +253,7 @@ public class YAMLUtil {
     return element;
   }
 
-  public static int getIndentInThisLine(@NotNull final PsiElement elementInLine) {
+  public static int getIndentInThisLine(@Nonnull final PsiElement elementInLine) {
     PsiElement currentElement = elementInLine;
     while (currentElement != null) {
       final IElementType type = currentElement.getNode().getElementType();
@@ -269,7 +269,7 @@ public class YAMLUtil {
     return 0;
   }
   
-  public static int getIndentToThisElement(@NotNull final PsiElement element) {
+  public static int getIndentToThisElement(@Nonnull final PsiElement element) {
     int offset = element.getTextOffset();
 
     PsiElement currentElement = element;

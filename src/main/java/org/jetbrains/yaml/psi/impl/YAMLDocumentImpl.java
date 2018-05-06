@@ -1,9 +1,11 @@
 package org.jetbrains.yaml.psi.impl;
 
+import javax.annotation.Nonnull;
+
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import org.jetbrains.yaml.psi.YAMLDocument;
 import org.jetbrains.yaml.psi.YAMLValue;
 
@@ -11,7 +13,7 @@ import org.jetbrains.yaml.psi.YAMLValue;
  * @author oleg
  */
 public class YAMLDocumentImpl extends YAMLPsiElementImpl implements YAMLDocument {
-  public YAMLDocumentImpl(@NotNull final ASTNode node) {
+  public YAMLDocumentImpl(@Nonnull final ASTNode node) {
     super(node);
   }
 

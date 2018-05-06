@@ -10,8 +10,9 @@ import com.intellij.openapi.editor.EditorModificationUtil;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.jetbrains.yaml.YAMLElementGenerator;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.psi.YAMLDocument;
@@ -20,8 +21,8 @@ import org.jetbrains.yaml.psi.YAMLValue;
 
 public abstract class YamlKeyCompletionInsertHandler<T extends LookupElement> implements InsertHandler<T> {
 
-  @NotNull
-  protected abstract YAMLKeyValue createNewEntry(@NotNull YAMLDocument document, T item);
+  @Nonnull
+  protected abstract YAMLKeyValue createNewEntry(@Nonnull YAMLDocument document, T item);
 
   @Override
   public void handleInsert(InsertionContext context, T item) {
@@ -50,7 +51,7 @@ public abstract class YamlKeyCompletionInsertHandler<T extends LookupElement> im
   }
 
   @Nullable
-  protected YAMLValue deleteLookupTextAndRetrieveOldValue(InsertionContext context, @NotNull PsiElement elementAtCaret) {
+  protected YAMLValue deleteLookupTextAndRetrieveOldValue(InsertionContext context, @Nonnull PsiElement elementAtCaret) {
     final YAMLValue oldValue;
     if (elementAtCaret.getNode().getElementType() != YAMLTokenTypes.SCALAR_KEY) {
       deleteLookupPlain(context);

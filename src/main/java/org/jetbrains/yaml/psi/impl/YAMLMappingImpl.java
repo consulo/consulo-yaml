@@ -2,19 +2,20 @@ package org.jetbrains.yaml.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLMapping;
 
 import java.util.Collection;
 
 public abstract class YAMLMappingImpl extends YAMLCompoundValueImpl implements YAMLMapping {
-  public YAMLMappingImpl(@NotNull ASTNode node) {
+  public YAMLMappingImpl(@Nonnull ASTNode node) {
     super(node);
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public Collection<YAMLKeyValue> getKeyValues() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, YAMLKeyValue.class);
@@ -22,7 +23,7 @@ public abstract class YAMLMappingImpl extends YAMLCompoundValueImpl implements Y
 
   @Nullable
   @Override
-  public YAMLKeyValue getKeyValueByKey(@NotNull String keyText) {
+  public YAMLKeyValue getKeyValueByKey(@Nonnull String keyText) {
     for (YAMLKeyValue keyValue : getKeyValues()) {
       if (keyText.equals(keyValue.getKeyText())) {
         return keyValue;
@@ -32,7 +33,7 @@ public abstract class YAMLMappingImpl extends YAMLCompoundValueImpl implements Y
   }
 
   @Override
-  public void putKeyValue(@NotNull YAMLKeyValue keyValueToAdd) {
+  public void putKeyValue(@Nonnull YAMLKeyValue keyValueToAdd) {
     final YAMLKeyValue existingKey = getKeyValueByKey(keyValueToAdd.getKeyText());
     if (existingKey == null) {
       addNewKey(keyValueToAdd);
@@ -43,7 +44,7 @@ public abstract class YAMLMappingImpl extends YAMLCompoundValueImpl implements Y
   }
 
   @Override
-  public void deleteKeyValue(@NotNull YAMLKeyValue keyValueToDelete) {
+  public void deleteKeyValue(@Nonnull YAMLKeyValue keyValueToDelete) {
     if (keyValueToDelete.getParent() != this) {
       throw new IllegalArgumentException("KeyValue should be the child of this");
     }
@@ -61,14 +62,14 @@ public abstract class YAMLMappingImpl extends YAMLCompoundValueImpl implements Y
     keyValueToDelete.delete();
   }
 
-  protected abstract void addNewKey(@NotNull YAMLKeyValue key);
+  protected abstract void addNewKey(@Nonnull YAMLKeyValue key);
 
   @Override
   public String toString() {
     return "YAML mapping";
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getTextValue() {
     return "<mapping:" + Integer.toHexString(getText().hashCode()) + ">";

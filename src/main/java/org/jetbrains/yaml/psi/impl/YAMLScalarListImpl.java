@@ -5,7 +5,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.YAMLUtil;
 import org.jetbrains.yaml.psi.YAMLScalarList;
@@ -18,30 +18,30 @@ import java.util.List;
  * @see <http://www.yaml.org/spec/1.2/spec.html#id2795688>
  */
 public class YAMLScalarListImpl extends YAMLBlockScalarImpl implements YAMLScalarList {
-  public YAMLScalarListImpl(@NotNull final ASTNode node) {
+  public YAMLScalarListImpl(@Nonnull final ASTNode node) {
     super(node);
   }
 
-  @NotNull
+  @Nonnull
   @Override
   protected IElementType getContentType() {
     return YAMLTokenTypes.SCALAR_LIST;
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public String getTextValue() {
     return super.getTextValue() + "\n";
   }
 
-  @NotNull
+  @Nonnull
   @Override
-  protected String getRangesJoiner(@NotNull CharSequence text, @NotNull List<TextRange> contentRanges, int indexBefore) {
+  protected String getRangesJoiner(@Nonnull CharSequence text, @Nonnull List<TextRange> contentRanges, int indexBefore) {
     return "\n";
   }
 
   @Override
-  protected List<Pair<TextRange, String>> getEncodeReplacements(@NotNull CharSequence input) throws IllegalArgumentException {
+  protected List<Pair<TextRange, String>> getEncodeReplacements(@Nonnull CharSequence input) throws IllegalArgumentException {
     if (!StringUtil.endsWithChar(input, '\n')) {
       throw new IllegalArgumentException("Should end with a line break");
     }

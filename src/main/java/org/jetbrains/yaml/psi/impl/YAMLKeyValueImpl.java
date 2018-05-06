@@ -1,10 +1,11 @@
 package org.jetbrains.yaml.psi.impl;
 
+import javax.annotation.Nonnull;
 import javax.swing.Icon;
 
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 import org.jetbrains.yaml.YAMLElementGenerator;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.YAMLUtil;
@@ -28,7 +29,7 @@ import consulo.ide.IconDescriptorUpdaters;
  * @author oleg
  */
 public class YAMLKeyValueImpl extends YAMLPsiElementImpl implements YAMLKeyValue {
-  public YAMLKeyValueImpl(@NotNull final ASTNode node) {
+  public YAMLKeyValueImpl(@Nonnull final ASTNode node) {
     super(node);
   }
 
@@ -61,7 +62,7 @@ public class YAMLKeyValueImpl extends YAMLPsiElementImpl implements YAMLKeyValue
     return getKeyText();
   }
 
-  @NotNull
+  @Nonnull
   public String getKeyText() {
     final PsiElement keyElement = getKey();
     if (keyElement == null) {
@@ -86,7 +87,7 @@ public class YAMLKeyValueImpl extends YAMLPsiElementImpl implements YAMLKeyValue
     return null;
   }
 
-  @NotNull
+  @Nonnull
   public String getValueText() {
     final YAMLValue value = getValue();
     if (value instanceof YAMLScalar){
@@ -100,7 +101,7 @@ public class YAMLKeyValueImpl extends YAMLPsiElementImpl implements YAMLKeyValue
 
 
   @Override
-  public void setValue(@NotNull YAMLValue value) {
+  public void setValue(@Nonnull YAMLValue value) {
     adjustWhitespaceToContentType(value instanceof YAMLScalar);
     
     if (getValue() != null) {
@@ -165,7 +166,7 @@ public class YAMLKeyValueImpl extends YAMLPsiElementImpl implements YAMLKeyValue
     };
   }
 
-  public PsiElement setName(@NonNls @NotNull String newName) throws IncorrectOperationException {
+  public PsiElement setName(@NonNls @Nonnull String newName) throws IncorrectOperationException {
     return YAMLUtil.rename(this, newName);
   }
 
@@ -173,7 +174,7 @@ public class YAMLKeyValueImpl extends YAMLPsiElementImpl implements YAMLKeyValue
    * Provide reference contributor with given method registerReferenceProviders implementation:
    * registrar.registerReferenceProvider(PlatformPatterns.psiElement(YAMLKeyValue.class), ReferenceProvider);
    */
-  @NotNull
+  @Nonnull
   public PsiReference[] getReferences() {
     return ReferenceProvidersRegistry.getReferencesFromProviders(this);
   }

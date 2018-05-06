@@ -1,7 +1,8 @@
 package org.jetbrains.yaml.parser;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.jetbrains.yaml.YAMLElementTypes;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import com.intellij.lang.ASTNode;
@@ -25,8 +26,8 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
 
   private final Stack<TokenSet> myStopTokensStack = new Stack<>();
 
-  @NotNull
-  public ASTNode parse(@NotNull final IElementType root, @NotNull final PsiBuilder builder, @NotNull LanguageVersion languageVersion) {
+  @Nonnull
+  public ASTNode parse(@Nonnull final IElementType root, @Nonnull final PsiBuilder builder, @Nonnull LanguageVersion languageVersion) {
     myBuilder = builder;
     myStopTokensStack.clear();
     final PsiBuilder.Marker fileMarker = mark();
@@ -207,13 +208,13 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
     }
   }
 
-  @NotNull
+  @Nonnull
   private IElementType parseQuotedString() {
     advanceLexer();
     return YAMLElementTypes.SCALAR_QUOTED_STRING;
   }
 
-  @NotNull
+  @Nonnull
   private IElementType parseMultiLineScalar(final IElementType tokenType) {
     int indent = -1;
     IElementType type = getTokenType();
@@ -246,7 +247,7 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
     return tokenType == SCALAR_LIST ? YAMLElementTypes.SCALAR_LIST_VALUE : YAMLElementTypes.SCALAR_TEXT_VALUE;
   }
 
-  @NotNull
+  @Nonnull
   private IElementType parseMultiLinePlainScalar(final int indent) {
     PsiBuilder.Marker lastTextEnd = null;
 
@@ -272,7 +273,7 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
     return YAMLElementTypes.SCALAR_PLAIN_VALUE;
   }
 
-  @NotNull
+  @Nonnull
   private IElementType parseExplicitKeyValue(int indent) {
     assert getTokenType() == QUESTION;
 
@@ -307,7 +308,7 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
   }
 
 
-  @NotNull
+  @Nonnull
   private IElementType parseScalarKeyValue(int indent) {
     assert getTokenType() == SCALAR_KEY : "Expected scalar key";
     eolSeen = false;
@@ -330,7 +331,7 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
     return YAMLElementTypes.KEY_VALUE_PAIR;
   }
 
-  @NotNull
+  @Nonnull
   private IElementType parseSequenceItem(int indent) {
     assert getTokenType() == SEQUENCE_MARKER;
 
@@ -344,7 +345,7 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
     return YAMLElementTypes.SEQUENCE_ITEM;
   }
 
-  @NotNull
+  @Nonnull
   private IElementType parseHash() {
     assert getTokenType() == LBRACE;
     advanceLexer();
@@ -363,7 +364,7 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
     return YAMLElementTypes.HASH;
   }
 
-  @NotNull
+  @Nonnull
   private IElementType parseArray() {
     assert getTokenType() == LBRACKET;
     advanceLexer();

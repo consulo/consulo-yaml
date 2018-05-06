@@ -5,7 +5,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.YAMLUtil;
 import org.jetbrains.yaml.lexer.YAMLGrammarCharUtil;
@@ -18,19 +18,19 @@ import java.util.List;
  * @author oleg
  */
 public class YAMLScalarTextImpl extends YAMLBlockScalarImpl implements YAMLScalarText {
-  public YAMLScalarTextImpl(@NotNull final ASTNode node) {
+  public YAMLScalarTextImpl(@Nonnull final ASTNode node) {
     super(node);
   }
 
-  @NotNull
+  @Nonnull
   @Override
   protected IElementType getContentType() {
     return YAMLTokenTypes.SCALAR_TEXT;
   }
 
-  @NotNull
+  @Nonnull
   @Override
-  protected String getRangesJoiner(@NotNull CharSequence text, @NotNull List<TextRange> contentRanges, int indexBefore) {
+  protected String getRangesJoiner(@Nonnull CharSequence text, @Nonnull List<TextRange> contentRanges, int indexBefore) {
     final TextRange leftRange = contentRanges.get(indexBefore);
     final TextRange rightRange = contentRanges.get(indexBefore + 1);
     if (leftRange.isEmpty()) {
@@ -56,7 +56,7 @@ public class YAMLScalarTextImpl extends YAMLBlockScalarImpl implements YAMLScala
     return " ";
   }
   
-  private static boolean startsWithWhitespace(@NotNull CharSequence text, @NotNull TextRange range) {
+  private static boolean startsWithWhitespace(@Nonnull CharSequence text, @Nonnull TextRange range) {
     if (range.isEmpty()) {
       return false;
     }
@@ -65,7 +65,7 @@ public class YAMLScalarTextImpl extends YAMLBlockScalarImpl implements YAMLScala
   }
 
   @Override
-  protected List<Pair<TextRange, String>> getEncodeReplacements(@NotNull CharSequence input) throws IllegalArgumentException {
+  protected List<Pair<TextRange, String>> getEncodeReplacements(@Nonnull CharSequence input) throws IllegalArgumentException {
     if (!StringUtil.endsWithChar(input, '\n')) {
       throw new IllegalArgumentException("Should end with a line break");
     }
@@ -112,7 +112,7 @@ public class YAMLScalarTextImpl extends YAMLBlockScalarImpl implements YAMLScala
     return result;
   }
   
-  @NotNull
+  @Nonnull
   @Override
   public String getTextValue() {
     return super.getTextValue() + "\n";

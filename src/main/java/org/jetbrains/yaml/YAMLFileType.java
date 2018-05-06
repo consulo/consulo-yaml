@@ -3,9 +3,9 @@ package org.jetbrains.yaml;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
 
+import javax.annotation.Nullable;
 import javax.swing.*;
 
 public class YAMLFileType extends LanguageFileType {
@@ -18,17 +18,17 @@ public class YAMLFileType extends LanguageFileType {
     super(YAMLLanguage.INSTANCE);
   }
 
-  @NotNull
+  @Nonnull
   public String getName() {
     return NAME;
   }
 
-  @NotNull
+  @Nonnull
   public String getDescription() {
     return DESCRIPTION;
   }
 
-  @NotNull
+  @Nonnull
   public String getDefaultExtension() {
     return DEFAULT_EXTENSION;
   }
