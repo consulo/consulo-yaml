@@ -19,8 +19,8 @@ package consulo.yaml;
 import javax.annotation.Nonnull;
 
 import org.jetbrains.yaml.psi.YAMLKeyValue;
+import com.intellij.icons.AllIcons;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.PlatformIcons;
 import consulo.annotations.RequiredReadAction;
 import consulo.ide.IconDescriptor;
 import consulo.ide.IconDescriptorUpdater;
@@ -37,7 +37,7 @@ public class YAMLIconDescriptorUpdater implements IconDescriptorUpdater
 	{
 		if(psiElement instanceof YAMLKeyValue)
 		{
-			iconDescriptor.setMainIcon(PlatformIcons.PROPERTY_ICON);
+			iconDescriptor.setMainIcon(AllIcons.Nodes.Property);
 		}
 	}
 }

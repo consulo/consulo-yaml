@@ -1,12 +1,12 @@
 package org.jetbrains.yaml;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.jetbrains.annotations.NonNls;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.fileTypes.LanguageFileType;
-import org.jetbrains.annotations.NonNls;
-import javax.annotation.Nonnull;
-
-import javax.annotation.Nullable;
-import javax.swing.*;
+import consulo.ui.image.Image;
 
 public class YAMLFileType extends LanguageFileType {
   public static final YAMLFileType YML = new YAMLFileType();
@@ -19,7 +19,7 @@ public class YAMLFileType extends LanguageFileType {
   }
 
   @Nonnull
-  public String getName() {
+  public String getId() {
     return NAME;
   }
 
@@ -34,7 +34,7 @@ public class YAMLFileType extends LanguageFileType {
   }
 
   @Nullable
-  public Icon getIcon() {
+  public Image getIcon() {
     return AllIcons.Nodes.DataTables;
   }
 }
