@@ -21,6 +21,7 @@ import org.jetbrains.yaml.psi.YAMLValue;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.util.PlatformIcons;
+import consulo.awt.TargetAWT;
 import consulo.ide.IconDescriptorUpdaters;
 
 /**
@@ -92,7 +93,7 @@ public class YAMLStructureViewElement implements StructureViewTreeElement {
 
         public Icon getIcon(boolean open) {
           final YAMLValue value = kv.getValue();
-          return value instanceof YAMLScalar ? IconDescriptorUpdaters.getIcon(kv, 0) : PlatformIcons.XML_TAG_ICON;
+          return value instanceof YAMLScalar ? TargetAWT.to(IconDescriptorUpdaters.getIcon(kv, 0)) : PlatformIcons.XML_TAG_ICON;
         }
       };
     }

@@ -1,11 +1,10 @@
 package org.jetbrains.yaml.psi.impl;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.Icon;
 
 import org.jetbrains.annotations.NonNls;
-
-import javax.annotation.Nullable;
 import org.jetbrains.yaml.YAMLElementGenerator;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.YAMLUtil;
@@ -23,6 +22,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ObjectUtils;
+import consulo.awt.TargetAWT;
 import consulo.ide.IconDescriptorUpdaters;
 
 /**
@@ -161,7 +161,7 @@ public class YAMLKeyValueImpl extends YAMLPsiElementImpl implements YAMLKeyValue
       }
 
       public Icon getIcon(boolean open) {
-        return IconDescriptorUpdaters.getIcon(YAMLKeyValueImpl.this, 0);
+        return TargetAWT.to(IconDescriptorUpdaters.getIcon(YAMLKeyValueImpl.this, 0));
       }
     };
   }
