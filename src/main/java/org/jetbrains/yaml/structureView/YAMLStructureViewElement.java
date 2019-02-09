@@ -6,9 +6,8 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.swing.Icon;
-
 import javax.annotation.Nullable;
+
 import org.jetbrains.yaml.psi.YAMLDocument;
 import org.jetbrains.yaml.psi.YAMLFile;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
@@ -18,11 +17,11 @@ import org.jetbrains.yaml.psi.YAMLScalar;
 import org.jetbrains.yaml.psi.YAMLSequence;
 import org.jetbrains.yaml.psi.YAMLSequenceItem;
 import org.jetbrains.yaml.psi.YAMLValue;
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.util.PlatformIcons;
-import consulo.awt.TargetAWT;
 import consulo.ide.IconDescriptorUpdaters;
+import consulo.ui.image.Image;
 
 /**
  * @author oleg
@@ -91,9 +90,9 @@ public class YAMLStructureViewElement implements StructureViewTreeElement {
           }
         }
 
-        public Icon getIcon(boolean open) {
+        public Image getIcon() {
           final YAMLValue value = kv.getValue();
-          return value instanceof YAMLScalar ? TargetAWT.to(IconDescriptorUpdaters.getIcon(kv, 0)) : PlatformIcons.XML_TAG_ICON;
+          return value instanceof YAMLScalar ? IconDescriptorUpdaters.getIcon(kv, 0) : AllIcons.Nodes.Tag;
         }
       };
     }
@@ -107,8 +106,8 @@ public class YAMLStructureViewElement implements StructureViewTreeElement {
           return null;
         }
 
-        public Icon getIcon(boolean open) {
-          return PlatformIcons.XML_TAG_ICON;
+        public Image getIcon() {
+          return AllIcons.Nodes.Tag;
         }
       };
     }
@@ -134,8 +133,8 @@ public class YAMLStructureViewElement implements StructureViewTreeElement {
 
         @Nullable
         @Override
-        public Icon getIcon(boolean unused) {
-          return item.getValue() instanceof YAMLScalar ? PlatformIcons.PROPERTY_ICON : PlatformIcons.XML_TAG_ICON;
+        public Image getIcon() {
+          return item.getValue() instanceof YAMLScalar ? AllIcons.Nodes.Property : AllIcons.Nodes.Tag;
         }
       };
     }
