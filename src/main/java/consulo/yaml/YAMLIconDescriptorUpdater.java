@@ -16,14 +16,14 @@
 
 package consulo.yaml;
 
-import javax.annotation.Nonnull;
-
-import org.jetbrains.yaml.psi.YAMLKeyValue;
 import com.intellij.icons.AllIcons;
 import com.intellij.psi.PsiElement;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
 import consulo.ide.IconDescriptor;
 import consulo.ide.IconDescriptorUpdater;
+import org.jetbrains.yaml.psi.YAMLKeyValue;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author VISTALL

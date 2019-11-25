@@ -1,4 +1,4 @@
-<idea-plugin>
+<consulo-plugin>
 	<name>YAML</name>
 	<id>org.jetbrains.plugins.yaml</id>
 	<vendor>JetBrains</vendor>
@@ -33,4 +33,4 @@
 
 		<breadcrumbsInfoProvider implementation="org.jetbrains.yaml.breadcrumbs.YAMLBreadcrumbsInfoProvider"/>
 	</extensions>
-</idea-plugin>
+</consulo-plugin>

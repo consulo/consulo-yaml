@@ -1,20 +1,5 @@
 package org.jetbrains.yaml.folding;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import org.jetbrains.yaml.psi.YAMLCompoundValue;
-import org.jetbrains.yaml.psi.YAMLDocument;
-import org.jetbrains.yaml.psi.YAMLKeyValue;
-import org.jetbrains.yaml.psi.YAMLMapping;
-import org.jetbrains.yaml.psi.YAMLScalar;
-import org.jetbrains.yaml.psi.YAMLSequence;
-import org.jetbrains.yaml.psi.impl.YAMLArrayImpl;
-import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl;
-import org.jetbrains.yaml.psi.impl.YAMLBlockSequenceImpl;
-import org.jetbrains.yaml.psi.impl.YAMLHashImpl;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.folding.FoldingBuilderEx;
 import com.intellij.lang.folding.FoldingDescriptor;
@@ -24,7 +9,17 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.SourceTreeToPsiMap;
-import consulo.annotations.RequiredReadAction;
+import consulo.annotation.access.RequiredReadAction;
+import org.jetbrains.yaml.psi.*;
+import org.jetbrains.yaml.psi.impl.YAMLArrayImpl;
+import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl;
+import org.jetbrains.yaml.psi.impl.YAMLBlockSequenceImpl;
+import org.jetbrains.yaml.psi.impl.YAMLHashImpl;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author oleg
