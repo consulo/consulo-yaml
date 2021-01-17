@@ -31,6 +31,6 @@
 
 		<iconDescriptorUpdater implementation="consulo.yaml.YAMLIconDescriptorUpdater"/>
 
-		<breadcrumbsInfoProvider implementation="org.jetbrains.yaml.breadcrumbs.YAMLBreadcrumbsInfoProvider"/>
+		<navbar implementation="consulo.yaml.navbar.YAMLNavBarExtension"/>
 	</extensions>
 </consulo-plugin>
