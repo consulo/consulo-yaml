@@ -6,14 +6,14 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.containers.HashMap;
-import javax.annotation.Nonnull;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.YAMLUtil;
 import org.jetbrains.yaml.lexer.YAMLGrammarCharUtil;
 import org.jetbrains.yaml.psi.YAMLQuotedText;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
