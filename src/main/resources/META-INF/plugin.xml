@@ -2,9 +2,14 @@
 	<name>YAML</name>
 	<id>org.jetbrains.plugins.yaml</id>
 	<vendor>JetBrains</vendor>
-	<version>SPANSHOT</version>
+	<version>SNAPSHOT</version>
 	<description>YAML support</description>
 	<depends optional="true">com.intellij.spellchecker</depends>
+
+	<tags>
+		<tag>custom.language</tag>
+		<tag>markup.language</tag>
+	</tags>
 
 	<extensions defaultExtensionNs="com.intellij.spellchecker">
 		<support language="yaml" implementationClass="org.jetbrains.yaml.YAMLSpellcheckerStrategy"/>
