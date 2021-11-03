@@ -5,7 +5,7 @@
 	<version>SNAPSHOT</version>
 	<description>YAML support</description>
 	<depends optional="true">com.intellij.spellchecker</depends>
-
+	<category>Custom Languages</category>
 	<tags>
 		<tag>custom.language</tag>
 		<tag>markup.language</tag>
