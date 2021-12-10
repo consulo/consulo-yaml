@@ -1,17 +1,16 @@
 package org.jetbrains.yaml;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import consulo.localize.LocalizeValue;
 import consulo.ui.image.Image;
 import consulo.yaml.icon.YAMLIconGroup;
-import org.jetbrains.annotations.NonNls;
+import consulo.yaml.localize.YAMLLocalize;
 
 import javax.annotation.Nonnull;
 
 public class YAMLFileType extends LanguageFileType {
   public static final YAMLFileType YML = new YAMLFileType();
-  @NonNls public static final String DEFAULT_EXTENSION = "yml";
-  @NonNls private static final String NAME = "YAML";
-  @NonNls private static final String DESCRIPTION = YAMLBundle.message("filetype.description.yaml");
+  public static final String DEFAULT_EXTENSION = "yml";
 
   private YAMLFileType() {
     super(YAMLLanguage.INSTANCE);
@@ -19,12 +18,12 @@ public class YAMLFileType extends LanguageFileType {
 
   @Nonnull
   public String getId() {
-    return NAME;
+    return "YAML";
   }
 
   @Nonnull
-  public String getDescription() {
-    return DESCRIPTION;
+  public LocalizeValue getDescription() {
+    return YAMLLocalize.filetypeDescriptionYaml();
   }
 
   @Nonnull

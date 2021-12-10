@@ -1,0 +1,26 @@
+filetype.description.yaml:
+  text: YAML files
+color.settings.yaml.name:
+  text: YAML
+color.settings.yaml.key:
+  text: Key
+color.settings.yaml.string:
+  text: String
+color.settings.yaml.dstring:
+  text: Double quoted string
+color.settings.yaml.scalar.list:
+  text: '''|'' block'
+color.settings.yaml.scalar.text:
+  text: '''>'' block'
+color.settings.yaml.text:
+  text: Text
+color.settings.yaml.sign:
+  text: 'Sign: brace, comma, etc'
+color.settings.yaml.comment:
+  text: Comment
+new.name.conflicts.with:
+  text: 'Key conflicts with existing one: ''''{0}'''''
+rename.same.name:
+  text: Same name
+rename.wrong.name:
+  text: Wrong name
