@@ -1,18 +1,18 @@
 package org.jetbrains.yaml.psi.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import consulo.language.ast.ASTNode;
+import consulo.language.ast.TokenSet;
+import consulo.language.file.FileViewProvider;
+import consulo.language.impl.psi.PsiFileBase;
+import consulo.language.psi.PsiElement;
 import org.jetbrains.yaml.YAMLElementTypes;
 import org.jetbrains.yaml.YAMLLanguage;
 import org.jetbrains.yaml.psi.YAMLDocument;
 import org.jetbrains.yaml.psi.YAMLFile;
 import org.jetbrains.yaml.psi.YAMLPsiElement;
-import com.intellij.extapi.psi.PsiFileBase;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.TokenSet;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author oleg

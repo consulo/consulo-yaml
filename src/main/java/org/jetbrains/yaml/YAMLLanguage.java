@@ -1,8 +1,8 @@
 package org.jetbrains.yaml;
 
-import javax.annotation.Nonnull;
+import consulo.language.Language;
 
-import com.intellij.lang.Language;
+import javax.annotation.Nonnull;
 
 /**
  * @author oleg
@@ -11,7 +11,7 @@ public class YAMLLanguage extends Language {
   public static final YAMLLanguage INSTANCE = new YAMLLanguage();
 
   private YAMLLanguage() {
-    super("yaml");
+    super("yaml", "application/x-yaml", "text/yaml", "text/x-yaml");
   }
 
   @Nonnull

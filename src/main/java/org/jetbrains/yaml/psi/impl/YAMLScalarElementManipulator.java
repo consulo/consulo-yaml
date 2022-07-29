@@ -1,18 +1,20 @@
 package org.jetbrains.yaml.psi.impl;
 
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.AbstractElementManipulator;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
-import javax.annotation.Nonnull;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.document.util.TextRange;
+import consulo.language.psi.AbstractElementManipulator;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.IncorrectOperationException;
+import consulo.util.lang.Pair;
 import org.jetbrains.yaml.YAMLElementGenerator;
 import org.jetbrains.yaml.psi.YAMLFile;
 import org.jetbrains.yaml.psi.YAMLScalar;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
+@ExtensionImpl
 public class YAMLScalarElementManipulator extends AbstractElementManipulator<YAMLScalarImpl> {
 
   @Nonnull
@@ -24,6 +26,12 @@ public class YAMLScalarElementManipulator extends AbstractElementManipulator<YAM
     }
     
     return TextRange.create(ranges.get(0).getStartOffset(), ranges.get(ranges.size() - 1).getEndOffset());
+  }
+
+  @Nonnull
+  @Override
+  public Class<YAMLScalarImpl> getElementClass() {
+    return YAMLScalarImpl.class;
   }
 
   @Override

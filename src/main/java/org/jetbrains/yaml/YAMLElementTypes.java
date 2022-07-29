@@ -1,7 +1,7 @@
 package org.jetbrains.yaml;
 
-import com.intellij.psi.tree.IFileElementType;
-import com.intellij.psi.tree.TokenSet;
+import consulo.language.ast.IFileElementType;
+import consulo.language.ast.TokenSet;
 
 /**
  * @author oleg

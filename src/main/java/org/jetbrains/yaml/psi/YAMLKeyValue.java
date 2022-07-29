@@ -1,12 +1,11 @@
 package org.jetbrains.yaml.psi;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.pom.PomTarget;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
+import consulo.language.pom.PomTarget;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiNamedElement;
 import org.jetbrains.annotations.Contract;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**

@@ -15,15 +15,20 @@
  */
 package org.jetbrains.yaml;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.spellchecker.tokenizer.SpellcheckingStrategy;
 import com.intellij.spellchecker.tokenizer.Tokenizer;
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.Language;
+import consulo.language.ast.ASTNode;
+import consulo.language.ast.IElementType;
+import consulo.language.psi.PsiElement;
 
+import javax.annotation.Nonnull;
+
+@ExtensionImpl
 public class YAMLSpellcheckerStrategy extends SpellcheckingStrategy {
+  @RequiredReadAction
   @Nonnull
   @Override
   public Tokenizer getTokenizer(final PsiElement element) {
@@ -38,5 +43,11 @@ public class YAMLSpellcheckerStrategy extends SpellcheckingStrategy {
       }
     }
     return super.getTokenizer(element);
+  }
+
+  @Nonnull
+  @Override
+  public Language getLanguage() {
+    return YAMLLanguage.INSTANCE;
   }
 }

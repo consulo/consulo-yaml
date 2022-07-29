@@ -1,11 +1,11 @@
 package org.jetbrains.yaml.psi.impl;
 
-import javax.annotation.Nonnull;
-
-import com.intellij.lang.ASTNode;
+import consulo.language.ast.ASTNode;
 import org.jetbrains.yaml.YAMLElementGenerator;
 import org.jetbrains.yaml.YAMLUtil;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
+
+import javax.annotation.Nonnull;
 
 public class YAMLBlockMappingImpl extends YAMLMappingImpl {
   public YAMLBlockMappingImpl(@Nonnull ASTNode node) {

@@ -10,32 +10,4 @@
 		<tag>custom.language</tag>
 		<tag>markup.language</tag>
 	</tags>
-
-	<extensions defaultExtensionNs="com.intellij.spellchecker">
-		<support language="yaml" implementationClass="org.jetbrains.yaml.YAMLSpellcheckerStrategy"/>
-	</extensions>
-
-	<extensions defaultExtensionNs="com.intellij">
-		<!-- YAML -->
-		<lang.parserDefinition language="yaml" implementationClass="org.jetbrains.yaml.YAMLParserDefinition"/>
-		<lang.commenter language="yaml" implementationClass="org.jetbrains.yaml.YAMLCommenter"/>
-		<lang.syntaxHighlighterFactory language="yaml" implementationClass="org.jetbrains.yaml.YAMLSyntaxHighlighterFactory"/>
-		<colorSettingsPage implementation="org.jetbrains.yaml.YAMLColorsPage"/>
-		<lang.braceMatcher language="yaml" implementationClass="org.jetbrains.yaml.YAMLPairedBraceMatcher"/>
-		<lang.foldingBuilder language="yaml" implementationClass="org.jetbrains.yaml.folding.YAMLFoldingBuilder"/>
-		<fileTypeFactory implementation="org.jetbrains.yaml.YAMLFileTypeLoader"/>
-		<editor.backspaceModeOverride language="yaml" implementationClass="com.intellij.codeInsight.editorActions.SmartBackspaceDisabler"/>
-		<lang.psiStructureViewFactory language="yaml" implementationClass="org.jetbrains.yaml.structureView.YAMLStructureViewFactory"/>
-		<langCodeStyleSettingsProvider implementation="org.jetbrains.yaml.YAMLLanguageCodeStyleSettingsProvider"/>
-		<codeStyleSettingsProvider implementation="org.jetbrains.yaml.YAMLCodeStyleSettingsProvider"/>
-
-		<projectService serviceImplementation="org.jetbrains.yaml.YAMLElementGenerator"/>
-
-		<lang.elementManipulator forClass="org.jetbrains.yaml.psi.impl.YAMLScalarImpl"
-								 implementationClass="org.jetbrains.yaml.psi.impl.YAMLScalarElementManipulator"/>
-
-		<iconDescriptorUpdater implementation="consulo.yaml.YAMLIconDescriptorUpdater"/>
-
-		<navbar implementation="consulo.yaml.navbar.YAMLNavBarExtension"/>
-	</extensions>
 </consulo-plugin>

@@ -16,11 +16,12 @@
 
 package consulo.yaml;
 
-import com.intellij.icons.AllIcons;
-import com.intellij.psi.PsiElement;
 import consulo.annotation.access.RequiredReadAction;
-import consulo.ide.IconDescriptor;
-import consulo.ide.IconDescriptorUpdater;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.AllIcons;
+import consulo.language.icon.IconDescriptor;
+import consulo.language.icon.IconDescriptorUpdater;
+import consulo.language.psi.PsiElement;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 
 import javax.annotation.Nonnull;
@@ -29,15 +30,13 @@ import javax.annotation.Nonnull;
  * @author VISTALL
  * @since 06-Nov-16
  */
-public class YAMLIconDescriptorUpdater implements IconDescriptorUpdater
-{
-	@RequiredReadAction
-	@Override
-	public void updateIcon(@Nonnull IconDescriptor iconDescriptor, @Nonnull PsiElement psiElement, int i)
-	{
-		if(psiElement instanceof YAMLKeyValue)
-		{
-			iconDescriptor.setMainIcon(AllIcons.Nodes.Property);
-		}
-	}
+@ExtensionImpl
+public class YAMLIconDescriptorUpdater implements IconDescriptorUpdater {
+    @RequiredReadAction
+    @Override
+    public void updateIcon(@Nonnull IconDescriptor iconDescriptor, @Nonnull PsiElement psiElement, int i) {
+        if (psiElement instanceof YAMLKeyValue) {
+            iconDescriptor.setMainIcon(AllIcons.Nodes.Property);
+        }
+    }
 }

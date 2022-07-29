@@ -1,16 +1,16 @@
 package org.jetbrains.yaml;
 
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.ObjectUtils;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import consulo.language.ast.IElementType;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.util.IncorrectOperationException;
+import consulo.util.lang.ObjectUtil;
+import consulo.util.lang.Pair;
+import consulo.util.lang.StringUtil;
 import org.jetbrains.yaml.psi.*;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -57,7 +57,7 @@ public class YAMLUtil {
   public static YAMLKeyValue getQualifiedKeyInDocument(@Nonnull YAMLDocument document, @Nonnull List<String> key) {
     assert key.size() != 0;
 
-    YAMLMapping mapping = ObjectUtils.tryCast(document.getTopLevelValue(), YAMLMapping.class);
+    YAMLMapping mapping = ObjectUtil.tryCast(document.getTopLevelValue(), YAMLMapping.class);
     for (int i = 0; i < key.size(); i++) {
       if (mapping == null) {
         return null;
@@ -68,7 +68,7 @@ public class YAMLUtil {
         return keyValue;
       }
       
-      mapping = ObjectUtils.tryCast(keyValue.getValue(), YAMLMapping.class);
+      mapping = ObjectUtil.tryCast(keyValue.getValue(), YAMLMapping.class);
     }
     throw new IllegalStateException("Should have returned from the loop");
   }
@@ -166,7 +166,7 @@ public class YAMLUtil {
     for (i = 0; i < keyLength; i++) {
       final YAMLKeyValue existingRec = current.getKeyValueByKey(key[i]);
       if (existingRec != null){
-        final YAMLMapping nextMapping = ObjectUtils.tryCast(existingRec.getValue(), YAMLMapping.class);
+        final YAMLMapping nextMapping = ObjectUtil.tryCast(existingRec.getValue(), YAMLMapping.class);
 
         if (nextMapping != null) {
           current = nextMapping;

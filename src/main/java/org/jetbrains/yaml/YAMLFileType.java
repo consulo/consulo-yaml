@@ -1,6 +1,6 @@
 package org.jetbrains.yaml;
 
-import com.intellij.openapi.fileTypes.LanguageFileType;
+import consulo.language.file.LanguageFileType;
 import consulo.localize.LocalizeValue;
 import consulo.ui.image.Image;
 import consulo.yaml.icon.YAMLIconGroup;

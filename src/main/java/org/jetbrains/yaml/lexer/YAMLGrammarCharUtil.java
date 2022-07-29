@@ -15,7 +15,7 @@
  */
 package org.jetbrains.yaml.lexer;
 
-import com.intellij.openapi.util.text.StringUtil;
+import consulo.util.lang.StringUtil;
 
 public class YAMLGrammarCharUtil {
   private static final String NS_INDICATORS = "-?:,\\[\\]\\{\\}#&*!|>'\\\"%@`";

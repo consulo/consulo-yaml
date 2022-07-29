@@ -1,6 +1,6 @@
 package org.jetbrains.yaml.psi;
 
-import com.intellij.psi.NavigatablePsiElement;
+import consulo.language.psi.NavigatablePsiElement;
 
 import java.util.List;
 
