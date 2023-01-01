@@ -1,6 +1,6 @@
 package org.jetbrains.yaml.psi;
 
-import com.intellij.psi.PsiFile;
+import consulo.language.psi.PsiFile;
 
 import java.util.List;
 

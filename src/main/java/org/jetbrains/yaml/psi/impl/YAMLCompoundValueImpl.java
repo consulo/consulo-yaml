@@ -1,10 +1,11 @@
 package org.jetbrains.yaml.psi.impl;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import javax.annotation.Nonnull;
+import consulo.language.ast.ASTNode;
+import consulo.language.psi.PsiElement;
 import org.jetbrains.yaml.psi.YAMLCompoundValue;
 import org.jetbrains.yaml.psi.YAMLScalar;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author oleg

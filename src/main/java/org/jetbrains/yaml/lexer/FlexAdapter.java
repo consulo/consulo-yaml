@@ -15,141 +15,121 @@
  */
 package org.jetbrains.yaml.lexer;
 
-import javax.annotation.Nonnull;
+import consulo.component.ProcessCanceledException;
+import consulo.language.ast.IElementType;
+import consulo.language.ast.TokenType;
+import consulo.language.lexer.FlexLexer;
+import consulo.language.lexer.LexerBase;
+import consulo.logging.Logger;
 
-import com.intellij.lexer.FlexLexer;
-import com.intellij.lexer.LexerBase;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.psi.TokenType;
-import com.intellij.psi.tree.IElementType;
+import javax.annotation.Nonnull;
 
 /**
  * @author max
- *
+ * <p>
  * TODO [VISTALL] this is only for fixing problems with lexing, need drop it
  */
 @Deprecated
-public class FlexAdapter extends LexerBase
-{
-	private static final Logger LOG = Logger.getInstance(FlexAdapter.class);
+public class FlexAdapter extends LexerBase {
+    private static final Logger LOG = Logger.getInstance(FlexAdapter.class);
 
-	private final FlexLexer myFlex;
+    private final FlexLexer myFlex;
 
-	private IElementType myTokenType;
-	private CharSequence myText;
+    private IElementType myTokenType;
+    private CharSequence myText;
 
-	private int myTokenStart;
-	private int myTokenEnd;
+    private int myTokenStart;
+    private int myTokenEnd;
 
-	private int myBufferEnd;
-	private int myState;
+    private int myBufferEnd;
+    private int myState;
 
-	private boolean myFailed;
+    private boolean myFailed;
 
-	public FlexAdapter(@Nonnull FlexLexer flex)
-	{
-		myFlex = flex;
-	}
+    public FlexAdapter(@Nonnull FlexLexer flex) {
+        myFlex = flex;
+    }
 
-	public FlexLexer getFlex()
-	{
-		return myFlex;
-	}
+    public FlexLexer getFlex() {
+        return myFlex;
+    }
 
-	@Override
-	public void start(@Nonnull final CharSequence buffer, int startOffset, int endOffset, final int initialState)
-	{
-		myText = buffer;
-		myTokenStart = myTokenEnd = startOffset;
-		myBufferEnd = endOffset;
-		myFlex.reset(myText, startOffset, endOffset, initialState);
-		myTokenType = null;
-	}
+    @Override
+    public void start(@Nonnull final CharSequence buffer, int startOffset, int endOffset, final int initialState) {
+        myText = buffer;
+        myTokenStart = myTokenEnd = startOffset;
+        myBufferEnd = endOffset;
+        myFlex.reset(myText, startOffset, endOffset, initialState);
+        myTokenType = null;
+    }
 
-	@Override
-	public int getState()
-	{
-		locateToken();
-		return myState;
-	}
+    @Override
+    public int getState() {
+        locateToken();
+        return myState;
+    }
 
-	@Override
-	public IElementType getTokenType()
-	{
-		locateToken();
-		return myTokenType;
-	}
+    @Override
+    public IElementType getTokenType() {
+        locateToken();
+        return myTokenType;
+    }
 
-	@Override
-	public int getTokenStart()
-	{
-		locateToken();
-		return myTokenStart;
-	}
+    @Override
+    public int getTokenStart() {
+        locateToken();
+        return myTokenStart;
+    }
 
-	@Override
-	public int getTokenEnd()
-	{
-		locateToken();
-		return myTokenEnd;
-	}
+    @Override
+    public int getTokenEnd() {
+        locateToken();
+        return myTokenEnd;
+    }
 
-	@Override
-	public void advance()
-	{
-		locateToken();
-		myTokenType = null;
-	}
+    @Override
+    public void advance() {
+        locateToken();
+        myTokenType = null;
+    }
 
-	@Nonnull
-	@Override
-	public CharSequence getBufferSequence()
-	{
-		return myText;
-	}
+    @Nonnull
+    @Override
+    public CharSequence getBufferSequence() {
+        return myText;
+    }
 
-	@Override
-	public int getBufferEnd()
-	{
-		return myBufferEnd;
-	}
+    @Override
+    public int getBufferEnd() {
+        return myBufferEnd;
+    }
 
-	protected void locateToken()
-	{
-		if(myTokenType != null)
-		{
-			return;
-		}
+    protected void locateToken() {
+        if (myTokenType != null) {
+            return;
+        }
 
-		myTokenStart = myTokenEnd;
-		if(myFailed)
-		{
-			return;
-		}
+        myTokenStart = myTokenEnd;
+        if (myFailed) {
+            return;
+        }
 
-		try
-		{
-			myState = myFlex.yystate();
-			myTokenType = myFlex.advance();
-			myTokenEnd = myFlex.getTokenEnd();
-		}
-		catch(ProcessCanceledException e)
-		{
-			throw e;
-		}
-		catch(Throwable e)
-		{
-			myFailed = true;
-			myTokenType = TokenType.BAD_CHARACTER;
-			myTokenEnd = myBufferEnd;
-			LOG.warn(myFlex.getClass().getName(), e);
-		}
-	}
+        try {
+            myState = myFlex.yystate();
+            myTokenType = myFlex.advance();
+            myTokenEnd = myFlex.getTokenEnd();
+        } catch (ProcessCanceledException e) {
+            throw e;
+        } catch (Throwable e) {
+            myFailed = true;
+            myTokenType = TokenType.BAD_CHARACTER;
+            myTokenEnd = myBufferEnd;
+            LOG.warn(myFlex.getClass().getName(), e);
+        }
+    }
 
-	@Override
-	public String toString()
-	{
-		return "FlexAdapter for " + myFlex.getClass().getName();
-	}
+    @Override
+    public String toString() {
+        return "FlexAdapter for " + myFlex.getClass().getName();
+    }
 }

@@ -1,28 +1,23 @@
 package org.jetbrains.yaml.psi.impl;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import consulo.language.ast.ASTNode;
+import consulo.language.icon.IconDescriptorUpdaters;
+import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiReference;
+import consulo.language.psi.ReferenceProvidersRegistry;
+import consulo.language.util.IncorrectOperationException;
+import consulo.navigation.ItemPresentation;
+import consulo.ui.image.Image;
+import consulo.util.lang.ObjectUtil;
+import consulo.util.lang.StringUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.yaml.YAMLElementGenerator;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.YAMLUtil;
-import org.jetbrains.yaml.psi.YAMLCompoundValue;
-import org.jetbrains.yaml.psi.YAMLFile;
-import org.jetbrains.yaml.psi.YAMLKeyValue;
-import org.jetbrains.yaml.psi.YAMLMapping;
-import org.jetbrains.yaml.psi.YAMLScalar;
-import org.jetbrains.yaml.psi.YAMLValue;
-import com.intellij.lang.ASTNode;
-import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
-import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.ObjectUtils;
-import consulo.ide.IconDescriptorUpdaters;
-import consulo.ui.image.Image;
+import org.jetbrains.yaml.psi.*;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author oleg
@@ -52,7 +47,7 @@ public class YAMLKeyValueImpl extends YAMLPsiElementImpl implements YAMLKeyValue
   @Nullable
   @Override
   public YAMLMapping getParentMapping() {
-    return ObjectUtils.tryCast(super.getParent(), YAMLMapping.class);
+    return ObjectUtil.tryCast(super.getParent(), YAMLMapping.class);
   }
 
   @Nullable

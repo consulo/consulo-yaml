@@ -1,15 +1,15 @@
 package org.jetbrains.yaml.psi.impl;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
-import javax.annotation.Nonnull;
+import consulo.document.util.TextRange;
+import consulo.language.ast.ASTNode;
+import consulo.util.lang.Pair;
+import consulo.util.lang.StringUtil;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.YAMLUtil;
 import org.jetbrains.yaml.lexer.YAMLGrammarCharUtil;
 import org.jetbrains.yaml.psi.YAMLScalar;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,8 +1,8 @@
 package org.jetbrains.yaml.psi.impl;
 
-import javax.annotation.Nonnull;
+import consulo.language.ast.ASTNode;
 
-import com.intellij.lang.ASTNode;
+import javax.annotation.Nonnull;
 
 public class YAMLBlockSequenceImpl extends YAMLSequenceImpl {
   public YAMLBlockSequenceImpl(@Nonnull ASTNode node) {

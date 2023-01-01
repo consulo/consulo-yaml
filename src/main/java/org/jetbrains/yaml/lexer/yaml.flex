@@ -1,7 +1,7 @@
 package org.jetbrains.yaml.lexer;
 
-import com.intellij.lexer.FlexLexer;
-import com.intellij.psi.tree.IElementType;
+import consulo.language.lexer.FlexLexer;
+import consulo.language.ast.IElementType;
 import org.jetbrains.yaml.YAMLTokenTypes;
 
 /* Auto generated File */

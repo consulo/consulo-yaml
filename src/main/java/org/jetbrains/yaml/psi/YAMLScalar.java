@@ -1,6 +1,7 @@
 package org.jetbrains.yaml.psi;
 
-import com.intellij.psi.PsiLanguageInjectionHost;
+import consulo.language.psi.PsiLanguageInjectionHost;
+
 import javax.annotation.Nonnull;
 
 public interface YAMLScalar extends YAMLValue, PsiLanguageInjectionHost {

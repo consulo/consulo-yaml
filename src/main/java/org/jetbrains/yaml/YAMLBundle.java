@@ -1,11 +1,11 @@
 package org.jetbrains.yaml;
 
-import com.intellij.CommonBundle;
-import com.intellij.reference.SoftReference;
+import consulo.application.CommonBundle;
+import consulo.util.lang.ref.SoftReference;
 import org.jetbrains.annotations.NonNls;
-import javax.annotation.Nonnull;
 import org.jetbrains.annotations.PropertyKey;
 
+import javax.annotation.Nonnull;
 import java.lang.ref.Reference;
 import java.util.ResourceBundle;
 

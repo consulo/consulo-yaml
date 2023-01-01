@@ -1,27 +1,18 @@
 package org.jetbrains.yaml.structureView;
 
+import consulo.application.AllIcons;
+import consulo.fileEditor.structureView.StructureViewTreeElement;
+import consulo.language.icon.IconDescriptorUpdaters;
+import consulo.navigation.ItemPresentation;
+import consulo.ui.image.Image;
+import org.jetbrains.yaml.psi.*;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.jetbrains.yaml.psi.YAMLDocument;
-import org.jetbrains.yaml.psi.YAMLFile;
-import org.jetbrains.yaml.psi.YAMLKeyValue;
-import org.jetbrains.yaml.psi.YAMLMapping;
-import org.jetbrains.yaml.psi.YAMLPsiElement;
-import org.jetbrains.yaml.psi.YAMLScalar;
-import org.jetbrains.yaml.psi.YAMLSequence;
-import org.jetbrains.yaml.psi.YAMLSequenceItem;
-import org.jetbrains.yaml.psi.YAMLValue;
-import com.intellij.icons.AllIcons;
-import com.intellij.ide.structureView.StructureViewTreeElement;
-import com.intellij.navigation.ItemPresentation;
-import consulo.ide.IconDescriptorUpdaters;
-import consulo.ui.image.Image;
 
 /**
  * @author oleg

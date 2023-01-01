@@ -1,17 +1,19 @@
 package org.jetbrains.yaml;
 
-import javax.annotation.Nonnull;
-import javax.swing.JLabel;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.application.ApplicationBundle;
+import consulo.language.Language;
+import consulo.language.codeStyle.CommonCodeStyleSettings;
+import consulo.language.codeStyle.setting.IndentOptionsEditor;
+import consulo.language.codeStyle.setting.LanguageCodeStyleSettingsProvider;
 
-import com.intellij.application.options.IndentOptionsEditor;
-import com.intellij.lang.Language;
-import com.intellij.openapi.application.ApplicationBundle;
-import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
-import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
+import javax.annotation.Nonnull;
+import javax.swing.*;
 
 /**
  * @author oleg
  */
+@ExtensionImpl
 public class YAMLLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProvider {
   @Override
   public CommonCodeStyleSettings getDefaultCommonSettings() {

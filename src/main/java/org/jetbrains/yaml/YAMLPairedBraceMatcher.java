@@ -1,15 +1,16 @@
 package org.jetbrains.yaml;
 
-import com.intellij.lang.BracePair;
-import com.intellij.lang.PairedBraceMatcher;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.tree.IElementType;
+import consulo.annotation.component.ExtensionImpl;
+import consulo.language.BracePair;
+import consulo.language.Language;
+import consulo.language.PairedBraceMatcher;
+
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * @author oleg
  */
+@ExtensionImpl
 public class YAMLPairedBraceMatcher implements PairedBraceMatcher, YAMLTokenTypes {
     private static final BracePair[] PAIRS = new BracePair[]{
             new BracePair(LBRACE, RBRACE, true),
@@ -21,12 +22,10 @@ public class YAMLPairedBraceMatcher implements PairedBraceMatcher, YAMLTokenType
         return PAIRS;
     }
 
-    public boolean isPairedBracesAllowedBeforeType(@Nonnull IElementType iElementType, @Nullable IElementType iElementType1) {
-        return true;
+    @Nonnull
+    @Override
+    public Language getLanguage() {
+        return YAMLLanguage.INSTANCE;
     }
-
-  public int getCodeConstructStart(final PsiFile file, final int openingBraceOffset) {
-    return openingBraceOffset;
-  }
 }
 

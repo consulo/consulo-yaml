@@ -1,11 +1,11 @@
 package org.jetbrains.yaml.lexer;
 
-import java.io.Reader;
+import consulo.language.ast.TokenSet;
+import consulo.language.lexer.MergingLexerAdapter;
+import org.jetbrains.yaml.YAMLTokenTypes;
 
 import javax.annotation.Nonnull;
-import org.jetbrains.yaml.YAMLTokenTypes;
-import com.intellij.lexer.MergingLexerAdapter;
-import com.intellij.psi.tree.TokenSet;
+import java.io.Reader;
 
 /**
  * @author oleg
