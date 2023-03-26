@@ -47,7 +47,6 @@
 				<artifactId>maven-consulo-plugin</artifactId>
 				<extensions>true</extensions>
 				<configuration>
-					<repositoryChannel>valhalla</repositoryChannel>
 					<dependencies>
 						<dependency>com.intellij.spellchecker</dependency>
 					</dependencies>
@@ -76,13 +75,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<dependencies>
-		<dependency>
-			<groupId>consulo.plugin</groupId>
-			<artifactId>com.intellij.spellchecker</artifactId>
-			<version>${project.version}</version>
-			<scope>provided</scope>
-		</dependency>
-	</dependencies>
 </project>
