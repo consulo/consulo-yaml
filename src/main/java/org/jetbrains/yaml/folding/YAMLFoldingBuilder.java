@@ -61,7 +61,9 @@ public class YAMLFoldingBuilder extends FoldingBuilderEx implements DumbAware {
             if (i > 1) {
                 descriptors.add(new FoldingDescriptor(element, nodeTextRange));
             }
-        } else if (element instanceof YAMLScalar || element instanceof YAMLKeyValue && ((YAMLKeyValue) element).getValue() instanceof YAMLCompoundValue) {
+        }
+        else if (element instanceof YAMLScalar
+            || element instanceof YAMLKeyValue keyValue && keyValue.getValue() instanceof YAMLCompoundValue) {
             descriptors.add(new FoldingDescriptor(element, nodeTextRange));
         }
 
@@ -80,26 +82,32 @@ public class YAMLFoldingBuilder extends FoldingBuilderEx implements DumbAware {
     private static String getPlaceholderText(@Nullable PsiElement psiElement) {
         if (psiElement instanceof YAMLDocument) {
             return "---";
-        } else if (psiElement instanceof YAMLScalar) {
-            return normalizePlaceHolderText(((YAMLScalar) psiElement).getTextValue());
-        } else if (psiElement instanceof YAMLSequence) {
-            final int size = ((YAMLSequence) psiElement).getItems().size();
+        }
+        else if (psiElement instanceof YAMLScalar scalar) {
+            return normalizePlaceHolderText(scalar.getTextValue());
+        }
+        else if (psiElement instanceof YAMLSequence sequence) {
+            final int size = sequence.getItems().size();
             final String placeholder = size + " " + StringUtil.pluralize("item", size);
             if (psiElement instanceof YAMLArrayImpl) {
                 return "[" + placeholder + "]";
-            } else if (psiElement instanceof YAMLBlockSequenceImpl) {
+            }
+            else if (psiElement instanceof YAMLBlockSequenceImpl) {
                 return "<" + placeholder + ">";
             }
-        } else if (psiElement instanceof YAMLMapping) {
-            final int size = ((YAMLMapping) psiElement).getKeyValues().size();
+        }
+        else if (psiElement instanceof YAMLMapping mapping) {
+            final int size = mapping.getKeyValues().size();
             final String placeholder = size + " " + StringUtil.pluralize("key", size);
             if (psiElement instanceof YAMLHashImpl) {
                 return "{" + placeholder + "}";
-            } else if (psiElement instanceof YAMLBlockMappingImpl) {
+            }
+            else if (psiElement instanceof YAMLBlockMappingImpl) {
                 return "<" + placeholder + ">";
             }
-        } else if (psiElement instanceof YAMLKeyValue) {
-            return normalizePlaceHolderText(((YAMLKeyValue) psiElement).getKeyText()) + ": " + getPlaceholderText(((YAMLKeyValue) psiElement).getValue());
+        }
+        else if (psiElement instanceof YAMLKeyValue keyValue) {
+            return normalizePlaceHolderText(keyValue.getKeyText()) + ": " + getPlaceholderText(keyValue.getValue());
         }
         return "...";
     }

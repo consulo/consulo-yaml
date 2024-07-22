@@ -12,18 +12,18 @@ import javax.annotation.Nullable;
  * @author oleg
  */
 public class YAMLDocumentImpl extends YAMLPsiElementImpl implements YAMLDocument {
-  public YAMLDocumentImpl(@Nonnull final ASTNode node) {
-    super(node);
-  }
+    public YAMLDocumentImpl(@Nonnull final ASTNode node) {
+        super(node);
+    }
 
-  @Override
-  public String toString() {
-    return "YAML document";
-  }
+    @Override
+    public String toString() {
+        return "YAML document";
+    }
 
-  @Nullable
-  @Override
-  public YAMLValue getTopLevelValue() {
-    return PsiTreeUtil.findChildOfType(this, YAMLValue.class);
-  }
+    @Nullable
+    @Override
+    public YAMLValue getTopLevelValue() {
+        return PsiTreeUtil.findChildOfType(this, YAMLValue.class);
+    }
 }

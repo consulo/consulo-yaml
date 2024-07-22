@@ -13,23 +13,23 @@ import java.util.List;
  * @author oleg
  */
 public class YAMLPsiElementImpl extends ASTWrapperPsiElement implements YAMLPsiElement {
-  public YAMLPsiElementImpl(@Nonnull final ASTNode node) {
-    super(node);
-  }
-
-  @Override
-  public String toString() {
-    return "YAML element";
-  }
-
-  public List<YAMLPsiElement> getYAMLElements() {
-    final ArrayList<YAMLPsiElement> result = new ArrayList<>();
-    for (ASTNode node : getNode().getChildren(null)) {
-      final PsiElement psi = node.getPsi();
-      if (psi instanceof YAMLPsiElement){
-        result.add((YAMLPsiElement) psi);
-      }
+    public YAMLPsiElementImpl(@Nonnull final ASTNode node) {
+        super(node);
     }
-    return result;
-  }
+
+    @Override
+    public String toString() {
+        return "YAML element";
+    }
+
+    public List<YAMLPsiElement> getYAMLElements() {
+        final ArrayList<YAMLPsiElement> result = new ArrayList<>();
+        for (ASTNode node : getNode().getChildren(null)) {
+            final PsiElement psi = node.getPsi();
+            if (psi instanceof YAMLPsiElement psiElement) {
+                result.add(psiElement);
+            }
+        }
+        return result;
+    }
 }

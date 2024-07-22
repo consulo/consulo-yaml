@@ -18,26 +18,26 @@ package org.jetbrains.yaml.lexer;
 import consulo.util.lang.StringUtil;
 
 public class YAMLGrammarCharUtil {
-  private static final String NS_INDICATORS = "-?:,\\[\\]\\{\\}#&*!|>'\\\"%@`";
-  private static final String NS_FLOW_INDICATORS = ",[]{}";
-  private static final String COMMON_SPACE_CHARS = "\n\r\t ";
-  
-  private YAMLGrammarCharUtil() {
-  }
+    private static final String NS_INDICATORS = "-?:,\\[\\]\\{\\}#&*!|>'\\\"%@`";
+    private static final String NS_FLOW_INDICATORS = ",[]{}";
+    private static final String COMMON_SPACE_CHARS = "\n\r\t ";
 
-  public static boolean isIndicatorChar(char c) {
-    return StringUtil.containsChar(NS_INDICATORS, c);
-  }
+    private YAMLGrammarCharUtil() {
+    }
 
-  public static boolean isPlainSafe(char c) {
-    return !isSpaceLike(c) && !StringUtil.containsChar(NS_FLOW_INDICATORS, c);
-  }
+    public static boolean isIndicatorChar(char c) {
+        return StringUtil.containsChar(NS_INDICATORS, c);
+    }
 
-  public static boolean isSpaceLike(char c) {
-    return c == ' ' || c == '\t';
-  }
+    public static boolean isPlainSafe(char c) {
+        return !isSpaceLike(c) && !StringUtil.containsChar(NS_FLOW_INDICATORS, c);
+    }
 
-  public static boolean isNonSpaceChar(char c) {
-    return !StringUtil.containsChar(COMMON_SPACE_CHARS, c);
-  }
+    public static boolean isSpaceLike(char c) {
+        return c == ' ' || c == '\t';
+    }
+
+    public static boolean isNonSpaceChar(char c) {
+        return !StringUtil.containsChar(COMMON_SPACE_CHARS, c);
+    }
 }
