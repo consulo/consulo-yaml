@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
  */
 @ExtensionImpl
 public class YAMLFileTypeLoader extends FileTypeFactory {
-  public void createFileTypes(final @Nonnull FileTypeConsumer consumer) {
-    consumer.consume(YAMLFileType.YML, YAMLFileType.DEFAULT_EXTENSION + ";yaml");
-  }
+    public void createFileTypes(final @Nonnull FileTypeConsumer consumer) {
+        consumer.consume(YAMLFileType.YML, YAMLFileType.DEFAULT_EXTENSION + ";yaml");
+    }
 }

@@ -15,31 +15,31 @@ import javax.annotation.Nonnull;
  */
 @ExtensionImpl
 public class YAMLCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
-  @Nonnull
-  @Override
-  public Configurable createSettingsPage(final CodeStyleSettings settings, final CodeStyleSettings originalSettings) {
-    return new CodeStyleAbstractConfigurable(settings, originalSettings, YAMLLanguage.INSTANCE.getDisplayName()) {
-      @Override
-      protected CodeStyleAbstractPanel createPanel(final CodeStyleSettings settings) {
-        final CodeStyleSettings currentSettings = getCurrentSettings();
-        final CodeStyleSettings settings1 = settings;
-        return new TabbedLanguageCodeStylePanel(YAMLLanguage.INSTANCE, currentSettings, settings1) {
-          @Override
-            protected void initTabs(final CodeStyleSettings settings) {
-              addIndentOptionsTab(settings);
+    @Nonnull
+    @Override
+    public Configurable createSettingsPage(final CodeStyleSettings settings, final CodeStyleSettings originalSettings) {
+        return new CodeStyleAbstractConfigurable(settings, originalSettings, YAMLLanguage.INSTANCE.getDisplayName()) {
+            @Override
+            protected CodeStyleAbstractPanel createPanel(final CodeStyleSettings settings) {
+                final CodeStyleSettings currentSettings = getCurrentSettings();
+                final CodeStyleSettings settings1 = settings;
+                return new TabbedLanguageCodeStylePanel(YAMLLanguage.INSTANCE, currentSettings, settings1) {
+                    @Override
+                    protected void initTabs(final CodeStyleSettings settings) {
+                        addIndentOptionsTab(settings);
+                    }
+                };
+            }
+
+            @Override
+            public String getHelpTopic() {
+                return "reference.settingsdialog.codestyle.yaml";
             }
         };
-      }
+    }
 
-      @Override
-      public String getHelpTopic() {
-        return "reference.settingsdialog.codestyle.yaml";
-      }
-    };
-  }
-
-  @Override
-  public String getConfigurableDisplayName() {
-    return YAMLLanguage.INSTANCE.getDisplayName();
-  }
+    @Override
+    public String getConfigurableDisplayName() {
+        return YAMLLanguage.INSTANCE.getDisplayName();
+    }
 }

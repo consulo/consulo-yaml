@@ -9,31 +9,31 @@ import consulo.yaml.localize.YAMLLocalize;
 import javax.annotation.Nonnull;
 
 public class YAMLFileType extends LanguageFileType {
-  public static final YAMLFileType YML = new YAMLFileType();
-  public static final String DEFAULT_EXTENSION = "yml";
+    public static final YAMLFileType YML = new YAMLFileType();
+    public static final String DEFAULT_EXTENSION = "yml";
 
-  private YAMLFileType() {
-    super(YAMLLanguage.INSTANCE);
-  }
+    private YAMLFileType() {
+        super(YAMLLanguage.INSTANCE);
+    }
 
-  @Nonnull
-  public String getId() {
-    return "YAML";
-  }
+    @Nonnull
+    public String getId() {
+        return "YAML";
+    }
 
-  @Nonnull
-  public LocalizeValue getDescription() {
-    return YAMLLocalize.filetypeDescriptionYaml();
-  }
+    @Nonnull
+    public LocalizeValue getDescription() {
+        return YAMLLocalize.filetypeDescriptionYaml();
+    }
 
-  @Nonnull
-  public String getDefaultExtension() {
-    return DEFAULT_EXTENSION;
-  }
+    @Nonnull
+    public String getDefaultExtension() {
+        return DEFAULT_EXTENSION;
+    }
 
-  @Nonnull
-  public Image getIcon() {
-    return YAMLIconGroup.yaml();
-  }
+    @Nonnull
+    public Image getIcon() {
+        return YAMLIconGroup.yaml();
+    }
 }
 

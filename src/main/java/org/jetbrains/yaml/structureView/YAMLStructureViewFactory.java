@@ -15,13 +15,13 @@ import javax.annotation.Nonnull;
  */
 @ExtensionImpl
 public class YAMLStructureViewFactory implements PsiStructureViewFactory {
-  public StructureViewBuilder getStructureViewBuilder(final PsiFile psiFile) {
-    return new YAMLStructureViewBuilder((YAMLFile) psiFile);
-  }
+    public StructureViewBuilder getStructureViewBuilder(final PsiFile psiFile) {
+        return new YAMLStructureViewBuilder((YAMLFile)psiFile);
+    }
 
-  @Nonnull
-  @Override
-  public Language getLanguage() {
-    return YAMLLanguage.INSTANCE;
-  }
+    @Nonnull
+    @Override
+    public Language getLanguage() {
+        return YAMLLanguage.INSTANCE;
+    }
 }

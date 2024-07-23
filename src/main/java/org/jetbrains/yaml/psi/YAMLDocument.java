@@ -6,6 +6,6 @@ import javax.annotation.Nullable;
  * @author oleg
  */
 public interface YAMLDocument extends YAMLPsiElement {
-  @Nullable
-  YAMLValue getTopLevelValue();
+    @Nullable
+    YAMLValue getTopLevelValue();
 }
