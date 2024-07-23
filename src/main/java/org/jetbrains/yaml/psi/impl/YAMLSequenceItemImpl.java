@@ -16,29 +16,29 @@ import java.util.Collections;
  * @author oleg
  */
 public class YAMLSequenceItemImpl extends YAMLPsiElementImpl implements YAMLSequenceItem {
-  public YAMLSequenceItemImpl(@Nonnull final ASTNode node) {
-    super(node);
-  }
-
-  @Nullable
-  @Override
-  public YAMLValue getValue() {
-    return PsiTreeUtil.findChildOfType(this, YAMLValue.class);
-  }
-
-  @Nonnull
-  public Collection<YAMLKeyValue> getKeysValues() {
-    final YAMLMapping mapping = PsiTreeUtil.findChildOfType(this, YAMLMapping.class);
-    if (mapping == null) {
-      return Collections.emptyList();
+    public YAMLSequenceItemImpl(@Nonnull final ASTNode node) {
+        super(node);
     }
-    else {
-      return mapping.getKeyValues();
-    }
-  }
 
-  @Override
-  public String toString() {
-    return "YAML sequence item";
-  }
+    @Nullable
+    @Override
+    public YAMLValue getValue() {
+        return PsiTreeUtil.findChildOfType(this, YAMLValue.class);
+    }
+
+    @Nonnull
+    public Collection<YAMLKeyValue> getKeysValues() {
+        final YAMLMapping mapping = PsiTreeUtil.findChildOfType(this, YAMLMapping.class);
+        if (mapping == null) {
+            return Collections.emptyList();
+        }
+        else {
+            return mapping.getKeyValues();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "YAML sequence item";
+    }
 }

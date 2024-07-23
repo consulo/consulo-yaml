@@ -9,8 +9,9 @@ import java.util.Collection;
  * @author oleg
  */
 public interface YAMLSequenceItem extends YAMLPsiElement {
-  @Nullable
-  YAMLValue getValue();
-  @Nonnull
-  Collection<YAMLKeyValue> getKeysValues();
+    @Nullable
+    YAMLValue getValue();
+
+    @Nonnull
+    Collection<YAMLKeyValue> getKeysValues();
 }
