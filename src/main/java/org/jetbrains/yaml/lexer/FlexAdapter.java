@@ -118,9 +118,11 @@ public class FlexAdapter extends LexerBase {
             myState = myFlex.yystate();
             myTokenType = myFlex.advance();
             myTokenEnd = myFlex.getTokenEnd();
-        } catch (ProcessCanceledException e) {
+        }
+        catch (ProcessCanceledException e) {
             throw e;
-        } catch (Throwable e) {
+        }
+        catch (Throwable e) {
             myFailed = true;
             myTokenType = TokenType.BAD_CHARACTER;
             myTokenEnd = myBufferEnd;

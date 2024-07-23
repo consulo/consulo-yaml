@@ -23,158 +23,158 @@ import javax.annotation.Nullable;
  * @author oleg
  */
 public class YAMLKeyValueImpl extends YAMLPsiElementImpl implements YAMLKeyValue {
-  public YAMLKeyValueImpl(@Nonnull final ASTNode node) {
-    super(node);
-  }
-
-  @Override
-  public String toString() {
-    return "YAML key value";
-  }
-
-  @Nullable
-  public PsiElement getKey() {
-    final PsiElement result = findChildByType(YAMLTokenTypes.SCALAR_KEY);
-    if (result != null) {
-      return result;
-    }
-    if (isExplicit()) {
-      return findChildByClass(YAMLCompoundValue.class);
-    }
-    return null;
-  }
-
-  @Nullable
-  @Override
-  public YAMLMapping getParentMapping() {
-    return ObjectUtil.tryCast(super.getParent(), YAMLMapping.class);
-  }
-
-  @Nullable
-  @Override
-  public String getName() {
-    return getKeyText();
-  }
-
-  @Nonnull
-  public String getKeyText() {
-    final PsiElement keyElement = getKey();
-    if (keyElement == null) {
-      return "";
+    public YAMLKeyValueImpl(@Nonnull final ASTNode node) {
+        super(node);
     }
 
-    if (keyElement instanceof YAMLCompoundValue) {
-      return ((YAMLCompoundValue)keyElement).getTextValue();
+    @Override
+    public String toString() {
+        return "YAML key value";
     }
 
-    final String text = keyElement.getText();
-    return StringUtil.unquoteString(text.substring(0, text.length() - 1));
-  }
-
-  @Nullable
-  public YAMLValue getValue() {
-    for (PsiElement child = getLastChild(); child != null; child = child.getPrevSibling()) {
-      if (child instanceof YAMLValue) {
-        return ((YAMLValue)child);
-      }
-    }
-    return null;
-  }
-
-  @Nonnull
-  public String getValueText() {
-    final YAMLValue value = getValue();
-    if (value instanceof YAMLScalar){
-      return ((YAMLScalar)value).getTextValue();
-    }
-    else if (value instanceof YAMLCompoundValue) {
-      return ((YAMLCompoundValue)value).getTextValue();
-    }
-    return "";
-  }
-
-
-  @Override
-  public void setValue(@Nonnull YAMLValue value) {
-    adjustWhitespaceToContentType(value instanceof YAMLScalar);
-    
-    if (getValue() != null) {
-      getValue().replace(value);
-      return;
-    }
-
-    final YAMLElementGenerator generator = YAMLElementGenerator.getInstance(getProject());
-    if (isExplicit()) {
-      if (findChildByType(YAMLTokenTypes.COLON) == null) {
-        add(generator.createColon());
-        add(generator.createSpace());
-        add(value);
-      }
-    }
-    else {
-      add(value);
-    }
-  }
-  
-  private void adjustWhitespaceToContentType(boolean isScalar) {
-    assert getKey() != null;
-    PsiElement key = getKey();
-    
-    if (key.getNextSibling() != null && key.getNextSibling().getNode().getElementType() == YAMLTokenTypes.COLON) {
-      key = key.getNextSibling();
-    }
-    
-    while (key.getNextSibling() != null && !(key.getNextSibling() instanceof YAMLValue)) {
-      key.getNextSibling().delete();
-    }
-    final YAMLElementGenerator generator = YAMLElementGenerator.getInstance(getProject());
-    if (isScalar) {
-      addAfter(generator.createSpace(), key);
-    }
-    else {
-      final int indent = YAMLUtil.getIndentToThisElement(this);
-      addAfter(generator.createIndent(indent + 2), key);
-      addAfter(generator.createEol(), key);
-    }
-  }
-
-  @Override
-  public ItemPresentation getPresentation() {
-    final YAMLFile yamlFile = (YAMLFile)getContainingFile();
-    final PsiElement value = getValue();
-    return new ItemPresentation() {
-      public String getPresentableText() {
-        if (value instanceof YAMLScalar){
-          return getValueText();
+    @Nullable
+    public PsiElement getKey() {
+        final PsiElement result = findChildByType(YAMLTokenTypes.SCALAR_KEY);
+        if (result != null) {
+            return result;
         }
-        return getName();
-      }
+        if (isExplicit()) {
+            return findChildByClass(YAMLCompoundValue.class);
+        }
+        return null;
+    }
 
-      public String getLocationString() {
-        return "[" + yamlFile.getName() + "]";
-      }
+    @Nullable
+    @Override
+    public YAMLMapping getParentMapping() {
+        return ObjectUtil.tryCast(super.getParent(), YAMLMapping.class);
+    }
 
-      public Image getIcon() {
-        return IconDescriptorUpdaters.getIcon(YAMLKeyValueImpl.this, 0);
-      }
-    };
-  }
+    @Nullable
+    @Override
+    public String getName() {
+        return getKeyText();
+    }
 
-  public PsiElement setName(@NonNls @Nonnull String newName) throws IncorrectOperationException {
-    return YAMLUtil.rename(this, newName);
-  }
+    @Nonnull
+    public String getKeyText() {
+        final PsiElement keyElement = getKey();
+        if (keyElement == null) {
+            return "";
+        }
 
-  /**
-   * Provide reference contributor with given method registerReferenceProviders implementation:
-   * registrar.registerReferenceProvider(PlatformPatterns.psiElement(YAMLKeyValue.class), ReferenceProvider);
-   */
-  @Nonnull
-  public PsiReference[] getReferences() {
-    return ReferenceProvidersRegistry.getReferencesFromProviders(this);
-  }
+        if (keyElement instanceof YAMLCompoundValue) {
+            return ((YAMLCompoundValue)keyElement).getTextValue();
+        }
 
-  private boolean isExplicit() {
-    final ASTNode child = getNode().getFirstChildNode();
-    return child != null && child.getElementType() == YAMLTokenTypes.QUESTION;
-  }
+        final String text = keyElement.getText();
+        return StringUtil.unquoteString(text.substring(0, text.length() - 1));
+    }
+
+    @Nullable
+    public YAMLValue getValue() {
+        for (PsiElement child = getLastChild(); child != null; child = child.getPrevSibling()) {
+            if (child instanceof YAMLValue) {
+                return ((YAMLValue)child);
+            }
+        }
+        return null;
+    }
+
+    @Nonnull
+    public String getValueText() {
+        final YAMLValue value = getValue();
+        if (value instanceof YAMLScalar) {
+            return ((YAMLScalar)value).getTextValue();
+        }
+        else if (value instanceof YAMLCompoundValue) {
+            return ((YAMLCompoundValue)value).getTextValue();
+        }
+        return "";
+    }
+
+
+    @Override
+    public void setValue(@Nonnull YAMLValue value) {
+        adjustWhitespaceToContentType(value instanceof YAMLScalar);
+
+        if (getValue() != null) {
+            getValue().replace(value);
+            return;
+        }
+
+        final YAMLElementGenerator generator = YAMLElementGenerator.getInstance(getProject());
+        if (isExplicit()) {
+            if (findChildByType(YAMLTokenTypes.COLON) == null) {
+                add(generator.createColon());
+                add(generator.createSpace());
+                add(value);
+            }
+        }
+        else {
+            add(value);
+        }
+    }
+
+    private void adjustWhitespaceToContentType(boolean isScalar) {
+        assert getKey() != null;
+        PsiElement key = getKey();
+
+        if (key.getNextSibling() != null && key.getNextSibling().getNode().getElementType() == YAMLTokenTypes.COLON) {
+            key = key.getNextSibling();
+        }
+
+        while (key.getNextSibling() != null && !(key.getNextSibling() instanceof YAMLValue)) {
+            key.getNextSibling().delete();
+        }
+        final YAMLElementGenerator generator = YAMLElementGenerator.getInstance(getProject());
+        if (isScalar) {
+            addAfter(generator.createSpace(), key);
+        }
+        else {
+            final int indent = YAMLUtil.getIndentToThisElement(this);
+            addAfter(generator.createIndent(indent + 2), key);
+            addAfter(generator.createEol(), key);
+        }
+    }
+
+    @Override
+    public ItemPresentation getPresentation() {
+        final YAMLFile yamlFile = (YAMLFile)getContainingFile();
+        final PsiElement value = getValue();
+        return new ItemPresentation() {
+            public String getPresentableText() {
+                if (value instanceof YAMLScalar) {
+                    return getValueText();
+                }
+                return getName();
+            }
+
+            public String getLocationString() {
+                return "[" + yamlFile.getName() + "]";
+            }
+
+            public Image getIcon() {
+                return IconDescriptorUpdaters.getIcon(YAMLKeyValueImpl.this, 0);
+            }
+        };
+    }
+
+    public PsiElement setName(@NonNls @Nonnull String newName) throws IncorrectOperationException {
+        return YAMLUtil.rename(this, newName);
+    }
+
+    /**
+     * Provide reference contributor with given method registerReferenceProviders implementation:
+     * registrar.registerReferenceProvider(PlatformPatterns.psiElement(YAMLKeyValue.class), ReferenceProvider);
+     */
+    @Nonnull
+    public PsiReference[] getReferences() {
+        return ReferenceProvidersRegistry.getReferencesFromProviders(this);
+    }
+
+    private boolean isExplicit() {
+        final ASTNode child = getNode().getFirstChildNode();
+        return child != null && child.getElementType() == YAMLTokenTypes.QUESTION;
+    }
 }
