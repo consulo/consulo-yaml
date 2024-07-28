@@ -1,12 +1,12 @@
 <consulo-plugin url="https://github.com/consulo/consulo-yaml">
-	<name>YAML</name>
-	<id>org.jetbrains.plugins.yaml</id>
-	<vendor>JetBrains</vendor>
-	<version>SNAPSHOT</version>
-	<description>YAML support</description>
-	<category>Custom Languages</category>
-	<tags>
-		<tag>custom.language</tag>
-		<tag>markup.language</tag>
-	</tags>
+    <name>YAML</name>
+    <id>org.jetbrains.plugins.yaml</id>
+    <vendor>JetBrains</vendor>
+    <version>SNAPSHOT</version>
+    <description>YAML support</description>
+    <category>Custom Languages</category>
+    <tags>
+        <tag>custom.language</tag>
+        <tag>markup.language</tag>
+    </tags>
 </consulo-plugin>
