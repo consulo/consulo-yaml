@@ -1,7 +1,7 @@
 package org.jetbrains.yaml;
 
 import consulo.annotation.component.ExtensionImpl;
-import consulo.application.ApplicationBundle;
+import consulo.application.localize.ApplicationLocalize;
 import consulo.language.Language;
 import consulo.language.codeStyle.CommonCodeStyleSettings;
 import consulo.language.codeStyle.setting.IndentOptionsEditor;
@@ -45,7 +45,6 @@ public class YAMLLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
     }
 
     private class YAMLIndentOptionsEditor extends IndentOptionsEditor {
-
         @Override
         protected void addComponents() {
             addTabOptions();
@@ -53,15 +52,16 @@ public class YAMLLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
             myCbUseTab.setEnabled(false);
 
             myTabSizeField = createIndentTextField();
-            myTabSizeLabel = new JLabel(ApplicationBundle.message("editbox.indent.tab.size"));
+            myTabSizeLabel = new JLabel(ApplicationLocalize.editboxIndentTabSize().get());
             // Do not add
             //add(myTabSizeLabel, myTabSizeField);
 
             myIndentField = createIndentTextField();
-            myIndentLabel = new JLabel(ApplicationBundle.message("editbox.indent.indent"));
+            myIndentLabel = new JLabel(ApplicationLocalize.editboxIndentIndent().get());
             add(myIndentLabel, myIndentField);
         }
 
+        @Override
         public void setEnabled(boolean enabled) {
             // Do nothing
         }

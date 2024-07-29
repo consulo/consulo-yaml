@@ -1,5 +1,6 @@
 package org.jetbrains.yaml;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.language.Language;
 import consulo.language.ast.ASTNode;
@@ -18,7 +19,6 @@ import org.jetbrains.yaml.parser.YAMLParser;
 import org.jetbrains.yaml.psi.impl.*;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * @author oleg
@@ -34,35 +34,44 @@ public class YAMLParserDefinition implements ParserDefinition, YAMLElementTypes 
     }
 
     @Nonnull
-    public Lexer createLexer(LanguageVersion languageVersion) {
+    @Override
+    public Lexer createLexer(@Nonnull LanguageVersion languageVersion) {
         return new YAMLFlexLexer();
     }
 
-    @Nullable
-    public PsiParser createParser(LanguageVersion languageVersion) {
+    @Nonnull
+    @Override
+    public PsiParser createParser(@Nonnull LanguageVersion languageVersion) {
         return new YAMLParser();
     }
 
+    @Nonnull
+    @Override
     public IFileElementType getFileNodeType() {
         return FILE;
     }
 
     @Nonnull
-    public TokenSet getWhitespaceTokens(LanguageVersion languageVersion) {
+    @Override
+    public TokenSet getWhitespaceTokens(@Nonnull LanguageVersion languageVersion) {
         return TokenSet.create(YAMLTokenTypes.WHITESPACE);
     }
 
     @Nonnull
-    public TokenSet getCommentTokens(LanguageVersion languageVersion) {
+    @Override
+    public TokenSet getCommentTokens(@Nonnull LanguageVersion languageVersion) {
         return ourCommentTokens;
     }
 
     @Nonnull
-    public TokenSet getStringLiteralElements(LanguageVersion languageVersion) {
+    @Override
+    public TokenSet getStringLiteralElements(@Nonnull LanguageVersion languageVersion) {
         return TokenSet.create(YAMLTokenTypes.SCALAR_STRING, YAMLTokenTypes.SCALAR_DSTRING, YAMLTokenTypes.TEXT);
     }
 
     @Nonnull
+    @Override
+    @RequiredReadAction
     public PsiElement createElement(final ASTNode node) {
         final IElementType type = node.getElementType();
         if (type == DOCUMENT) {
@@ -104,10 +113,14 @@ public class YAMLParserDefinition implements ParserDefinition, YAMLElementTypes 
         return new YAMLPsiElementImpl(node);
     }
 
-    public PsiFile createFile(final FileViewProvider viewProvider) {
+    @Nonnull
+    @Override
+    public PsiFile createFile(@Nonnull final FileViewProvider viewProvider) {
         return new YAMLFileImpl(viewProvider);
     }
 
+    @Nonnull
+    @Override
     public SpaceRequirements spaceExistanceTypeBetweenTokens(final ASTNode left, final ASTNode right) {
         return SpaceRequirements.MAY;
     }

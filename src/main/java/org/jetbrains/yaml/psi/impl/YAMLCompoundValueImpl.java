@@ -1,5 +1,6 @@
 package org.jetbrains.yaml.psi.impl;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import org.jetbrains.yaml.psi.YAMLCompoundValue;
@@ -22,6 +23,7 @@ public class YAMLCompoundValueImpl extends YAMLValueImpl implements YAMLCompound
 
     @Nonnull
     @Override
+    @RequiredReadAction
     public String getTextValue() {
         PsiElement element = getTag() != null ? getTag().getNextSibling() : getFirstChild();
 

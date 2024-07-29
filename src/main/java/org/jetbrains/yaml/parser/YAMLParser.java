@@ -7,6 +7,7 @@ import consulo.language.parser.PsiBuilder;
 import consulo.language.parser.PsiParser;
 import consulo.language.version.LanguageVersion;
 import consulo.util.collection.Stack;
+import consulo.yaml.localize.YAMLLocalize;
 import org.jetbrains.yaml.YAMLElementTypes;
 import org.jetbrains.yaml.YAMLTokenTypes;
 
@@ -17,8 +18,8 @@ import javax.annotation.Nullable;
  * @author oleg
  */
 public class YAMLParser implements PsiParser, YAMLTokenTypes {
-    public static final TokenSet HASH_STOP_TOKENS = TokenSet.create(RBRACE, COMMA);
-    public static final TokenSet ARRAY_STOP_TOKENS = TokenSet.create(RBRACKET, COMMA);
+    private static final TokenSet HASH_STOP_TOKENS = TokenSet.create(RBRACE, COMMA);
+    private static final TokenSet ARRAY_STOP_TOKENS = TokenSet.create(RBRACKET, COMMA);
     private PsiBuilder myBuilder;
     private boolean eolSeen = false;
     private int myIndent;
@@ -27,6 +28,7 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
     private final Stack<TokenSet> myStopTokensStack = new Stack<>();
 
     @Nonnull
+    @Override
     public ASTNode parse(@Nonnull final IElementType root, @Nonnull final PsiBuilder builder, @Nonnull LanguageVersion languageVersion) {
         myBuilder = builder;
         myStopTokensStack.clear();
@@ -386,7 +388,7 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
                 marker.done(YAMLElementTypes.SEQUENCE_ITEM);
             }
             else {
-                marker.error("Sequence item expected");
+                marker.error(YAMLLocalize.parsingErrorSequenceItemExpected());
             }
 
             if (getTokenType() == YAMLTokenTypes.COMMA) {

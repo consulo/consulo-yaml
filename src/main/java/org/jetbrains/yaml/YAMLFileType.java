@@ -17,21 +17,25 @@ public class YAMLFileType extends LanguageFileType {
     }
 
     @Nonnull
+    @Override
     public String getId() {
         return "YAML";
     }
 
     @Nonnull
+    @Override
     public LocalizeValue getDescription() {
         return YAMLLocalize.filetypeDescriptionYaml();
     }
 
     @Nonnull
+    @Override
     public String getDefaultExtension() {
         return DEFAULT_EXTENSION;
     }
 
     @Nonnull
+    @Override
     public Image getIcon() {
         return YAMLIconGroup.yaml();
     }

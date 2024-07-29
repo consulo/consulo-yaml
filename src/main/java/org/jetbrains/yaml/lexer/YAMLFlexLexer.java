@@ -5,7 +5,6 @@ import consulo.language.lexer.MergingLexerAdapter;
 import org.jetbrains.yaml.YAMLTokenTypes;
 
 import javax.annotation.Nonnull;
-import java.io.Reader;
 
 /**
  * @author oleg
@@ -16,7 +15,7 @@ public class YAMLFlexLexer extends MergingLexerAdapter {
     private static final int DIRTY_STATE = 239;
 
     public YAMLFlexLexer() {
-        super(new MyFlexAdapter(new _YAMLLexer((Reader)null)), TOKENS_TO_MERGE);
+        super(new MyFlexAdapter(new _YAMLLexer(null)), TOKENS_TO_MERGE);
     }
 
     private static class MyFlexAdapter extends FlexAdapter {

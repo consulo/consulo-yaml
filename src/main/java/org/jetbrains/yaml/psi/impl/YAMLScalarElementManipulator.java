@@ -1,5 +1,6 @@
 package org.jetbrains.yaml.psi.impl;
 
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.document.util.TextRange;
 import consulo.language.psi.AbstractElementManipulator;
@@ -34,6 +35,8 @@ public class YAMLScalarElementManipulator extends AbstractElementManipulator<YAM
     }
 
     @Override
+    @RequiredWriteAction
+    @SuppressWarnings("unchecked")
     public YAMLScalarImpl handleContentChange(@Nonnull YAMLScalarImpl element, @Nonnull TextRange range, String newContent)
         throws IncorrectOperationException {
 
@@ -51,19 +54,18 @@ public class YAMLScalarElementManipulator extends AbstractElementManipulator<YAM
             final YAMLScalar newScalar = PsiTreeUtil.collectElementsOfType(dummyYamlFile, YAMLScalar.class).iterator().next();
 
             final PsiElement result = element.replace(newScalar);
-            if (!(result instanceof YAMLScalarImpl)) {
-                throw new AssertionError("Inserted YAML scalar, but it isn't a scalar after insertion :(");
+            if (result instanceof YAMLScalarImpl scalar) {
+                return scalar;
             }
-
-            return ((YAMLScalarImpl)result);
+            throw new AssertionError("Inserted YAML scalar, but it isn't a scalar after insertion :(");
         }
         catch (IllegalArgumentException e) {
             final PsiElement newElement =
                 element.replace(YAMLElementGenerator.getInstance(element.getProject()).createYamlDoubleQuotedString());
-            if (!(newElement instanceof YAMLQuotedTextImpl)) {
-                throw new AssertionError("Could not replace with dummy scalar");
+            if (newElement instanceof YAMLQuotedTextImpl quotedText) {
+                return handleContentChange(quotedText, newContent);
             }
-            return handleContentChange((YAMLScalarImpl)newElement, newContent);
+            throw new AssertionError("Could not replace with dummy scalar");
         }
     }
 }

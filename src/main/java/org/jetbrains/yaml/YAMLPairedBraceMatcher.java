@@ -18,6 +18,7 @@ public class YAMLPairedBraceMatcher implements PairedBraceMatcher, YAMLTokenType
     };
 
     @Nonnull
+    @Override
     public BracePair[] getPairs() {
         return PAIRS;
     }

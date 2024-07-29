@@ -1,5 +1,6 @@
 package org.jetbrains.yaml.psi.impl;
 
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.ast.ASTNode;
 import consulo.language.ast.IElementType;
 import consulo.language.psi.PsiElement;
@@ -20,6 +21,7 @@ public class YAMLHashImpl extends YAMLMappingImpl implements YAMLMapping {
     }
 
     @Override
+    @RequiredWriteAction
     protected void addNewKey(@Nonnull YAMLKeyValue key) {
         PsiElement anchor = null;
         for (PsiElement child = getLastChild(); child != null; child = child.getPrevSibling()) {

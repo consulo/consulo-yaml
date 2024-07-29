@@ -27,6 +27,7 @@ public class YAMLSequenceItemImpl extends YAMLPsiElementImpl implements YAMLSequ
     }
 
     @Nonnull
+    @Override
     public Collection<YAMLKeyValue> getKeysValues() {
         final YAMLMapping mapping = PsiTreeUtil.findChildOfType(this, YAMLMapping.class);
         if (mapping == null) {

@@ -1,5 +1,7 @@
 package org.jetbrains.yaml.psi.impl;
 
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.ast.ASTNode;
 import consulo.language.icon.IconDescriptorUpdaters;
 import consulo.language.psi.PsiElement;
@@ -10,7 +12,6 @@ import consulo.navigation.ItemPresentation;
 import consulo.ui.image.Image;
 import consulo.util.lang.ObjectUtil;
 import consulo.util.lang.StringUtil;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.yaml.YAMLElementGenerator;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.YAMLUtil;
@@ -33,6 +34,8 @@ public class YAMLKeyValueImpl extends YAMLPsiElementImpl implements YAMLKeyValue
     }
 
     @Nullable
+    @Override
+    @RequiredReadAction
     public PsiElement getKey() {
         final PsiElement result = findChildByType(YAMLTokenTypes.SCALAR_KEY);
         if (result != null) {
@@ -52,19 +55,22 @@ public class YAMLKeyValueImpl extends YAMLPsiElementImpl implements YAMLKeyValue
 
     @Nullable
     @Override
+    @RequiredReadAction
     public String getName() {
         return getKeyText();
     }
 
     @Nonnull
+    @Override
+    @RequiredReadAction
     public String getKeyText() {
         final PsiElement keyElement = getKey();
         if (keyElement == null) {
             return "";
         }
 
-        if (keyElement instanceof YAMLCompoundValue) {
-            return ((YAMLCompoundValue)keyElement).getTextValue();
+        if (keyElement instanceof YAMLCompoundValue compoundValue) {
+            return compoundValue.getTextValue();
         }
 
         final String text = keyElement.getText();
@@ -72,29 +78,34 @@ public class YAMLKeyValueImpl extends YAMLPsiElementImpl implements YAMLKeyValue
     }
 
     @Nullable
+    @Override
+    @RequiredReadAction
     public YAMLValue getValue() {
         for (PsiElement child = getLastChild(); child != null; child = child.getPrevSibling()) {
-            if (child instanceof YAMLValue) {
-                return ((YAMLValue)child);
+            if (child instanceof YAMLValue value) {
+                return value;
             }
         }
         return null;
     }
 
     @Nonnull
+    @Override
+    @RequiredReadAction
     public String getValueText() {
         final YAMLValue value = getValue();
-        if (value instanceof YAMLScalar) {
-            return ((YAMLScalar)value).getTextValue();
+        if (value instanceof YAMLScalar scalar) {
+            return scalar.getTextValue();
         }
-        else if (value instanceof YAMLCompoundValue) {
-            return ((YAMLCompoundValue)value).getTextValue();
+        else if (value instanceof YAMLCompoundValue compoundValue) {
+            return compoundValue.getTextValue();
         }
         return "";
     }
 
 
     @Override
+    @RequiredWriteAction
     public void setValue(@Nonnull YAMLValue value) {
         adjustWhitespaceToContentType(value instanceof YAMLScalar);
 
@@ -116,6 +127,7 @@ public class YAMLKeyValueImpl extends YAMLPsiElementImpl implements YAMLKeyValue
         }
     }
 
+    @RequiredWriteAction
     private void adjustWhitespaceToContentType(boolean isScalar) {
         assert getKey() != null;
         PsiElement key = getKey();
@@ -139,10 +151,13 @@ public class YAMLKeyValueImpl extends YAMLPsiElementImpl implements YAMLKeyValue
     }
 
     @Override
+    @RequiredReadAction
     public ItemPresentation getPresentation() {
         final YAMLFile yamlFile = (YAMLFile)getContainingFile();
         final PsiElement value = getValue();
         return new ItemPresentation() {
+            @Override
+            @RequiredReadAction
             public String getPresentableText() {
                 if (value instanceof YAMLScalar) {
                     return getValueText();
@@ -150,17 +165,23 @@ public class YAMLKeyValueImpl extends YAMLPsiElementImpl implements YAMLKeyValue
                 return getName();
             }
 
+            @Override
+            @RequiredReadAction
             public String getLocationString() {
                 return "[" + yamlFile.getName() + "]";
             }
 
+            @Override
+            @RequiredReadAction
             public Image getIcon() {
                 return IconDescriptorUpdaters.getIcon(YAMLKeyValueImpl.this, 0);
             }
         };
     }
 
-    public PsiElement setName(@NonNls @Nonnull String newName) throws IncorrectOperationException {
+    @Override
+    @RequiredWriteAction
+    public PsiElement setName(@Nonnull String newName) throws IncorrectOperationException {
         return YAMLUtil.rename(this, newName);
     }
 
@@ -169,6 +190,7 @@ public class YAMLKeyValueImpl extends YAMLPsiElementImpl implements YAMLKeyValue
      * registrar.registerReferenceProvider(PlatformPatterns.psiElement(YAMLKeyValue.class), ReferenceProvider);
      */
     @Nonnull
+    @Override
     public PsiReference[] getReferences() {
         return ReferenceProvidersRegistry.getReferencesFromProviders(this);
     }
