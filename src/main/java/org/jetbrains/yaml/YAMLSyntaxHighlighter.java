@@ -27,8 +27,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author: oleg
- * @date: Feb 11, 2008
+ * @author oleg
+ * @since Feb 11, 2008
  */
 public class YAMLSyntaxHighlighter extends SyntaxHighlighterBase implements YAMLTokenTypes {
 
@@ -55,11 +55,13 @@ public class YAMLSyntaxHighlighter extends SyntaxHighlighterBase implements YAML
 
 
     @Nonnull
-    public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
+    @Override
+    public TextAttributesKey[] getTokenHighlights(@Nonnull IElementType tokenType) {
         return SyntaxHighlighterBase.pack(ATTRIBUTES.get(tokenType));
     }
 
     @Nonnull
+    @Override
     public Lexer getHighlightingLexer() {
         return new YAMLFlexLexer();
     }

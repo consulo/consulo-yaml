@@ -22,6 +22,7 @@ public class YAMLPsiElementImpl extends ASTWrapperPsiElement implements YAMLPsiE
         return "YAML element";
     }
 
+    @Override
     public List<YAMLPsiElement> getYAMLElements() {
         final ArrayList<YAMLPsiElement> result = new ArrayList<>();
         for (ASTNode node : getNode().getChildren(null)) {

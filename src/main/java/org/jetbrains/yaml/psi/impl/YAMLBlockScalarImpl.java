@@ -1,5 +1,6 @@
 package org.jetbrains.yaml.psi.impl;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.document.util.TextRange;
 import consulo.language.ast.ASTNode;
 import consulo.language.ast.IElementType;
@@ -31,6 +32,7 @@ public abstract class YAMLBlockScalarImpl extends YAMLScalarImpl {
 
     @Nonnull
     @Override
+    @RequiredReadAction
     public List<TextRange> getContentRanges() {
         final int myStart = getTextOffset();
         final ASTNode node = getNode();
@@ -77,6 +79,7 @@ public abstract class YAMLBlockScalarImpl extends YAMLScalarImpl {
         return lastNonEmpty == -1 ? result : result.subList(0, lastNonEmpty + 1);
     }
 
+    @RequiredReadAction
     protected int locateIndent() {
         int number = 0;
         for (ASTNode child = getNode().getFirstChildNode(); child != null; child = child.getTreeNext()) {

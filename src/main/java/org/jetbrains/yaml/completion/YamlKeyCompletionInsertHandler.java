@@ -1,5 +1,6 @@
 package org.jetbrains.yaml.completion;
 
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.codeEditor.Editor;
 import consulo.codeEditor.util.EditorModificationUtil;
 import consulo.document.Document;
@@ -10,6 +11,7 @@ import consulo.language.editor.completion.lookup.LookupElement;
 import consulo.language.psi.PsiDocumentManager;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
+import consulo.ui.annotation.RequiredUIAccess;
 import org.jetbrains.yaml.YAMLElementGenerator;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.psi.YAMLDocument;
@@ -24,6 +26,7 @@ public abstract class YamlKeyCompletionInsertHandler<T extends LookupElement> im
     protected abstract YAMLKeyValue createNewEntry(@Nonnull YAMLDocument document, T item);
 
     @Override
+    @RequiredUIAccess
     public void handleInsert(InsertionContext context, T item) {
         final PsiElement currentElement = context.getFile().findElementAt(context.getStartOffset());
         assert currentElement != null : "no element at " + context.getStartOffset();
@@ -50,6 +53,7 @@ public abstract class YamlKeyCompletionInsertHandler<T extends LookupElement> im
     }
 
     @Nullable
+    @RequiredWriteAction
     protected YAMLValue deleteLookupTextAndRetrieveOldValue(InsertionContext context, @Nonnull PsiElement elementAtCaret) {
         final YAMLValue oldValue;
         if (elementAtCaret.getNode().getElementType() != YAMLTokenTypes.SCALAR_KEY) {

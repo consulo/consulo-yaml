@@ -1,5 +1,6 @@
 package org.jetbrains.yaml.psi.impl;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.document.util.TextRange;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.*;
@@ -35,6 +36,7 @@ public abstract class YAMLScalarImpl extends YAMLValueImpl implements YAMLScalar
 
     @Nonnull
     @Override
+    @RequiredReadAction
     public String getTextValue() {
         final String text = getText();
         final List<TextRange> contentRanges = getContentRanges();
@@ -62,6 +64,7 @@ public abstract class YAMLScalarImpl extends YAMLValueImpl implements YAMLScalar
     }
 
     @Nonnull
+    @Override
     public PsiReference[] getReferences() {
         return ReferenceProvidersRegistry.getReferencesFromProviders(this);
     }
@@ -109,12 +112,14 @@ public abstract class YAMLScalarImpl extends YAMLValueImpl implements YAMLScalar
         }
 
         @Override
+        @RequiredReadAction
         public boolean decode(@Nonnull TextRange rangeInsideHost, @Nonnull StringBuilder outChars) {
             outChars.append(myHost.getTextValue());
             return true;
         }
 
         @Override
+        @RequiredReadAction
         public int getOffsetInHost(int offsetInDecoded, @Nonnull TextRange rangeInsideHost) {
             final String text = myHost.getText();
             final List<TextRange> contentRanges = myHost.getContentRanges();

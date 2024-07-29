@@ -27,6 +27,7 @@ public class YAMLFileImpl extends PsiFileBase implements YAMLFile {
         return "YAML file";
     }
 
+    @Override
     public List<YAMLDocument> getDocuments() {
         final ArrayList<YAMLDocument> result = new ArrayList<>();
         for (ASTNode node : getNode().getChildren(TokenSet.create(YAMLElementTypes.DOCUMENT))) {
@@ -35,6 +36,7 @@ public class YAMLFileImpl extends PsiFileBase implements YAMLFile {
         return result;
     }
 
+    @Override
     public List<YAMLPsiElement> getYAMLElements() {
         final ArrayList<YAMLPsiElement> result = new ArrayList<>();
         for (ASTNode node : getNode().getChildren(null)) {

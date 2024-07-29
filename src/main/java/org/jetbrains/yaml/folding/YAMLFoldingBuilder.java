@@ -72,8 +72,9 @@ public class YAMLFoldingBuilder extends FoldingBuilderEx implements DumbAware {
         }
     }
 
-    @RequiredReadAction
     @Nullable
+    @Override
+    @RequiredReadAction
     public String getPlaceholderText(@Nonnull ASTNode node) {
         return getPlaceholderText(node.getPsi());
     }
@@ -112,6 +113,7 @@ public class YAMLFoldingBuilder extends FoldingBuilderEx implements DumbAware {
         return "...";
     }
 
+    @Override
     @RequiredReadAction
     public boolean isCollapsedByDefault(@Nonnull ASTNode node) {
         return false;

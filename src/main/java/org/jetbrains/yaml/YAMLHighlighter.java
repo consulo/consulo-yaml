@@ -3,29 +3,11 @@ package org.jetbrains.yaml;
 import consulo.codeEditor.DefaultLanguageHighlighterColors;
 import consulo.codeEditor.HighlighterColors;
 import consulo.colorScheme.TextAttributesKey;
-import org.jetbrains.annotations.NonNls;
 
 /**
  * @author oleg
  */
 public class YAMLHighlighter {
-    @NonNls
-    static final String SCALAR_KEY_ID = "YAML_SCALAR_KEY";
-    @NonNls
-    static final String SCALAR_TEXT_ID = "YAML_SCALAR_VALUE";
-    @NonNls
-    static final String SCALAR_STRING_ID = "YAML_SCALAR_STRING";
-    @NonNls
-    static final String SCALAR_DSTRING_ID = "YAML_SCALAR_DSTRING";
-    @NonNls
-    static final String SCALAR_LIST_ID = "YAML_SCALAR_LIST";
-    @NonNls
-    static final String COMMENT_ID = "YAML_COMMENT";
-    @NonNls
-    static final String TEXT_ID = "YAML_TEXT";
-    @NonNls
-    static final String SIGN_ID = "YAML_SIGN";
-
     // Text default attrs
     public static final TextAttributesKey SCALAR_KEY_DEFAULT_ATTRS = DefaultLanguageHighlighterColors.KEYWORD;
     public static final TextAttributesKey COMMENT_DEFAULT_ATTRS = DefaultLanguageHighlighterColors.DOC_COMMENT;
@@ -38,18 +20,19 @@ public class YAMLHighlighter {
 
     // text attributes keys
     public static final TextAttributesKey SCALAR_KEY = TextAttributesKey
-        .createTextAttributesKey(SCALAR_KEY_ID, SCALAR_KEY_DEFAULT_ATTRS);
+        .createTextAttributesKey("YAML_SCALAR_KEY", SCALAR_KEY_DEFAULT_ATTRS);
     public static final TextAttributesKey SCALAR_TEXT = TextAttributesKey
-        .createTextAttributesKey(SCALAR_TEXT_ID, SCALAR_TEXT_DEFAULT_ATTRS);
+        .createTextAttributesKey("YAML_SCALAR_VALUE", SCALAR_TEXT_DEFAULT_ATTRS);
     public static final TextAttributesKey SCALAR_STRING =
-        TextAttributesKey.createTextAttributesKey(SCALAR_STRING_ID, SCALAR_STRING_DEFAULT_ATTRS);
+        TextAttributesKey.createTextAttributesKey("YAML_SCALAR_STRING", SCALAR_STRING_DEFAULT_ATTRS);
     public static final TextAttributesKey SCALAR_DSTRING =
-        TextAttributesKey.createTextAttributesKey(SCALAR_DSTRING_ID, SCALAR_DSTRING_DEFAULT_ATTRS);
+        TextAttributesKey.createTextAttributesKey("YAML_SCALAR_DSTRING", SCALAR_DSTRING_DEFAULT_ATTRS);
     public static final TextAttributesKey SCALAR_LIST = TextAttributesKey
-        .createTextAttributesKey(SCALAR_LIST_ID, SCALAR_LIST_DEFAULT_ATTRS);
-    public static final TextAttributesKey COMMENT = TextAttributesKey.createTextAttributesKey(COMMENT_ID, COMMENT_DEFAULT_ATTRS);
-    public static final TextAttributesKey TEXT = TextAttributesKey.createTextAttributesKey(TEXT_ID, TEXT_DEFAULT_ATTRS);
-    public static final TextAttributesKey SIGN = TextAttributesKey.createTextAttributesKey(SIGN_ID, SIGN_DEFAULT_ATTRS);
+        .createTextAttributesKey("YAML_SCALAR_LIST", SCALAR_LIST_DEFAULT_ATTRS);
+    public static final TextAttributesKey COMMENT =
+        TextAttributesKey.createTextAttributesKey("YAML_COMMENT", COMMENT_DEFAULT_ATTRS);
+    public static final TextAttributesKey TEXT = TextAttributesKey.createTextAttributesKey("YAML_TEXT", TEXT_DEFAULT_ATTRS);
+    public static final TextAttributesKey SIGN = TextAttributesKey.createTextAttributesKey("YAML_SIGN", SIGN_DEFAULT_ATTRS);
 
     private YAMLHighlighter() {
     }

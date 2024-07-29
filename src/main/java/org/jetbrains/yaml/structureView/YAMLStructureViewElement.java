@@ -1,5 +1,6 @@
 package org.jetbrains.yaml.structureView;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.application.AllIcons;
 import consulo.fileEditor.structureView.StructureViewTreeElement;
 import consulo.language.icon.IconDescriptorUpdaters;
@@ -25,6 +26,7 @@ public class YAMLStructureViewElement implements StructureViewTreeElement {
     }
 
     @Nonnull
+    @Override
     public StructureViewTreeElement[] getChildren() {
         final Collection<? extends YAMLPsiElement> children;
         if (myElement instanceof YAMLFile file) {
@@ -62,17 +64,22 @@ public class YAMLStructureViewElement implements StructureViewTreeElement {
     }
 
     @Nonnull
+    @Override
     public ItemPresentation getPresentation() {
         if (myElement instanceof YAMLKeyValue kv) {
             return new ItemPresentation() {
+                @Override
                 public String getPresentableText() {
                     return kv.getKeyText();
                 }
 
+                @Override
                 public String getLocationString() {
                     return kv.getValue() instanceof YAMLScalar ? kv.getValueText() : null;
                 }
 
+                @Override
+                @RequiredReadAction
                 public Image getIcon() {
                     final YAMLValue value = kv.getValue();
                     return value instanceof YAMLScalar ? IconDescriptorUpdaters.getIcon(kv, 0) : AllIcons.Nodes.Tag;
@@ -81,14 +88,17 @@ public class YAMLStructureViewElement implements StructureViewTreeElement {
         }
         if (myElement instanceof YAMLDocument) {
             return new ItemPresentation() {
+                @Override
                 public String getPresentableText() {
                     return "YAML document";
                 }
 
+                @Override
                 public String getLocationString() {
                     return null;
                 }
 
+                @Override
                 public Image getIcon() {
                     return AllIcons.Nodes.Tag;
                 }
@@ -118,18 +128,22 @@ public class YAMLStructureViewElement implements StructureViewTreeElement {
         return myElement.getPresentation();
     }
 
+    @Override
     public YAMLPsiElement getValue() {
         return myElement;
     }
 
+    @Override
     public void navigate(boolean requestFocus) {
         myElement.navigate(requestFocus);
     }
 
+    @Override
     public boolean canNavigate() {
         return myElement.canNavigate();
     }
 
+    @Override
     public boolean canNavigateToSource() {
         return myElement.canNavigateToSource();
     }

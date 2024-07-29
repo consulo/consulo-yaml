@@ -1,5 +1,7 @@
 package org.jetbrains.yaml;
 
+import consulo.annotation.access.RequiredReadAction;
+import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.ast.IElementType;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.util.PsiTreeUtil;
@@ -7,6 +9,7 @@ import consulo.language.util.IncorrectOperationException;
 import consulo.util.lang.ObjectUtil;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
+import consulo.yaml.localize.YAMLLocalize;
 import org.jetbrains.yaml.psi.*;
 
 import javax.annotation.Nonnull;
@@ -21,6 +24,7 @@ import java.util.List;
  */
 public class YAMLUtil {
     @Nonnull
+    @SuppressWarnings("unchecked")
     public static String getFullKey(final YAMLKeyValue yamlKeyValue) {
         final StringBuilder builder = new StringBuilder();
         YAMLKeyValue element = yamlKeyValue;
@@ -39,12 +43,7 @@ public class YAMLUtil {
     @Nonnull
     public static Collection<YAMLKeyValue> getTopLevelKeys(final YAMLFile file) {
         final YAMLValue topLevelValue = file.getDocuments().get(0).getTopLevelValue();
-        if (topLevelValue instanceof YAMLMapping) {
-            return ((YAMLMapping)topLevelValue).getKeyValues();
-        }
-        else {
-            return Collections.emptyList();
-        }
+        return topLevelValue instanceof YAMLMapping mapping ? mapping.getKeyValues() : Collections.emptyList();
     }
 
     @Nullable
@@ -79,10 +78,7 @@ public class YAMLUtil {
 
     @Nullable
     public static YAMLKeyValue findKeyInProbablyMapping(@Nullable YAMLValue node, @Nonnull String keyText) {
-        if (!(node instanceof YAMLMapping)) {
-            return null;
-        }
-        return ((YAMLMapping)node).getKeyValueByKey(keyText);
+        return node instanceof YAMLMapping mapping ? mapping.getKeyValueByKey(keyText) : null;
     }
 
     @Nullable
@@ -141,11 +137,13 @@ public class YAMLUtil {
     //  }
     //}
 
+    @RequiredWriteAction
     public YAMLKeyValue createI18nRecord(final YAMLFile file, final String key, final String text) {
         return createI18nRecord(file, key.split("\\."), text);
     }
 
     @Nullable
+    @RequiredWriteAction
     public static YAMLKeyValue createI18nRecord(final YAMLFile file, final String[] key, final String text) {
         final YAMLDocument root = file.getDocuments().get(0);
         assert root != null;
@@ -196,11 +194,11 @@ public class YAMLUtil {
             final YAMLKeyValue dummyKeyValue = dummyMapping.getKeyValues().iterator().next();
             current.putKeyValue(dummyKeyValue);
 
-            if (!(dummyKeyValue.getValue() instanceof YAMLMapping)) {
-                return dummyKeyValue;
+            if (dummyKeyValue.getValue() instanceof YAMLMapping mapping) {
+                current = mapping;
             }
             else {
-                current = ((YAMLMapping)dummyKeyValue.getValue());
+                return dummyKeyValue;
             }
         }
 
@@ -213,7 +211,7 @@ public class YAMLUtil {
             }
             builder.append(key[j]);
         }
-        throw new IncorrectOperationException(YAMLBundle.message("new.name.conflicts.with", builder.toString()));
+        throw new IncorrectOperationException(YAMLLocalize.newNameConflictsWith(builder.toString()).get());
     }
 
     //public static void removeI18nRecord(final YAMLFile file, final String[] key){
@@ -234,12 +232,13 @@ public class YAMLUtil {
     //  }
     //}
 
+    @RequiredWriteAction
     public static PsiElement rename(final YAMLKeyValue element, final String newName) {
         if (newName.contains(".")) {
-            throw new IncorrectOperationException(YAMLBundle.message("rename.wrong.name"));
+            throw new IncorrectOperationException(YAMLLocalize.renameWrongName().get());
         }
         if (newName.equals(element.getName())) {
-            throw new IncorrectOperationException(YAMLBundle.message("rename.same.name"));
+            throw new IncorrectOperationException(YAMLLocalize.renameSameName().get());
         }
         final YAMLKeyValue topKeyValue = YAMLElementGenerator.getInstance(element.getProject()).createYamlKeyValue(newName, "Foo");
 
@@ -251,6 +250,7 @@ public class YAMLUtil {
         return element;
     }
 
+    @RequiredReadAction
     public static int getIndentInThisLine(@Nonnull final PsiElement elementInLine) {
         PsiElement currentElement = elementInLine;
         while (currentElement != null) {

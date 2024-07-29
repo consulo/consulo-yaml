@@ -1,6 +1,6 @@
 package org.jetbrains.yaml.psi.impl;
 
-import consulo.language.ast.ASTNode;
+import consulo.annotation.access.RequiredReadAction;import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElement;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.psi.YAMLValue;
@@ -15,14 +15,10 @@ abstract class YAMLValueImpl extends YAMLPsiElementImpl implements YAMLValue {
 
     @Nullable
     @Override
+    @RequiredReadAction
     public PsiElement getTag() {
         final PsiElement firstChild = getFirstChild();
-        if (firstChild.getNode().getElementType() == YAMLTokenTypes.TAG) {
-            return firstChild;
-        }
-        else {
-            return null;
-        }
+        return firstChild.getNode().getElementType() == YAMLTokenTypes.TAG ? firstChild : null;
     }
 
     @Override

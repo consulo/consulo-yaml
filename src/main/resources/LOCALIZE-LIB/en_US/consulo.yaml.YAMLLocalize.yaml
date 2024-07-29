@@ -24,3 +24,5 @@ rename.same.name:
   text: Same name
 rename.wrong.name:
   text: Wrong name
+parsing.error.sequence.item.expected:
+  text: Sequence item expected

@@ -1,5 +1,6 @@
 package org.jetbrains.yaml.psi.impl;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.document.util.TextRange;
 import consulo.language.ast.ASTNode;
 import consulo.util.lang.ObjectUtil;
@@ -28,6 +29,7 @@ public class YAMLQuotedTextImpl extends YAMLScalarImpl implements YAMLQuotedText
 
     @Nonnull
     @Override
+    @RequiredReadAction
     public List<TextRange> getContentRanges() {
         List<TextRange> result = new ArrayList<>();
 
@@ -175,10 +177,12 @@ public class YAMLQuotedTextImpl extends YAMLScalarImpl implements YAMLQuotedText
     }
 
     @Override
+    @RequiredReadAction
     public boolean isMultiline() {
         return textContains('\n');
     }
 
+    @Override
     public boolean isSingleQuote() {
         return myIsSingleQuoted;
     }

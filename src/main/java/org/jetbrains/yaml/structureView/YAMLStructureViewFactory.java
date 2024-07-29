@@ -15,6 +15,7 @@ import javax.annotation.Nonnull;
  */
 @ExtensionImpl
 public class YAMLStructureViewFactory implements PsiStructureViewFactory {
+    @Override
     public StructureViewBuilder getStructureViewBuilder(final PsiFile psiFile) {
         return new YAMLStructureViewBuilder((YAMLFile)psiFile);
     }

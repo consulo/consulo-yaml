@@ -13,24 +13,29 @@ import javax.annotation.Nonnull;
 public class YAMLCommenter implements Commenter {
     private static final String LINE_COMMENT_PREFIX = "#";
 
+    @Override
     public String getLineCommentPrefix() {
         return LINE_COMMENT_PREFIX;
     }
 
+    @Override
     public String getBlockCommentPrefix() {
         // N/A
         return null;
     }
 
+    @Override
     public String getBlockCommentSuffix() {
         // N/A
         return null;
     }
 
+    @Override
     public String getCommentedBlockCommentPrefix() {
         return null;
     }
 
+    @Override
     public String getCommentedBlockCommentSuffix() {
         return null;
     }

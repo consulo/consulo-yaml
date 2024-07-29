@@ -6,7 +6,6 @@ import consulo.application.ui.UISettings;
 import consulo.codeEditor.Editor;
 import consulo.dataContext.DataContext;
 import consulo.ide.navigationToolbar.AbstractNavBarModelExtension;
-import consulo.language.editor.CommonDataKeys;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
@@ -35,8 +34,8 @@ public class YAMLNavBarExtension extends AbstractNavBarModelExtension {
     @RequiredReadAction
     public PsiElement getLeafElement(@Nonnull DataContext dataContext) {
         if (UISettings.getInstance().getShowMembersInNavigationBar()) {
-            PsiFile psiFile = dataContext.getData(CommonDataKeys.PSI_FILE);
-            Editor editor = dataContext.getData(CommonDataKeys.EDITOR);
+            PsiFile psiFile = dataContext.getData(PsiFile.KEY);
+            Editor editor = dataContext.getData(Editor.KEY);
             if (psiFile == null || editor == null) {
                 return null;
             }

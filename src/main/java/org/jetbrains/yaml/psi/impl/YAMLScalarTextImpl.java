@@ -1,6 +1,6 @@
 package org.jetbrains.yaml.psi.impl;
 
-import consulo.document.util.TextRange;
+import consulo.annotation.access.RequiredReadAction;import consulo.document.util.TextRange;
 import consulo.language.ast.ASTNode;
 import consulo.language.ast.IElementType;
 import consulo.util.lang.Pair;
@@ -114,6 +114,7 @@ public class YAMLScalarTextImpl extends YAMLBlockScalarImpl implements YAMLScala
 
     @Nonnull
     @Override
+    @RequiredReadAction
     public String getTextValue() {
         return super.getTextValue() + "\n";
     }

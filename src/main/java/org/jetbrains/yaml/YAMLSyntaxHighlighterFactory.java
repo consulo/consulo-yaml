@@ -15,6 +15,7 @@ import javax.annotation.Nonnull;
 @ExtensionImpl
 public class YAMLSyntaxHighlighterFactory extends SyntaxHighlighterFactory {
     @Nonnull
+    @Override
     public SyntaxHighlighter getSyntaxHighlighter(final Project project, final VirtualFile virtualFile) {
         return new YAMLSyntaxHighlighter();
     }

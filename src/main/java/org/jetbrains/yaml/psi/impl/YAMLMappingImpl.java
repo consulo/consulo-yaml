@@ -1,5 +1,6 @@
 package org.jetbrains.yaml.psi.impl;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.util.PsiTreeUtil;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
@@ -43,6 +44,7 @@ public abstract class YAMLMappingImpl extends YAMLCompoundValueImpl implements Y
     }
 
     @Override
+    @RequiredReadAction
     public void deleteKeyValue(@Nonnull YAMLKeyValue keyValueToDelete) {
         if (keyValueToDelete.getParent() != this) {
             throw new IllegalArgumentException("KeyValue should be the child of this");
@@ -70,6 +72,7 @@ public abstract class YAMLMappingImpl extends YAMLCompoundValueImpl implements Y
 
     @Nonnull
     @Override
+    @RequiredReadAction
     public String getTextValue() {
         return "<mapping:" + Integer.toHexString(getText().hashCode()) + ">";
     }

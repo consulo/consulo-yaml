@@ -1,5 +1,6 @@
 package org.jetbrains.yaml.psi.impl;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.document.util.TextRange;
 import consulo.language.ast.ASTNode;
 import consulo.util.lang.Pair;
@@ -20,6 +21,7 @@ public class YAMLPlainTextImpl extends YAMLScalarImpl implements YAMLScalar {
 
     @Nonnull
     @Override
+    @RequiredReadAction
     public List<TextRange> getContentRanges() {
         final int myStart = getTextOffset();
         final ASTNode node = getNode();
