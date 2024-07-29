@@ -143,7 +143,7 @@ public class YAMLUtil {
     }
 
     @Nullable
-    @RequiredWriteAction
+    @RequiredReadAction
     public static YAMLKeyValue createI18nRecord(final YAMLFile file, final String[] key, final String text) {
         final YAMLDocument root = file.getDocuments().get(0);
         assert root != null;

@@ -1,11 +1,10 @@
 package org.jetbrains.yaml;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.annotation.access.RequiredWriteAction;
 import consulo.annotation.component.ComponentScope;
 import consulo.annotation.component.ServiceAPI;
 import consulo.annotation.component.ServiceImpl;
-import consulo.component.ComponentManager;
-import consulo.ide.ServiceManager;
 import consulo.language.ast.ASTNode;
 import consulo.language.ast.TokenType;
 import consulo.language.psi.PsiElement;
@@ -58,7 +57,7 @@ public class YAMLElementGenerator {
     }
 
     @Nonnull
-    @RequiredWriteAction
+    @RequiredReadAction
     @SuppressWarnings("unchecked")
     public YAMLKeyValue createYamlKeyValue(@Nonnull String keyName, @Nonnull String valueText) {
         final PsiFile tempFile = createDummyYamlWithText(keyName + ": " + valueText);
@@ -66,7 +65,7 @@ public class YAMLElementGenerator {
     }
 
     @Nonnull
-    @RequiredWriteAction
+    @RequiredReadAction
     @SuppressWarnings("unchecked")
     public YAMLQuotedTextImpl createYamlDoubleQuotedString() {
         final YAMLFile tempFile = createDummyYamlWithText("\"foo\"");
@@ -74,7 +73,7 @@ public class YAMLElementGenerator {
     }
 
     @Nonnull
-    @RequiredWriteAction
+    @RequiredReadAction
     public YAMLFile createDummyYamlWithText(@Nonnull String text) {
         return (YAMLFile)PsiFileFactory.getInstance(myProject).createFileFromText(
             "temp." + YAMLFileType.YML.getDefaultExtension(),
@@ -86,7 +85,7 @@ public class YAMLElementGenerator {
     }
 
     @Nonnull
-    @RequiredWriteAction
+    @RequiredReadAction
     public PsiElement createEol() {
         final YAMLFile file = createDummyYamlWithText("\n");
         return PsiTreeUtil.getDeepestFirst(file);
@@ -102,14 +101,14 @@ public class YAMLElementGenerator {
     }
 
     @Nonnull
-    @RequiredWriteAction
+    @RequiredReadAction
     public PsiElement createIndent(int size) {
         final YAMLFile file = createDummyYamlWithText(StringUtil.repeatSymbol(' ', size));
         return PsiTreeUtil.getDeepestFirst(file);
     }
 
     @Nonnull
-    @RequiredWriteAction
+    @RequiredReadAction
     public PsiElement createColon() {
         final YAMLFile file = createDummyYamlWithText("? foo : bar");
         final PsiElement at = file.findElementAt("? foo ".length());
