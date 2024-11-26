@@ -6,6 +6,6 @@ import javax.annotation.Nonnull;
  * @author oleg
  */
 public interface YAMLCompoundValue extends YAMLValue {
-  @Nonnull
-  String getTextValue();
+    @Nonnull
+    String getTextValue();
 }

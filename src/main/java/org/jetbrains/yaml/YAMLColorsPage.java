@@ -21,6 +21,7 @@ import consulo.colorScheme.setting.AttributesDescriptor;
 import consulo.colorScheme.setting.ColorDescriptor;
 import consulo.language.editor.colorScheme.setting.ColorSettingsPage;
 import consulo.language.editor.highlight.SyntaxHighlighter;
+import consulo.yaml.localize.YAMLLocalize;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,62 +34,67 @@ import java.util.Map;
 @ExtensionImpl
 public class YAMLColorsPage implements ColorSettingsPage {
 
-  private static final String DEMO_TEXT = "---\n" +
-                                          "# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html\n" +
-                                          "static_sidebar:\n" +
-                                          "  id: \"foo\"\n" +
-                                          "  name: 'side_bar'\n" +
-                                          "  staged_position: 1\n" +
-                                          "  blog_id: 1\n" +
-                                          "  config: |+\n" +
-                                          "    --- !map:HashWithIndifferentAccess\n" +
-                                          "      title: Static Sidebar\n" +
-                                          "      body: The body of a static sidebar\n" +
-                                          "  type: StaticSidebar\n" +
-                                          "  type: > some_type_here";
+    private static final String DEMO_TEXT = "---\n" +
+        "# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html\n" +
+        "static_sidebar:\n" +
+        "  id: \"foo\"\n" +
+        "  name: 'side_bar'\n" +
+        "  staged_position: 1\n" +
+        "  blog_id: 1\n" +
+        "  config: |+\n" +
+        "    --- !map:HashWithIndifferentAccess\n" +
+        "      title: Static Sidebar\n" +
+        "      body: The body of a static sidebar\n" +
+        "  type: StaticSidebar\n" +
+        "  type: > some_type_here";
 
-  private static final AttributesDescriptor[] ATTRS = new AttributesDescriptor[]{
-      new AttributesDescriptor(YAMLBundle.message("color.settings.yaml.key"), YAMLHighlighter.SCALAR_KEY),
-      new AttributesDescriptor(YAMLBundle.message("color.settings.yaml.string"), YAMLHighlighter.SCALAR_STRING),
-      new AttributesDescriptor(YAMLBundle.message("color.settings.yaml.dstring"), YAMLHighlighter.SCALAR_DSTRING),
-      new AttributesDescriptor(YAMLBundle.message("color.settings.yaml.scalar.list"), YAMLHighlighter.SCALAR_LIST),
-      new AttributesDescriptor(YAMLBundle.message("color.settings.yaml.scalar.text"), YAMLHighlighter.SCALAR_TEXT),
-      new AttributesDescriptor(YAMLBundle.message("color.settings.yaml.text"), YAMLHighlighter.TEXT),
-      new AttributesDescriptor(YAMLBundle.message("color.settings.yaml.sign"), YAMLHighlighter.SIGN),
-      new AttributesDescriptor(YAMLBundle.message("color.settings.yaml.comment"), YAMLHighlighter.COMMENT)
-  };
+    private static final AttributesDescriptor[] ATTRS = new AttributesDescriptor[]{
+        new AttributesDescriptor(YAMLLocalize.colorSettingsYamlKey(), YAMLHighlighter.SCALAR_KEY),
+        new AttributesDescriptor(YAMLLocalize.colorSettingsYamlString(), YAMLHighlighter.SCALAR_STRING),
+        new AttributesDescriptor(YAMLLocalize.colorSettingsYamlDstring(), YAMLHighlighter.SCALAR_DSTRING),
+        new AttributesDescriptor(YAMLLocalize.colorSettingsYamlScalarList(), YAMLHighlighter.SCALAR_LIST),
+        new AttributesDescriptor(YAMLLocalize.colorSettingsYamlScalarText(), YAMLHighlighter.SCALAR_TEXT),
+        new AttributesDescriptor(YAMLLocalize.colorSettingsYamlText(), YAMLHighlighter.TEXT),
+        new AttributesDescriptor(YAMLLocalize.colorSettingsYamlSign(), YAMLHighlighter.SIGN),
+        new AttributesDescriptor(YAMLLocalize.colorSettingsYamlComment(), YAMLHighlighter.COMMENT)
+    };
 
-  // Empty still
-  private static final Map<String, TextAttributesKey> ADDITIONAL_HIGHLIGHT_DESCRIPTORS = new HashMap<>();
+    // Empty still
+    private static final Map<String, TextAttributesKey> ADDITIONAL_HIGHLIGHT_DESCRIPTORS = new HashMap<>();
 
-  @Nullable
-  public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
-    return ADDITIONAL_HIGHLIGHT_DESCRIPTORS;
-  }
+    @Nullable
+    @Override
+    public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
+        return ADDITIONAL_HIGHLIGHT_DESCRIPTORS;
+    }
 
-  @Nonnull
-  public String getDisplayName() {
-    return YAMLBundle.message("color.settings.yaml.name");
-  }
+    @Nonnull
+    @Override
+    public String getDisplayName() {
+        return YAMLLocalize.colorSettingsYamlName().get();
+    }
 
-  @Nonnull
-  public AttributesDescriptor[] getAttributeDescriptors() {
-    return ATTRS;
-  }
+    @Nonnull
+    @Override
+    public AttributesDescriptor[] getAttributeDescriptors() {
+        return ATTRS;
+    }
 
-  @Nonnull
-  public ColorDescriptor[] getColorDescriptors() {
-    return ColorDescriptor.EMPTY_ARRAY;
-  }
+    @Nonnull
+    @Override
+    public ColorDescriptor[] getColorDescriptors() {
+        return ColorDescriptor.EMPTY_ARRAY;
+    }
 
-  @Nonnull
-  public SyntaxHighlighter getHighlighter() {
-    return new YAMLSyntaxHighlighter();
-  }
+    @Nonnull
+    @Override
+    public SyntaxHighlighter getHighlighter() {
+        return new YAMLSyntaxHighlighter();
+    }
 
-  @Nonnull
-  public String getDemoText() {
-    return DEMO_TEXT;
-  }
-
+    @Nonnull
+    @Override
+    public String getDemoText() {
+        return DEMO_TEXT;
+    }
 }

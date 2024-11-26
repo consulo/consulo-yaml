@@ -13,11 +13,12 @@ import javax.annotation.Nonnull;
 @ExtensionImpl
 public class YAMLPairedBraceMatcher implements PairedBraceMatcher, YAMLTokenTypes {
     private static final BracePair[] PAIRS = new BracePair[]{
-            new BracePair(LBRACE, RBRACE, true),
-            new BracePair(LBRACKET, RBRACKET, true),
+        new BracePair(LBRACE, RBRACE, true),
+        new BracePair(LBRACKET, RBRACKET, true),
     };
 
     @Nonnull
+    @Override
     public BracePair[] getPairs() {
         return PAIRS;
     }

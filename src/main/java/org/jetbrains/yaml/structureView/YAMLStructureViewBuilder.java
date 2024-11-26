@@ -16,17 +16,17 @@ import javax.annotation.Nullable;
  * @author oleg
  */
 public class YAMLStructureViewBuilder extends TreeBasedStructureViewBuilder {
-  private final YAMLFile myPsiFile;
+    private final YAMLFile myPsiFile;
 
-  public YAMLStructureViewBuilder(@Nonnull final YAMLFile psiFile) {
-    myPsiFile = psiFile;
-  }
+    public YAMLStructureViewBuilder(@Nonnull final YAMLFile psiFile) {
+        myPsiFile = psiFile;
+    }
 
-  @Override
-  @Nonnull
-  public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
-    return new StructureViewModelBase(myPsiFile, editor, new YAMLStructureViewElement(myPsiFile))
-      .withSorters(Sorter.ALPHA_SORTER)
-      .withSuitableClasses(YAMLFile.class, YAMLDocument.class, YAMLKeyValue.class);
-  }
+    @Override
+    @Nonnull
+    public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
+        return new StructureViewModelBase(myPsiFile, editor, new YAMLStructureViewElement(myPsiFile))
+            .withSorters(Sorter.ALPHA_SORTER)
+            .withSuitableClasses(YAMLFile.class, YAMLDocument.class, YAMLKeyValue.class);
+    }
 }

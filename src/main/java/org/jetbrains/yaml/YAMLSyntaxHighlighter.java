@@ -27,40 +27,42 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author: oleg
- * @date: Feb 11, 2008
+ * @author oleg
+ * @since Feb 11, 2008
  */
 public class YAMLSyntaxHighlighter extends SyntaxHighlighterBase implements YAMLTokenTypes {
 
-  private static final Map<IElementType, TextAttributesKey> ATTRIBUTES = new HashMap<>();
+    private static final Map<IElementType, TextAttributesKey> ATTRIBUTES = new HashMap<>();
 
-  static {
-    ATTRIBUTES.put(SCALAR_KEY, YAMLHighlighter.SCALAR_KEY);
-    ATTRIBUTES.put(SCALAR_STRING, YAMLHighlighter.SCALAR_STRING);
-    ATTRIBUTES.put(SCALAR_DSTRING, YAMLHighlighter.SCALAR_DSTRING);
-    ATTRIBUTES.put(SCALAR_TEXT, YAMLHighlighter.SCALAR_TEXT);
-    ATTRIBUTES.put(SCALAR_LIST, YAMLHighlighter.SCALAR_LIST);
-    ATTRIBUTES.put(COMMENT, YAMLHighlighter.COMMENT);
-    ATTRIBUTES.put(TEXT, YAMLHighlighter.TEXT);
-    ATTRIBUTES.put(LBRACE, YAMLHighlighter.SIGN);
-    ATTRIBUTES.put(RBRACE, YAMLHighlighter.SIGN);
-    ATTRIBUTES.put(LBRACKET, YAMLHighlighter.SIGN);
-    ATTRIBUTES.put(RBRACKET, YAMLHighlighter.SIGN);
-    ATTRIBUTES.put(COMMA, YAMLHighlighter.SIGN);
-    ATTRIBUTES.put(QUESTION, YAMLHighlighter.SIGN);
-    ATTRIBUTES.put(COLON, YAMLHighlighter.SIGN);
-    ATTRIBUTES.put(DOCUMENT_MARKER, YAMLHighlighter.SIGN);
-    ATTRIBUTES.put(SEQUENCE_MARKER, YAMLHighlighter.SIGN);
-  }
+    static {
+        ATTRIBUTES.put(SCALAR_KEY, YAMLHighlighter.SCALAR_KEY);
+        ATTRIBUTES.put(SCALAR_STRING, YAMLHighlighter.SCALAR_STRING);
+        ATTRIBUTES.put(SCALAR_DSTRING, YAMLHighlighter.SCALAR_DSTRING);
+        ATTRIBUTES.put(SCALAR_TEXT, YAMLHighlighter.SCALAR_TEXT);
+        ATTRIBUTES.put(SCALAR_LIST, YAMLHighlighter.SCALAR_LIST);
+        ATTRIBUTES.put(COMMENT, YAMLHighlighter.COMMENT);
+        ATTRIBUTES.put(TEXT, YAMLHighlighter.TEXT);
+        ATTRIBUTES.put(LBRACE, YAMLHighlighter.SIGN);
+        ATTRIBUTES.put(RBRACE, YAMLHighlighter.SIGN);
+        ATTRIBUTES.put(LBRACKET, YAMLHighlighter.SIGN);
+        ATTRIBUTES.put(RBRACKET, YAMLHighlighter.SIGN);
+        ATTRIBUTES.put(COMMA, YAMLHighlighter.SIGN);
+        ATTRIBUTES.put(QUESTION, YAMLHighlighter.SIGN);
+        ATTRIBUTES.put(COLON, YAMLHighlighter.SIGN);
+        ATTRIBUTES.put(DOCUMENT_MARKER, YAMLHighlighter.SIGN);
+        ATTRIBUTES.put(SEQUENCE_MARKER, YAMLHighlighter.SIGN);
+    }
 
 
-  @Nonnull
-  public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
-    return SyntaxHighlighterBase.pack(ATTRIBUTES.get(tokenType));
-  }
+    @Nonnull
+    @Override
+    public TextAttributesKey[] getTokenHighlights(@Nonnull IElementType tokenType) {
+        return SyntaxHighlighterBase.pack(ATTRIBUTES.get(tokenType));
+    }
 
-  @Nonnull
-  public Lexer getHighlightingLexer() {
-    return new YAMLFlexLexer();
-  }
+    @Nonnull
+    @Override
+    public Lexer getHighlightingLexer() {
+        return new YAMLFlexLexer();
+    }
 }

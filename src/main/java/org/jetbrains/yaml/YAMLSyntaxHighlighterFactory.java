@@ -14,14 +14,15 @@ import javax.annotation.Nonnull;
  */
 @ExtensionImpl
 public class YAMLSyntaxHighlighterFactory extends SyntaxHighlighterFactory {
-  @Nonnull
-  public SyntaxHighlighter getSyntaxHighlighter(final Project project, final VirtualFile virtualFile) {
-    return new YAMLSyntaxHighlighter();
-  }
+    @Nonnull
+    @Override
+    public SyntaxHighlighter getSyntaxHighlighter(final Project project, final VirtualFile virtualFile) {
+        return new YAMLSyntaxHighlighter();
+    }
 
-  @Nonnull
-  @Override
-  public Language getLanguage() {
-    return YAMLLanguage.INSTANCE;
-  }
+    @Nonnull
+    @Override
+    public Language getLanguage() {
+        return YAMLLanguage.INSTANCE;
+    }
 }

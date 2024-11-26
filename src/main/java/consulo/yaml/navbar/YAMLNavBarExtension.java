@@ -6,7 +6,6 @@ import consulo.application.ui.UISettings;
 import consulo.codeEditor.Editor;
 import consulo.dataContext.DataContext;
 import consulo.ide.navigationToolbar.AbstractNavBarModelExtension;
-import consulo.language.editor.CommonDataKeys;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
@@ -35,8 +34,8 @@ public class YAMLNavBarExtension extends AbstractNavBarModelExtension {
     @RequiredReadAction
     public PsiElement getLeafElement(@Nonnull DataContext dataContext) {
         if (UISettings.getInstance().getShowMembersInNavigationBar()) {
-            PsiFile psiFile = dataContext.getData(CommonDataKeys.PSI_FILE);
-            Editor editor = dataContext.getData(CommonDataKeys.EDITOR);
+            PsiFile psiFile = dataContext.getData(PsiFile.KEY);
+            Editor editor = dataContext.getData(Editor.KEY);
             if (psiFile == null || editor == null) {
                 return null;
             }
@@ -65,7 +64,7 @@ public class YAMLNavBarExtension extends AbstractNavBarModelExtension {
     @Override
     public String getPresentableText(Object e) {
         if (e instanceof YAMLDocument) {
-            final YAMLFile file = (YAMLFile) ((YAMLDocument) e).getContainingFile();
+            final YAMLFile file = (YAMLFile)((YAMLDocument)e).getContainingFile();
             if (file == null) {
                 return "Document";
             }
@@ -73,18 +72,18 @@ public class YAMLNavBarExtension extends AbstractNavBarModelExtension {
             return "Document " + getIndexOf(documents, e);
         }
         if (e instanceof YAMLKeyValue) {
-            return ((YAMLKeyValue) e).getKeyText() + ':';
+            return ((YAMLKeyValue)e).getKeyText() + ':';
         }
         if (e instanceof YAMLSequenceItem) {
-            final PsiElement parent = ((YAMLSequenceItem) e).getParent();
+            final PsiElement parent = ((YAMLSequenceItem)e).getParent();
             if (!(parent instanceof YAMLSequence)) {
                 return "Item";
             }
-            final List<YAMLSequenceItem> items = ((YAMLSequence) parent).getItems();
+            final List<YAMLSequenceItem> items = ((YAMLSequence)parent).getItems();
             return "Item " + getIndexOf(items, e);
         }
         if (e instanceof YAMLScalar) {
-            return StringUtil.first(((YAMLScalar) e).getTextValue(), SCALAR_MAX_LENGTH, true);
+            return StringUtil.first(((YAMLScalar)e).getTextValue(), SCALAR_MAX_LENGTH, true);
         }
         return null;
     }

@@ -8,5 +8,5 @@ import java.util.List;
  * @author oleg
  */
 public interface YAMLPsiElement extends NavigatablePsiElement {
-  List<YAMLPsiElement> getYAMLElements();
+    List<YAMLPsiElement> getYAMLElements();
 }

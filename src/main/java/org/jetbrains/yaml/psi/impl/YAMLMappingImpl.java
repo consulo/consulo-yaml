@@ -1,5 +1,6 @@
 package org.jetbrains.yaml.psi.impl;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.util.PsiTreeUtil;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
@@ -10,67 +11,69 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 
 public abstract class YAMLMappingImpl extends YAMLCompoundValueImpl implements YAMLMapping {
-  public YAMLMappingImpl(@Nonnull ASTNode node) {
-    super(node);
-  }
-
-  @Nonnull
-  @Override
-  public Collection<YAMLKeyValue> getKeyValues() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, YAMLKeyValue.class);
-  }
-
-  @Nullable
-  @Override
-  public YAMLKeyValue getKeyValueByKey(@Nonnull String keyText) {
-    for (YAMLKeyValue keyValue : getKeyValues()) {
-      if (keyText.equals(keyValue.getKeyText())) {
-        return keyValue;
-      }
-    }
-    return null;
-  }
-
-  @Override
-  public void putKeyValue(@Nonnull YAMLKeyValue keyValueToAdd) {
-    final YAMLKeyValue existingKey = getKeyValueByKey(keyValueToAdd.getKeyText());
-    if (existingKey == null) {
-      addNewKey(keyValueToAdd);
-    }
-    else {
-      existingKey.replace(keyValueToAdd);
-    }
-  }
-
-  @Override
-  public void deleteKeyValue(@Nonnull YAMLKeyValue keyValueToDelete) {
-    if (keyValueToDelete.getParent() != this) {
-      throw new IllegalArgumentException("KeyValue should be the child of this");
+    public YAMLMappingImpl(@Nonnull ASTNode node) {
+        super(node);
     }
 
-    if (keyValueToDelete.getPrevSibling() != null) {
-      while (keyValueToDelete.getPrevSibling() != null && !(keyValueToDelete.getPrevSibling() instanceof YAMLKeyValue)) {
-        keyValueToDelete.getPrevSibling().delete();
-      }
+    @Nonnull
+    @Override
+    public Collection<YAMLKeyValue> getKeyValues() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, YAMLKeyValue.class);
     }
-    else {
-      while (keyValueToDelete.getNextSibling() != null && !(keyValueToDelete.getNextSibling() instanceof YAMLKeyValue)) {
-        keyValueToDelete.getNextSibling().delete();
-      }
+
+    @Nullable
+    @Override
+    public YAMLKeyValue getKeyValueByKey(@Nonnull String keyText) {
+        for (YAMLKeyValue keyValue : getKeyValues()) {
+            if (keyText.equals(keyValue.getKeyText())) {
+                return keyValue;
+            }
+        }
+        return null;
     }
-    keyValueToDelete.delete();
-  }
 
-  protected abstract void addNewKey(@Nonnull YAMLKeyValue key);
+    @Override
+    public void putKeyValue(@Nonnull YAMLKeyValue keyValueToAdd) {
+        final YAMLKeyValue existingKey = getKeyValueByKey(keyValueToAdd.getKeyText());
+        if (existingKey == null) {
+            addNewKey(keyValueToAdd);
+        }
+        else {
+            existingKey.replace(keyValueToAdd);
+        }
+    }
 
-  @Override
-  public String toString() {
-    return "YAML mapping";
-  }
+    @Override
+    @RequiredReadAction
+    public void deleteKeyValue(@Nonnull YAMLKeyValue keyValueToDelete) {
+        if (keyValueToDelete.getParent() != this) {
+            throw new IllegalArgumentException("KeyValue should be the child of this");
+        }
 
-  @Nonnull
-  @Override
-  public String getTextValue() {
-    return "<mapping:" + Integer.toHexString(getText().hashCode()) + ">";
-  }
+        if (keyValueToDelete.getPrevSibling() != null) {
+            while (keyValueToDelete.getPrevSibling() != null && !(keyValueToDelete.getPrevSibling() instanceof YAMLKeyValue)) {
+                keyValueToDelete.getPrevSibling().delete();
+            }
+        }
+        else {
+            while (keyValueToDelete.getNextSibling() != null && !(keyValueToDelete.getNextSibling() instanceof YAMLKeyValue)) {
+                keyValueToDelete.getNextSibling().delete();
+            }
+        }
+        keyValueToDelete.delete();
+    }
+
+    protected abstract void addNewKey(@Nonnull YAMLKeyValue key);
+
+    @Override
+    public String toString() {
+        return "YAML mapping";
+    }
+
+    @Nonnull
+    @Override
+    @RequiredReadAction
+    public String getTextValue() {
+        return "<mapping:" + Integer.toHexString(getText().hashCode()) + ">";
+    }
 }

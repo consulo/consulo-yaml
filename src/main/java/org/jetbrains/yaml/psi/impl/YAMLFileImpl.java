@@ -18,31 +18,33 @@ import java.util.List;
  * @author oleg
  */
 public class YAMLFileImpl extends PsiFileBase implements YAMLFile {
-  public YAMLFileImpl(FileViewProvider viewProvider) {
-    super(viewProvider, YAMLLanguage.INSTANCE);
-  }
-
-  @Override
-  public String toString() {
-    return "YAML file";
-  }
-
-  public List<YAMLDocument> getDocuments() {
-    final ArrayList<YAMLDocument> result = new ArrayList<>();
-    for (ASTNode node : getNode().getChildren(TokenSet.create(YAMLElementTypes.DOCUMENT))) {
-     result.add((YAMLDocument) node.getPsi());
+    public YAMLFileImpl(FileViewProvider viewProvider) {
+        super(viewProvider, YAMLLanguage.INSTANCE);
     }
-    return result;
-  }
 
-  public List<YAMLPsiElement> getYAMLElements() {
-    final ArrayList<YAMLPsiElement> result = new ArrayList<>();
-    for (ASTNode node : getNode().getChildren(null)) {
-      final PsiElement psi = node.getPsi();
-      if (psi instanceof YAMLPsiElement){
-        result.add((YAMLPsiElement) psi);
-      }
+    @Override
+    public String toString() {
+        return "YAML file";
     }
-    return result;
-  }
+
+    @Override
+    public List<YAMLDocument> getDocuments() {
+        final ArrayList<YAMLDocument> result = new ArrayList<>();
+        for (ASTNode node : getNode().getChildren(TokenSet.create(YAMLElementTypes.DOCUMENT))) {
+            result.add((YAMLDocument)node.getPsi());
+        }
+        return result;
+    }
+
+    @Override
+    public List<YAMLPsiElement> getYAMLElements() {
+        final ArrayList<YAMLPsiElement> result = new ArrayList<>();
+        for (ASTNode node : getNode().getChildren(null)) {
+            final PsiElement psi = node.getPsi();
+            if (psi instanceof YAMLPsiElement psiElement) {
+                result.add(psiElement);
+            }
+        }
+        return result;
+    }
 }

@@ -28,26 +28,26 @@ import javax.annotation.Nonnull;
 
 @ExtensionImpl
 public class YAMLSpellcheckerStrategy extends SpellcheckingStrategy {
-  @RequiredReadAction
-  @Nonnull
-  @Override
-  public Tokenizer getTokenizer(final PsiElement element) {
-    final ASTNode node = element.getNode();
-    if (node != null){
-      final IElementType type = node.getElementType();
-      if (type == YAMLTokenTypes.SCALAR_TEXT ||
-          type == YAMLTokenTypes.SCALAR_STRING ||
-          type == YAMLTokenTypes.SCALAR_DSTRING ||
-          type == YAMLTokenTypes.COMMENT) {
-        return TEXT_TOKENIZER;
-      }
+    @RequiredReadAction
+    @Nonnull
+    @Override
+    public Tokenizer getTokenizer(final PsiElement element) {
+        final ASTNode node = element.getNode();
+        if (node != null) {
+            final IElementType type = node.getElementType();
+            if (type == YAMLTokenTypes.SCALAR_TEXT
+                || type == YAMLTokenTypes.SCALAR_STRING
+                || type == YAMLTokenTypes.SCALAR_DSTRING
+                || type == YAMLTokenTypes.COMMENT) {
+                return TEXT_TOKENIZER;
+            }
+        }
+        return super.getTokenizer(element);
     }
-    return super.getTokenizer(element);
-  }
 
-  @Nonnull
-  @Override
-  public Language getLanguage() {
-    return YAMLLanguage.INSTANCE;
-  }
+    @Nonnull
+    @Override
+    public Language getLanguage() {
+        return YAMLLanguage.INSTANCE;
+    }
 }
