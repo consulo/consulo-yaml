@@ -5,7 +5,7 @@ import consulo.language.psi.util.PsiTreeUtil;
 import org.jetbrains.yaml.psi.YAMLSequence;
 import org.jetbrains.yaml.psi.YAMLSequenceItem;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.List;
 
 public abstract class YAMLSequenceImpl extends YAMLCompoundValueImpl implements YAMLSequence {

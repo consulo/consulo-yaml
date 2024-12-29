@@ -6,7 +6,7 @@ import org.jetbrains.yaml.YAMLElementGenerator;
 import org.jetbrains.yaml.YAMLUtil;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 public class YAMLBlockMappingImpl extends YAMLMappingImpl {
     public YAMLBlockMappingImpl(@Nonnull ASTNode node) {

@@ -6,8 +6,8 @@ import consulo.language.psi.util.PsiTreeUtil;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLMapping;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 
 public abstract class YAMLMappingImpl extends YAMLCompoundValueImpl implements YAMLMapping {

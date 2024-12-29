@@ -6,7 +6,7 @@ import consulo.language.Language;
 import consulo.language.editor.action.LanguageBackspaceModeOverride;
 import org.jetbrains.yaml.YAMLLanguage;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL

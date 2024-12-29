@@ -13,8 +13,8 @@ import consulo.util.lang.StringUtil;
 import org.jetbrains.yaml.YAMLLanguage;
 import org.jetbrains.yaml.psi.*;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.List;
 
 /**

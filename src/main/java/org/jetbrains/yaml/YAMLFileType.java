@@ -6,7 +6,7 @@ import consulo.ui.image.Image;
 import consulo.yaml.icon.YAMLIconGroup;
 import consulo.yaml.localize.YAMLLocalize;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 public class YAMLFileType extends LanguageFileType {
     public static final YAMLFileType YML = new YAMLFileType();

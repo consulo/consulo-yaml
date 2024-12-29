@@ -5,7 +5,7 @@ import consulo.language.impl.psi.ASTWrapperPsiElement;
 import consulo.language.psi.PsiElement;
 import org.jetbrains.yaml.psi.YAMLPsiElement;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 

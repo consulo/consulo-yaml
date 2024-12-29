@@ -6,8 +6,8 @@ import consulo.language.psi.PsiElement;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.psi.YAMLValue;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 abstract class YAMLValueImpl extends YAMLPsiElementImpl implements YAMLValue {
     public YAMLValueImpl(@Nonnull ASTNode node) {

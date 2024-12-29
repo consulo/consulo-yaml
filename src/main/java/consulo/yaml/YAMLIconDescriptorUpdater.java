@@ -24,7 +24,7 @@ import consulo.language.icon.IconDescriptorUpdater;
 import consulo.language.psi.PsiElement;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author VISTALL

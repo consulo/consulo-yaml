@@ -4,7 +4,7 @@ import consulo.language.ast.TokenSet;
 import consulo.language.lexer.MergingLexerAdapter;
 import org.jetbrains.yaml.YAMLTokenTypes;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author oleg

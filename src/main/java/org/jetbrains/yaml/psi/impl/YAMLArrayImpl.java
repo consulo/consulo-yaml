@@ -3,7 +3,7 @@ package org.jetbrains.yaml.psi.impl;
 import consulo.language.ast.ASTNode;
 import org.jetbrains.yaml.psi.YAMLSequence;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author oleg

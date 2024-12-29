@@ -22,7 +22,7 @@ import consulo.language.lexer.FlexLexer;
 import consulo.language.lexer.LexerBase;
 import consulo.logging.Logger;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 /**
  * @author max
