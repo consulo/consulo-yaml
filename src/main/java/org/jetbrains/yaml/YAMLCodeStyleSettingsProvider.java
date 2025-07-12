@@ -2,13 +2,16 @@ package org.jetbrains.yaml;
 
 import consulo.annotation.component.ExtensionImpl;
 import consulo.configurable.Configurable;
+import consulo.language.Language;
 import consulo.language.codeStyle.CodeStyleSettings;
 import consulo.language.codeStyle.setting.CodeStyleSettingsProvider;
 import consulo.language.codeStyle.ui.setting.CodeStyleAbstractConfigurable;
 import consulo.language.codeStyle.ui.setting.CodeStyleAbstractPanel;
 import consulo.language.codeStyle.ui.setting.TabbedLanguageCodeStylePanel;
 
+import consulo.yaml.localize.YAMLLocalize;
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * @author oleg
@@ -18,7 +21,7 @@ public class YAMLCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
     @Nonnull
     @Override
     public Configurable createSettingsPage(final CodeStyleSettings settings, final CodeStyleSettings originalSettings) {
-        return new CodeStyleAbstractConfigurable(settings, originalSettings, YAMLLanguage.INSTANCE.getDisplayName()) {
+        return new CodeStyleAbstractConfigurable(settings, originalSettings, YAMLLocalize.yamlLanguageDisplayName().get()) {
             @Override
             protected CodeStyleAbstractPanel createPanel(final CodeStyleSettings settings) {
                 final CodeStyleSettings currentSettings = getCurrentSettings();
@@ -38,8 +41,9 @@ public class YAMLCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
         };
     }
 
+    @Nullable
     @Override
-    public String getConfigurableDisplayName() {
-        return YAMLLanguage.INSTANCE.getDisplayName();
+    public Language getLanguage() {
+        return YAMLLanguage.INSTANCE;
     }
 }

@@ -2,6 +2,8 @@ package org.jetbrains.yaml;
 
 import consulo.language.Language;
 
+import consulo.localize.LocalizeValue;
+import consulo.yaml.localize.YAMLLocalize;
 import jakarta.annotation.Nonnull;
 
 /**
@@ -16,7 +18,7 @@ public class YAMLLanguage extends Language {
 
     @Nonnull
     @Override
-    public String getDisplayName() {
-        return "YAML";
+    public LocalizeValue getDisplayName() {
+        return YAMLLocalize.yamlLanguageDisplayName();
     }
 }
