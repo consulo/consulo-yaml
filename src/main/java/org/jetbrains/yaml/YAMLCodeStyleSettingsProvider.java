@@ -21,7 +21,7 @@ public class YAMLCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
     @Nonnull
     @Override
     public Configurable createSettingsPage(final CodeStyleSettings settings, final CodeStyleSettings originalSettings) {
-        return new CodeStyleAbstractConfigurable(settings, originalSettings, YAMLLocalize.yamlLanguageDisplayName().get()) {
+        return new CodeStyleAbstractConfigurable(settings, originalSettings, YAMLLocalize.yamlLanguageDisplayName()) {
             @Override
             protected CodeStyleAbstractPanel createPanel(final CodeStyleSettings settings) {
                 final CodeStyleSettings currentSettings = getCurrentSettings();
