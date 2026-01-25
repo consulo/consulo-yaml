@@ -21,4 +21,6 @@ module org.jetbrains.plugins.yaml {
     exports org.jetbrains.yaml.psi;
 
     opens org.jetbrains.yaml.resolve to consulo.application.impl;
+
+    opens org.jetbrains.yaml.formatter to consulo.util.xml.serializer;
 }
