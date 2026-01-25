@@ -66,65 +66,6 @@ public class YAMLStructureViewElement implements StructureViewTreeElement {
     @Nonnull
     @Override
     public ItemPresentation getPresentation() {
-        if (myElement instanceof YAMLKeyValue kv) {
-            return new ItemPresentation() {
-                @Override
-                public String getPresentableText() {
-                    return kv.getKeyText();
-                }
-
-                @Override
-                public String getLocationString() {
-                    return kv.getValue() instanceof YAMLScalar ? kv.getValueText() : null;
-                }
-
-                @Override
-                @RequiredReadAction
-                public Image getIcon() {
-                    final YAMLValue value = kv.getValue();
-                    return value instanceof YAMLScalar ? IconDescriptorUpdaters.getIcon(kv, 0) : AllIcons.Nodes.Tag;
-                }
-            };
-        }
-        if (myElement instanceof YAMLDocument) {
-            return new ItemPresentation() {
-                @Override
-                public String getPresentableText() {
-                    return "YAML document";
-                }
-
-                @Override
-                public String getLocationString() {
-                    return null;
-                }
-
-                @Override
-                public Image getIcon() {
-                    return AllIcons.Nodes.Tag;
-                }
-            };
-        }
-        if (myElement instanceof YAMLSequenceItem item) {
-            return new ItemPresentation() {
-                @Nullable
-                @Override
-                public String getPresentableText() {
-                    return item.getValue() instanceof YAMLScalar scalar ? scalar.getTextValue() : "Sequence Item";
-                }
-
-                @Nullable
-                @Override
-                public String getLocationString() {
-                    return null;
-                }
-
-                @Nullable
-                @Override
-                public Image getIcon() {
-                    return item.getValue() instanceof YAMLScalar ? AllIcons.Nodes.Property : AllIcons.Nodes.Tag;
-                }
-            };
-        }
         return myElement.getPresentation();
     }
 

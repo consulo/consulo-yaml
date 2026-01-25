@@ -1,7 +1,6 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.yaml;
 
-import consulo.annotation.access.RequiredReadAction;
-import consulo.annotation.access.RequiredWriteAction;
 import consulo.annotation.component.ComponentScope;
 import consulo.annotation.component.ServiceAPI;
 import consulo.annotation.component.ServiceImpl;
@@ -14,18 +13,17 @@ import consulo.language.psi.util.PsiTreeUtil;
 import consulo.project.Project;
 import consulo.util.lang.LocalTimeCounter;
 import consulo.util.lang.StringUtil;
+import jakarta.annotation.Nonnull;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import org.jetbrains.yaml.psi.YAMLFile;
-import org.jetbrains.yaml.psi.YAMLKeyValue;
+import org.jetbrains.yaml.psi.*;
 import org.jetbrains.yaml.psi.impl.YAMLQuotedTextImpl;
 
-import jakarta.annotation.Nonnull;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-/**
- * @author traff
- */
 @ServiceAPI(ComponentScope.PROJECT)
 @ServiceImpl
 @Singleton
@@ -38,11 +36,10 @@ public class YAMLElementGenerator {
     }
 
     public static YAMLElementGenerator getInstance(Project project) {
-        return project.getInstance(YAMLElementGenerator.class);
+        return project.getService(YAMLElementGenerator.class);
     }
 
-    @Nonnull
-    public static String createChainedKey(@Nonnull List<String> keyComponents, int indentAddition) {
+    public static @Nonnull String createChainedKey(@Nonnull List<String> keyComponents, int indentAddition) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < keyComponents.size(); ++i) {
             if (i > 0) {
@@ -56,63 +53,117 @@ public class YAMLElementGenerator {
         return sb.toString();
     }
 
-    @Nonnull
-    @RequiredReadAction
-    @SuppressWarnings("unchecked")
-    public YAMLKeyValue createYamlKeyValue(@Nonnull String keyName, @Nonnull String valueText) {
-        final PsiFile tempFile = createDummyYamlWithText(keyName + ": " + valueText);
+    public YAMLKeyValue createYamlKeyValueWithSequence(@Nonnull String keyName, @Nonnull Map<String, String> elementsMap) {
+        String yamlString = elementsMap
+            .entrySet().stream()
+            .sorted(Map.Entry.comparingByKey())
+            .map(entry -> "%s: %s".formatted(entry.getKey(), entry.getValue()))
+            .collect(Collectors.joining("\n"));
+        return createYamlKeyValue(keyName, yamlString);
+    }
+
+    public @Nonnull YAMLKeyValue createYamlKeyValue(@Nonnull String keyName, @Nonnull String valueText) {
+        final PsiFile tempValueFile = createDummyYamlWithText(valueText);
+        Collection<YAMLValue> values = PsiTreeUtil.collectElementsOfType(tempValueFile, YAMLValue.class);
+
+        String text;
+        if (values.isEmpty()) {
+            text = keyName + ":";
+        }
+        else if (values.iterator().next() instanceof YAMLScalar && !valueText.contains("\n")) {
+            text = keyName + ": " + valueText;
+        }
+        else {
+            text = keyName + ":\n" + YAMLTextUtil.indentText(valueText, 2);
+        }
+
+        final PsiFile tempFile = createDummyYamlWithText(text);
         return PsiTreeUtil.collectElementsOfType(tempFile, YAMLKeyValue.class).iterator().next();
     }
 
-    @Nonnull
-    @RequiredReadAction
-    @SuppressWarnings("unchecked")
-    public YAMLQuotedTextImpl createYamlDoubleQuotedString() {
+    public @Nonnull YAMLQuotedTextImpl createYamlDoubleQuotedString() {
         final YAMLFile tempFile = createDummyYamlWithText("\"foo\"");
         return PsiTreeUtil.collectElementsOfType(tempFile, YAMLQuotedTextImpl.class).iterator().next();
     }
 
-    @Nonnull
-    @RequiredReadAction
-    public YAMLFile createDummyYamlWithText(@Nonnull String text) {
-        return (YAMLFile)PsiFileFactory.getInstance(myProject).createFileFromText(
-            "temp." + YAMLFileType.YML.getDefaultExtension(),
-            YAMLFileType.YML,
-            text,
-            LocalTimeCounter.currentTime(),
-            true
-        );
+    public @Nonnull YAMLFile createDummyYamlWithText(@Nonnull String text) {
+        return (YAMLFile) PsiFileFactory.getInstance(myProject)
+            .createFileFromText("temp." + YAMLFileType.YML.getDefaultExtension(), YAMLFileType.YML, text, LocalTimeCounter.currentTime(), false);
     }
 
-    @Nonnull
-    @RequiredReadAction
-    public PsiElement createEol() {
+    public @Nonnull PsiElement createEol() {
         final YAMLFile file = createDummyYamlWithText("\n");
         return PsiTreeUtil.getDeepestFirst(file);
     }
 
-    @Nonnull
-    @RequiredWriteAction
-    public PsiElement createSpace() {
+    public @Nonnull PsiElement createSpace() {
         final YAMLKeyValue keyValue = createYamlKeyValue("foo", "bar");
         final ASTNode whitespaceNode = keyValue.getNode().findChildByType(TokenType.WHITE_SPACE);
         assert whitespaceNode != null;
         return whitespaceNode.getPsi();
     }
 
-    @Nonnull
-    @RequiredReadAction
-    public PsiElement createIndent(int size) {
+    public @Nonnull PsiElement createIndent(int size) {
         final YAMLFile file = createDummyYamlWithText(StringUtil.repeatSymbol(' ', size));
         return PsiTreeUtil.getDeepestFirst(file);
     }
 
-    @Nonnull
-    @RequiredReadAction
-    public PsiElement createColon() {
+    public @Nonnull PsiElement createColon() {
         final YAMLFile file = createDummyYamlWithText("? foo : bar");
         final PsiElement at = file.findElementAt("? foo ".length());
         assert at != null && at.getNode().getElementType() == YAMLTokenTypes.COLON;
         return at;
+    }
+
+    public @Nonnull PsiElement createComma() {
+        final YAMLFile file = createDummyYamlWithText("[1,2]");
+        final PsiElement comma = file.findElementAt("[1".length());
+        assert comma != null && comma.getNode().getElementType() == YAMLTokenTypes.COMMA;
+        return comma;
+    }
+
+    public @Nonnull PsiElement createDocumentMarker() {
+        final YAMLFile file = createDummyYamlWithText("---");
+        PsiElement at = file.findElementAt(0);
+        assert at != null && at.getNode().getElementType() == YAMLTokenTypes.DOCUMENT_MARKER;
+        return at;
+    }
+
+    public @Nonnull YAMLSequence createEmptySequence() {
+        YAMLSequence sequence = PsiTreeUtil.findChildOfType(createDummyYamlWithText("- dummy"), YAMLSequence.class);
+        assert sequence != null;
+        sequence.deleteChildRange(sequence.getFirstChild(), sequence.getLastChild());
+        return sequence;
+    }
+
+    public @Nonnull YAMLSequence createEmptyArray() {
+        YAMLSequence sequence = PsiTreeUtil.findChildOfType(createDummyYamlWithText("[]"), YAMLSequence.class);
+        assert sequence != null;
+        return sequence;
+    }
+
+    public @Nonnull YAMLSequenceItem createEmptySequenceItem() {
+        YAMLSequenceItem sequenceItem = PsiTreeUtil.findChildOfType(createDummyYamlWithText("- dummy"), YAMLSequenceItem.class);
+        assert sequenceItem != null;
+        YAMLValue value = sequenceItem.getValue();
+        assert value != null;
+        value.deleteChildRange(value.getFirstChild(), value.getLastChild());
+        return sequenceItem;
+    }
+
+    public @Nonnull YAMLSequenceItem createSequenceItem(String text) {
+        YAMLSequenceItem sequenceItem = PsiTreeUtil.findChildOfType(createDummyYamlWithText("- " + text), YAMLSequenceItem.class);
+        assert sequenceItem != null;
+        YAMLValue value = sequenceItem.getValue();
+        assert value != null;
+        return sequenceItem;
+    }
+
+    public @Nonnull YAMLSequenceItem createArrayItem(String text) {
+        YAMLSequenceItem sequenceItem = PsiTreeUtil.findChildOfType(createDummyYamlWithText("[" + text + "]"), YAMLSequenceItem.class);
+        assert sequenceItem != null;
+        YAMLValue value = sequenceItem.getValue();
+        assert value != null;
+        return sequenceItem;
     }
 }

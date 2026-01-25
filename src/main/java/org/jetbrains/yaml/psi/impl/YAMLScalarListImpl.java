@@ -1,70 +1,126 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.yaml.psi.impl;
 
-import consulo.annotation.access.RequiredReadAction;import consulo.document.util.TextRange;
+import consulo.document.util.TextRange;
 import consulo.language.ast.ASTNode;
 import consulo.language.ast.IElementType;
-import consulo.util.lang.Pair;
+import consulo.language.ast.TokenSet;
+import consulo.language.impl.ast.TreeUtil;
+import consulo.language.psi.PsiElementVisitor;
+import consulo.language.psi.PsiLanguageInjectionHost;
+import consulo.util.lang.ObjectUtil;
 import consulo.util.lang.StringUtil;
-import org.jetbrains.yaml.YAMLTokenTypes;
-import org.jetbrains.yaml.YAMLUtil;
-import org.jetbrains.yaml.psi.YAMLScalarList;
-
 import jakarta.annotation.Nonnull;
-import java.util.ArrayList;
+import jakarta.annotation.Nullable;
+import org.jetbrains.yaml.YAMLElementTypes;
+import org.jetbrains.yaml.YAMLTokenTypes;
+import org.jetbrains.yaml.psi.YAMLBlockScalar;
+import org.jetbrains.yaml.psi.YAMLScalarList;
+import org.jetbrains.yaml.psi.YamlPsiElementVisitor;
+
 import java.util.List;
 
 /**
  * @author oleg
- * @see <http://www.yaml.org/spec/1.2/spec.html#id2795688>
+ * @see <a href="https://yaml.org/spec/1.2-old/spec.html#id2795688">YAML spec, 8.1.2</a>
  */
-public class YAMLScalarListImpl extends YAMLBlockScalarImpl implements YAMLScalarList {
-    public YAMLScalarListImpl(@Nonnull final ASTNode node) {
+public class YAMLScalarListImpl extends YAMLBlockScalarImpl implements YAMLScalarList, YAMLBlockScalar {
+    public YAMLScalarListImpl(final @Nonnull ASTNode node) {
         super(node);
     }
 
-    @Nonnull
     @Override
-    protected IElementType getContentType() {
+    protected @Nonnull IElementType getContentType() {
         return YAMLTokenTypes.SCALAR_LIST;
     }
 
-    @Nonnull
     @Override
-    @RequiredReadAction
-    public String getTextValue() {
-        return super.getTextValue() + "\n";
-    }
+    public @Nonnull YamlScalarTextEvaluator<YAMLScalarListImpl> getTextEvaluator() {
+        return new YAMLBlockScalarTextEvaluator<>(this) {
 
-    @Nonnull
-    @Override
-    protected String getRangesJoiner(@Nonnull CharSequence text, @Nonnull List<TextRange> contentRanges, int indexBefore) {
-        return "\n";
-    }
-
-    @Override
-    protected List<Pair<TextRange, String>> getEncodeReplacements(@Nonnull CharSequence input) throws IllegalArgumentException {
-        if (!StringUtil.endsWithChar(input, '\n')) {
-            throw new IllegalArgumentException("Should end with a line break");
-        }
-
-        int indent = locateIndent();
-        if (indent == 0) {
-            indent = YAMLUtil.getIndentToThisElement(this) + DEFAULT_CONTENT_INDENT;
-        }
-        final String indentString = StringUtil.repeatSymbol(' ', indent);
-
-        final List<Pair<TextRange, String>> result = new ArrayList<>();
-        for (int i = 0; i < input.length(); ++i) {
-            if (input.charAt(i) == '\n') {
-                result.add(Pair.create(TextRange.from(i, 1), "\n" + indentString));
+            @Override
+            protected @Nonnull String getRangesJoiner(@Nonnull CharSequence text, @Nonnull List<TextRange> contentRanges, int indexBefore) {
+                return "";
             }
+
+            @Override
+            public @Nonnull String getTextValue(@Nullable TextRange rangeInHost) {
+                String value = super.getTextValue(rangeInHost);
+                if (!StringUtil.isEmptyOrSpaces(value) && getChompingIndicator() == ChompingIndicator.KEEP && isEnding(rangeInHost)) {
+                    value += "\n";
+                }
+                return value;
+            }
+
+            @Override
+            protected boolean shouldIncludeEolInRange(ASTNode child) {
+                if (getChompingIndicator() == ChompingIndicator.KEEP) return true;
+
+                if (isEol(child) &&
+                    isEolOrNull(child.getTreeNext()) &&
+                    !(YAMLTokenTypes.INDENT.equals(ObjectUtil.doIfNotNull(child.getTreePrev(), ASTNode::getElementType)) &&
+                        myHost.getLinesNodes().size() <= 2)) {
+                    return false;
+                }
+
+                ASTNode next = TreeUtil.findSibling(child.getTreeNext(), NON_SPACE_VALUES);
+                if (isEol(next) &&
+                    isEolOrNull(TreeUtil.findSibling(next.getTreeNext(), NON_SPACE_VALUES)) &&
+                    getChompingIndicator() == ChompingIndicator.STRIP) {
+                    return false;
+                }
+
+                return true;
+            }
+
+            private final TokenSet NON_SPACE_VALUES = TokenSet.orSet(YAMLElementTypes.SCALAR_VALUES, YAMLElementTypes.EOL_ELEMENTS);
+        };
+    }
+
+
+    @Override
+    public PsiLanguageInjectionHost updateText(@Nonnull String text) {
+        String original = getNode().getText();
+        int commonPrefixLength = StringUtil.commonPrefixLength(original, text);
+        int commonSuffixLength = StringUtil.commonSuffixLength(original, text);
+        int indent = locateIndent();
+
+        ASTNode scalarEol = getNode().findChildByType(YAMLTokenTypes.SCALAR_EOL);
+        if (scalarEol == null) {
+            // a very strange situation
+            return super.updateText(text);
         }
 
-        return result;
+        int eolOffsetInParent = scalarEol.getStartOffsetInParent();
+
+        int startContent = eolOffsetInParent + indent + 1;
+        if (startContent > commonPrefixLength) {
+            // a very strange situation
+            return super.updateText(text);
+        }
+
+        String originalRowPrefix = original.substring(startContent, commonPrefixLength);
+        String indentString = StringUtil.repeatSymbol(' ', indent);
+
+        String prefix = originalRowPrefix.replaceAll("\n" + indentString, "\n");
+        String suffix = text.substring(text.length() - commonSuffixLength).replaceAll("\n" + indentString, "\n");
+
+        String result = prefix + text.substring(commonPrefixLength, text.length() - commonSuffixLength) + suffix;
+        return super.updateText(result);
     }
 
     @Override
     public String toString() {
         return "YAML scalar list";
+    }
+
+    @Override
+    public void accept(@Nonnull PsiElementVisitor visitor) {
+        if (visitor instanceof YamlPsiElementVisitor) {
+            ((YamlPsiElementVisitor) visitor).visitScalarList(this);
+        }
+        else {
+            super.accept(visitor);
+        }
     }
 }

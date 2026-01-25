@@ -1,3 +1,4 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.yaml.parser;
 
 import consulo.language.ast.ASTNode;
@@ -8,18 +9,16 @@ import consulo.language.parser.PsiParser;
 import consulo.language.version.LanguageVersion;
 import consulo.util.collection.Stack;
 import consulo.yaml.localize.YAMLLocalize;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import org.jetbrains.yaml.YAMLElementTypes;
 import org.jetbrains.yaml.YAMLTokenTypes;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+import java.util.List;
 
-/**
- * @author oleg
- */
 public class YAMLParser implements PsiParser, YAMLTokenTypes {
-    private static final TokenSet HASH_STOP_TOKENS = TokenSet.create(RBRACE, COMMA);
-    private static final TokenSet ARRAY_STOP_TOKENS = TokenSet.create(RBRACKET, COMMA);
+    public static final TokenSet HASH_STOP_TOKENS = TokenSet.create(RBRACE, COMMA);
+    public static final TokenSet ARRAY_STOP_TOKENS = TokenSet.create(RBRACKET, COMMA);
     private PsiBuilder myBuilder;
     private boolean eolSeen = false;
     private int myIndent;
@@ -27,26 +26,36 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
 
     private final Stack<TokenSet> myStopTokensStack = new Stack<>();
 
-    @Nonnull
     @Override
-    public ASTNode parse(@Nonnull final IElementType root, @Nonnull final PsiBuilder builder, @Nonnull LanguageVersion languageVersion) {
+    public @Nonnull ASTNode parse(final @Nonnull IElementType root, final @Nonnull PsiBuilder builder, LanguageVersion languageVersion) {
+        parseLight(root, builder);
+        return builder.getTreeBuilt();
+    }
+
+    public void parseLight(IElementType root, PsiBuilder builder) {
         myBuilder = builder;
         myStopTokensStack.clear();
         final PsiBuilder.Marker fileMarker = mark();
         parseFile();
         assert myBuilder.eof() : "Not all tokens were passed.";
         fileMarker.done(root);
-        return builder.getTreeBuilt();
     }
 
     private void parseFile() {
+        PsiBuilder.Marker marker = mark();
         passJunk();
-        parseDocument();
-        passJunk();
-        while (!myBuilder.eof()) {
+        if (myBuilder.getTokenType() != DOCUMENT_MARKER) {
+            dropEolMarker();
+            marker.rollbackTo();
+        }
+        else {
+            marker.drop();
+        }
+        do {
             parseDocument();
             passJunk();
         }
+        while (!myBuilder.eof());
         dropEolMarker();
     }
 
@@ -55,15 +64,23 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
         if (myBuilder.getTokenType() == DOCUMENT_MARKER) {
             advanceLexer();
         }
-        parseBlockNode(0, false);
+        parseBlockNode(myIndent, false);
         dropEolMarker();
         marker.done(YAMLElementTypes.DOCUMENT);
     }
 
     private void parseBlockNode(int indent, boolean insideSequence) {
-        passJunk();
+        // Preserve most test and current behaviour for most general cases without comments
+        if (getTokenType() == EOL) {
+            advanceLexer();
+            if (getTokenType() == INDENT) {
+                advanceLexer();
+            }
+        }
 
         final PsiBuilder.Marker marker = mark();
+        passJunk();
+
         PsiBuilder.Marker endOfNodeMarker = null;
         IElementType nodeType = null;
 
@@ -86,7 +103,7 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
             }
 
             numberOfItems++;
-            final IElementType parsedTokenType = parseSingleStatement(eolSeen ? myIndent : indent);
+            final IElementType parsedTokenType = parseSingleStatement(eolSeen ? myIndent : indent, indent);
             if (nodeType == null) {
                 if (parsedTokenType == YAMLElementTypes.SEQUENCE_ITEM) {
                     nodeType = YAMLElementTypes.SEQUENCE;
@@ -112,11 +129,49 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
         else {
             rollBackToEol();
         }
+
+        includeBlockEmptyTail(indent);
+
         if (nodeType != null) {
             marker.done(nodeType);
+            marker.setCustomEdgeTokenBinders(
+                (tokens, atStreamEdge, getter) -> findLeftRange(tokens),
+                (tokens, atStreamEdge, getter) -> tokens.size());
         }
         else {
             marker.drop();
+        }
+    }
+
+    private void includeBlockEmptyTail(int indent) {
+        if (indent == 0) {
+            // top-level block with zero indent
+            while (isJunk()) {
+                if (getTokenType() == EOL) {
+                    if (!YAMLElementTypes.BLANK_ELEMENTS.contains(myBuilder.lookAhead(1))) {
+                        // do not include last \n into block
+                        break;
+                    }
+                }
+                advanceLexer();
+                dropEolMarker();
+            }
+        }
+        else {
+            PsiBuilder.Marker endOfBlock = mark();
+            while (isJunk()) {
+                if (getTokenType() == INDENT && getCurrentTokenLength() >= indent) {
+                    dropEolMarker();
+                    endOfBlock.drop();
+                    advanceLexer();
+                    endOfBlock = mark();
+                }
+                else {
+                    advanceLexer();
+                    dropEolMarker();
+                }
+            }
+            endOfBlock.rollbackTo();
         }
     }
 
@@ -146,16 +201,13 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
         }
     }
 
-    @Nullable
-    private IElementType parseSingleStatement(int indent) {
+    private @Nullable IElementType parseSingleStatement(int indent, int minIndent) {
         if (eof()) {
             return null;
         }
 
         final PsiBuilder.Marker marker = mark();
-        if (getTokenType() == YAMLTokenTypes.TAG) {
-            advanceLexer();
-        }
+        parseNodeProperties();
 
         final IElementType tokenType = getTokenType();
         final IElementType nodeType;
@@ -175,7 +227,31 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
             nodeType = parseScalarKeyValue(indent);
         }
         else if (YAMLElementTypes.SCALAR_VALUES.contains(getTokenType())) {
-            nodeType = parseScalarValue(indent);
+            nodeType = parseScalarValue(minIndent);
+        }
+        else if (tokenType == STAR) {
+            PsiBuilder.Marker aliasMarker = mark();
+            advanceLexer(); // symbol *
+            if (getTokenType() == YAMLTokenTypes.ALIAS) {
+                advanceLexer(); // alias name
+                aliasMarker.done(YAMLElementTypes.ALIAS_NODE);
+                if (getTokenType() == COLON) {
+                    // Alias is used as key name
+                    eolSeen = false;
+                    int indentAddition = getShorthandIndentAddition();
+                    nodeType = parseSimpleScalarKeyValueFromColon(indent, indentAddition);
+                }
+                else {
+                    // simple ALIAS_NODE was constructed and marker should be dropped
+                    marker.drop();
+                    return YAMLElementTypes.ALIAS_NODE;
+                }
+            }
+            else {
+                // Should be impossible now (because of lexer rules)
+                aliasMarker.drop();
+                nodeType = null;
+            }
         }
         else {
             advanceLexer();
@@ -191,8 +267,59 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
         return nodeType;
     }
 
-    @Nullable
-    private IElementType parseScalarValue(int indent) {
+    /**
+     * Each node may have two optional properties, anchor and tag, in addition to its content.
+     * Node properties may be specified in any order before the node’s content.
+     * Either or both may be omitted.
+     *
+     * <pre>
+     * [96] c-ns-properties(n,c) ::= ( c-ns-tag-property ( s-separate(n,c) c-ns-anchor-property )? )
+     *                             | ( c-ns-anchor-property ( s-separate(n,c) c-ns-tag-property )? )
+     *
+     * </pre>
+     * See <a href="http://www.yaml.org/spec/1.2/spec.html#id2783797">6.9. Node Properties</a>
+     */
+    private void parseNodeProperties() {
+        // By standard here could be no more than one TAG or ANCHOR
+        // By better to support sequence of them
+        boolean anchorWasRead = false;
+        boolean tagWasRead = false;
+        while (getTokenType() == YAMLTokenTypes.TAG || getTokenType() == YAMLTokenTypes.AMPERSAND) {
+            if (getTokenType() == YAMLTokenTypes.AMPERSAND) {
+                PsiBuilder.Marker errorMarker = null;
+                if (anchorWasRead) {
+                    errorMarker = mark();
+                }
+                anchorWasRead = true;
+                PsiBuilder.Marker anchorMarker = mark();
+                advanceLexer(); // symbol &
+                if (getTokenType() == YAMLTokenTypes.ANCHOR) {
+                    advanceLexer(); // anchor name
+                    anchorMarker.done(YAMLElementTypes.ANCHOR_NODE);
+                }
+                else {
+                    // Should be impossible now (because of lexer rules)
+                    anchorMarker.drop();
+                }
+                if (errorMarker != null) {
+                    errorMarker.error(YAMLLocalize.parserMultipleAnchors());
+                }
+            }
+            else { // tag case
+                if (tagWasRead) {
+                    PsiBuilder.Marker errorMarker = mark();
+                    advanceLexer();
+                    errorMarker.error(YAMLLocalize.parserMultipleTags());
+                }
+                else {
+                    tagWasRead = true;
+                    advanceLexer();
+                }
+            }
+        }
+    }
+
+    private @Nullable IElementType parseScalarValue(int indent) {
         final IElementType tokenType = getTokenType();
         assert YAMLElementTypes.SCALAR_VALUES.contains(tokenType) : "Scalar value expected!";
         if (tokenType == SCALAR_LIST || tokenType == SCALAR_TEXT) {
@@ -210,47 +337,57 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
         }
     }
 
-    @Nonnull
-    private IElementType parseQuotedString() {
+    private @Nonnull IElementType parseQuotedString() {
         advanceLexer();
         return YAMLElementTypes.SCALAR_QUOTED_STRING;
     }
 
-    @Nonnull
-    private IElementType parseMultiLineScalar(final IElementType tokenType) {
-        int indent = -1;
-        IElementType type = getTokenType();
-        PsiBuilder.Marker endOfValue = null;
-        while (type == tokenType || type == INDENT || type == EOL) {
-            if (indent == -1 && type == INDENT) {
-                indent = getCurrentTokenLength();
-            }
+    private @Nonnull IElementType parseMultiLineScalar(final IElementType tokenType) {
+        assert tokenType == getTokenType();
+        // Accept header token: '|' or '>'
+        advanceLexer();
 
-            if (type == tokenType || type == INDENT && getCurrentTokenLength() > indent) {
-                advanceLexer();
+        // Parse header tail: TEXT is used as placeholder for invalid symbols in this context
+        if (getTokenType() == TEXT) {
+            PsiBuilder.Marker err = myBuilder.mark();
+            advanceLexer();
+            err.error(YAMLLocalize.parserInvalidHeaderSymbols());
+        }
+
+        if (YAMLElementTypes.EOL_ELEMENTS.contains(getTokenType())) {
+            advanceLexer();
+        }
+        PsiBuilder.Marker endOfValue = myBuilder.mark();
+
+        IElementType type = getTokenType();
+        // Lexer ensures such input token structure: ( ( INDENT tokenType? )? SCALAR_EOL )*
+        // endOfValue marker is needed to exclude INDENT after last SCALAR_EOL
+        while (type == tokenType || type == INDENT || type == SCALAR_EOL) {
+            advanceLexer();
+            if (type == tokenType) {
+                if (endOfValue != null) {
+                    // this 'if' should be always true because of input token structure
+                    endOfValue.drop();
+                }
+                endOfValue = null;
+            }
+            if (type == SCALAR_EOL) {
                 if (endOfValue != null) {
                     endOfValue.drop();
                 }
                 endOfValue = myBuilder.mark();
             }
-            else {
-                advanceLexer();
-            }
 
             type = getTokenType();
         }
-        if (endOfValue == null) {
-            rollBackToEol();
-        }
-        else {
-            dropEolMarker();
+        if (endOfValue != null) {
             endOfValue.rollbackTo();
         }
+
         return tokenType == SCALAR_LIST ? YAMLElementTypes.SCALAR_LIST_VALUE : YAMLElementTypes.SCALAR_TEXT_VALUE;
     }
 
-    @Nonnull
-    private IElementType parseMultiLinePlainScalar(final int indent) {
+    private @Nonnull IElementType parseMultiLinePlainScalar(final int indent) {
         PsiBuilder.Marker lastTextEnd = null;
 
         IElementType type = getTokenType();
@@ -290,8 +427,6 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
             myStopTokensStack.add(TokenSet.create(COLON));
             eolSeen = false;
 
-            passJunk();
-
             parseBlockNode(indent + indentAddition, false);
 
             myStopTokensStack.pop();
@@ -310,12 +445,18 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
     }
 
 
-    @Nonnull
-    private IElementType parseScalarKeyValue(int indent) {
+    private @Nonnull IElementType parseScalarKeyValue(int indent) {
         assert getTokenType() == SCALAR_KEY : "Expected scalar key";
         eolSeen = false;
 
         int indentAddition = getShorthandIndentAddition();
+        advanceLexer();
+
+        return parseSimpleScalarKeyValueFromColon(indent, indentAddition);
+    }
+
+    private @Nonnull IElementType parseSimpleScalarKeyValueFromColon(int indent, int indentAddition) {
+        assert getTokenType() == COLON : "Expected colon";
         advanceLexer();
 
         final PsiBuilder.Marker rollbackMarker = mark();
@@ -326,29 +467,27 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
             rollbackMarker.rollbackTo();
         }
         else {
-            rollbackMarker.drop();
+            dropEolMarker();
+            rollbackMarker.rollbackTo();
             parseBlockNode(indent + indentAddition, false);
         }
 
         return YAMLElementTypes.KEY_VALUE_PAIR;
     }
 
-    @Nonnull
-    private IElementType parseSequenceItem(int indent) {
+    private @Nonnull IElementType parseSequenceItem(int indent) {
         assert getTokenType() == SEQUENCE_MARKER;
 
         int indentAddition = getShorthandIndentAddition();
         advanceLexer();
         eolSeen = false;
-        passJunk();
 
         parseBlockNode(indent + indentAddition, true);
         rollBackToEol();
         return YAMLElementTypes.SEQUENCE_ITEM;
     }
 
-    @Nonnull
-    private IElementType parseHash() {
+    private @Nonnull IElementType parseHash() {
         assert getTokenType() == LBRACE;
         advanceLexer();
         myStopTokensStack.add(HASH_STOP_TOKENS);
@@ -358,7 +497,7 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
                 advanceLexer();
                 break;
             }
-            parseSingleStatement(0);
+            parseSingleStatement(0, 0);
         }
 
         myStopTokensStack.pop();
@@ -383,7 +522,7 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
             }
 
             final PsiBuilder.Marker marker = mark();
-            final IElementType parsedElement = parseSingleStatement(0);
+            final IElementType parsedElement = parseSingleStatement(0, 0);
             if (parsedElement != null) {
                 marker.done(YAMLElementTypes.SEQUENCE_ITEM);
             }
@@ -405,8 +544,7 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
         return myBuilder.eof() || myBuilder.getTokenType() == DOCUMENT_MARKER;
     }
 
-    @Nullable
-    private IElementType getTokenType() {
+    private @Nullable IElementType getTokenType() {
         return eof() ? null : myBuilder.getTokenType();
     }
 
@@ -435,8 +573,9 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
             return;
         }
         final IElementType type = myBuilder.getTokenType();
-        eolSeen = eolSeen || type == EOL;
-        if (type == EOL) {
+        boolean eolElement = YAMLElementTypes.EOL_ELEMENTS.contains(type);
+        eolSeen = eolSeen || eolElement;
+        if (eolElement) {
             // Drop and create new eolMarker
             myAfterLastEolMarker = mark();
             myIndent = 0;
@@ -464,5 +603,10 @@ public class YAMLParser implements PsiParser, YAMLTokenTypes {
     private boolean isJunk() {
         final IElementType type = getTokenType();
         return type == INDENT || type == EOL;
+    }
+
+    private static int findLeftRange(@Nonnull List<? extends IElementType> tokens) {
+        int i = tokens.indexOf(COMMENT);
+        return i != -1 ? i : tokens.size();
     }
 }

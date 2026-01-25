@@ -14,11 +14,10 @@ import consulo.language.parser.PsiParser;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.version.LanguageVersion;
+import jakarta.annotation.Nonnull;
 import org.jetbrains.yaml.lexer.YAMLFlexLexer;
 import org.jetbrains.yaml.parser.YAMLParser;
 import org.jetbrains.yaml.psi.impl.*;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * @author oleg
@@ -26,6 +25,7 @@ import jakarta.annotation.Nonnull;
 @ExtensionImpl
 public class YAMLParserDefinition implements ParserDefinition, YAMLElementTypes {
     private static final TokenSet ourCommentTokens = TokenSet.create(YAMLTokenTypes.COMMENT);
+    public static final IFileElementType FILE = new IFileElementType(YAMLLanguage.INSTANCE);
 
     @Nonnull
     @Override
@@ -54,19 +54,19 @@ public class YAMLParserDefinition implements ParserDefinition, YAMLElementTypes 
     @Nonnull
     @Override
     public TokenSet getWhitespaceTokens(@Nonnull LanguageVersion languageVersion) {
-        return TokenSet.create(YAMLTokenTypes.WHITESPACE);
+        return YAMLElementTypes.WHITESPACE_TOKENS;
     }
 
     @Nonnull
     @Override
     public TokenSet getCommentTokens(@Nonnull LanguageVersion languageVersion) {
-        return ourCommentTokens;
+        return YAMLElementTypes.YAML_COMMENT_TOKENS;
     }
 
     @Nonnull
     @Override
     public TokenSet getStringLiteralElements(@Nonnull LanguageVersion languageVersion) {
-        return TokenSet.create(YAMLTokenTypes.SCALAR_STRING, YAMLTokenTypes.SCALAR_DSTRING, YAMLTokenTypes.TEXT);
+        return YAMLElementTypes.TEXT_SCALAR_ITEMS;
     }
 
     @Nonnull
@@ -74,41 +74,47 @@ public class YAMLParserDefinition implements ParserDefinition, YAMLElementTypes 
     @RequiredReadAction
     public PsiElement createElement(final ASTNode node) {
         final IElementType type = node.getElementType();
-        if (type == DOCUMENT) {
+        if (type == YAMLElementTypes.DOCUMENT) {
             return new YAMLDocumentImpl(node);
         }
-        if (type == KEY_VALUE_PAIR) {
+        if (type == YAMLElementTypes.KEY_VALUE_PAIR) {
             return new YAMLKeyValueImpl(node);
         }
-        if (type == COMPOUND_VALUE) {
+        if (type == YAMLElementTypes.COMPOUND_VALUE) {
             return new YAMLCompoundValueImpl(node);
         }
-        if (type == SEQUENCE) {
+        if (type == YAMLElementTypes.SEQUENCE) {
             return new YAMLBlockSequenceImpl(node);
         }
-        if (type == MAPPING) {
+        if (type == YAMLElementTypes.MAPPING) {
             return new YAMLBlockMappingImpl(node);
         }
-        if (type == SEQUENCE_ITEM) {
+        if (type == YAMLElementTypes.SEQUENCE_ITEM) {
             return new YAMLSequenceItemImpl(node);
         }
-        if (type == HASH) {
+        if (type == YAMLElementTypes.HASH) {
             return new YAMLHashImpl(node);
         }
-        if (type == ARRAY) {
+        if (type == YAMLElementTypes.ARRAY) {
             return new YAMLArrayImpl(node);
         }
-        if (type == SCALAR_LIST_VALUE) {
+        if (type == YAMLElementTypes.SCALAR_LIST_VALUE) {
             return new YAMLScalarListImpl(node);
         }
-        if (type == SCALAR_TEXT_VALUE) {
+        if (type == YAMLElementTypes.SCALAR_TEXT_VALUE) {
             return new YAMLScalarTextImpl(node);
         }
-        if (type == SCALAR_PLAIN_VALUE) {
+        if (type == YAMLElementTypes.SCALAR_PLAIN_VALUE) {
             return new YAMLPlainTextImpl(node);
         }
-        if (type == SCALAR_QUOTED_STRING) {
+        if (type == YAMLElementTypes.SCALAR_QUOTED_STRING) {
             return new YAMLQuotedTextImpl(node);
+        }
+        if (type == YAMLElementTypes.ANCHOR_NODE) {
+            return new YAMLAnchorImpl(node);
+        }
+        if (type == YAMLElementTypes.ALIAS_NODE) {
+            return new YAMLAliasImpl(node);
         }
         return new YAMLPsiElementImpl(node);
     }
@@ -119,9 +125,9 @@ public class YAMLParserDefinition implements ParserDefinition, YAMLElementTypes 
         return new YAMLFileImpl(viewProvider);
     }
 
-    @Nonnull
     @Override
-    public SpaceRequirements spaceExistanceTypeBetweenTokens(final ASTNode left, final ASTNode right) {
+    @Nonnull
+    public SpaceRequirements spaceExistenceTypeBetweenTokens(final ASTNode left, final ASTNode right) {
         return SpaceRequirements.MAY;
     }
 }

@@ -1,59 +1,89 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.yaml;
 
-import consulo.annotation.access.RequiredReadAction;
-import consulo.annotation.access.RequiredWriteAction;
 import consulo.language.ast.IElementType;
+import consulo.language.ast.TokenSet;
+import consulo.language.impl.ast.LeafElement;
+import consulo.language.impl.ast.TreeUtil;
 import consulo.language.psi.PsiElement;
+import consulo.language.psi.PsiUtilCore;
 import consulo.language.psi.util.PsiTreeUtil;
 import consulo.language.util.IncorrectOperationException;
+import consulo.logging.Logger;
+import consulo.util.collection.ContainerUtil;
+import consulo.util.collection.SmartList;
 import consulo.util.lang.ObjectUtil;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
 import consulo.yaml.localize.YAMLLocalize;
-import org.jetbrains.yaml.psi.*;
-
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
+import org.jetbrains.yaml.psi.*;
+import org.jetbrains.yaml.psi.impl.YAMLBlockMappingImpl;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
-/**
- * @author oleg
- */
-public class YAMLUtil {
-    @Nonnull
-    @SuppressWarnings("unchecked")
-    public static String getFullKey(final YAMLKeyValue yamlKeyValue) {
-        final StringBuilder builder = new StringBuilder();
-        YAMLKeyValue element = yamlKeyValue;
-        PsiElement parent;
-        while (element != null &&
-            (parent = PsiTreeUtil.getParentOfType(element, YAMLKeyValue.class, YAMLDocument.class)) instanceof YAMLKeyValue) {
-            if (builder.length() > 0) {
-                builder.insert(0, '.');
+public final class YAMLUtil {
+
+    private static final TokenSet BLANK_LINE_ELEMENTS = TokenSet.andNot(YAMLElementTypes.BLANK_ELEMENTS, YAMLElementTypes.EOL_ELEMENTS);
+
+    /**
+     * This method return flattened key path (consist of ancestors until a document).
+     * </p>
+     * YAML is frequently used in configured files.
+     * Dot separator preforms access to child keys.
+     * <pre>{@code
+     *  top:
+     *    next:
+     *      list:
+     *        - needKey: value
+     * }</pre>
+     * Flattened {@code needKey} is {@code top.next.list[0].needKey}
+     */
+    public static @Nonnull String getConfigFullName(@Nonnull YAMLPsiElement target) {
+        return StringUtil.join(getConfigFullNameParts(target), ".");
+    }
+
+    public static @Nonnull List<String> getConfigFullNameParts(@Nonnull YAMLPsiElement target) {
+        List<String> result = new SmartList<>();
+        PsiElement element = target;
+        while (element != null) {
+            String elementIndexSuffix = "";
+            if (element instanceof YAMLSequenceItem) {
+                elementIndexSuffix = "[" + ((YAMLSequenceItem) element).getItemIndex() + "]";
+                element = PsiTreeUtil.getParentOfType(element, YAMLKeyValue.class);
             }
-            builder.insert(0, element.getKeyText());
-            element = (YAMLKeyValue)parent;
+
+            if (element instanceof YAMLKeyValue) {
+                String keyText = ((YAMLKeyValue) element).getKeyText();
+                result.add(keyText + elementIndexSuffix);
+            }
+            element = PsiTreeUtil.getParentOfType(element, YAMLKeyValue.class, YAMLSequenceItem.class);
         }
-        return builder.toString();
+        return ContainerUtil.reverse(result);
     }
 
-    @Nonnull
-    public static Collection<YAMLKeyValue> getTopLevelKeys(final YAMLFile file) {
+
+    public static @Nonnull Collection<YAMLKeyValue> getTopLevelKeys(final YAMLFile file) {
         final YAMLValue topLevelValue = file.getDocuments().get(0).getTopLevelValue();
-        return topLevelValue instanceof YAMLMapping mapping ? mapping.getKeyValues() : Collections.emptyList();
+        if (topLevelValue instanceof YAMLMapping) {
+            return ((YAMLMapping) topLevelValue).getKeyValues();
+        }
+        else {
+            return Collections.emptyList();
+        }
     }
 
-    @Nullable
-    public static YAMLKeyValue getQualifiedKeyInFile(final YAMLFile file, List<String> key) {
+    public static @Nullable YAMLKeyValue getQualifiedKeyInFile(final YAMLFile file, List<String> key) {
         return getQualifiedKeyInDocument(file.getDocuments().get(0), key);
     }
 
-    @Nullable
-    public static YAMLKeyValue getQualifiedKeyInDocument(@Nonnull YAMLDocument document, @Nonnull List<String> key) {
-        assert key.size() != 0;
+    public static @Nullable YAMLKeyValue getQualifiedKeyInDocument(@Nonnull YAMLDocument document, @Nonnull List<String> key) {
+        assert !key.isEmpty();
 
         YAMLMapping mapping = ObjectUtil.tryCast(document.getTopLevelValue(), YAMLMapping.class);
         for (int i = 0; i < key.size(); i++) {
@@ -61,7 +91,12 @@ public class YAMLUtil {
                 return null;
             }
 
-            final YAMLKeyValue keyValue = mapping.getKeyValueByKey(key.get(i));
+            YAMLKeyValue keyValue = mapping.getKeyValueByKey(String.join(".", key.subList(i, key.size())));
+            if (keyValue != null) {
+                return keyValue;
+            }
+
+            keyValue = mapping.getKeyValueByKey(key.get(i));
             if (keyValue == null || i + 1 == key.size()) {
                 return keyValue;
             }
@@ -71,18 +106,18 @@ public class YAMLUtil {
         throw new IllegalStateException("Should have returned from the loop");
     }
 
-    @Nullable
-    public static YAMLKeyValue getQualifiedKeyInFile(final YAMLFile file, String... key) {
+    public static @Nullable YAMLKeyValue getQualifiedKeyInFile(final YAMLFile file, String... key) {
         return getQualifiedKeyInFile(file, Arrays.asList(key));
     }
 
-    @Nullable
-    public static YAMLKeyValue findKeyInProbablyMapping(@Nullable YAMLValue node, @Nonnull String keyText) {
-        return node instanceof YAMLMapping mapping ? mapping.getKeyValueByKey(keyText) : null;
+    public static @Nullable YAMLKeyValue findKeyInProbablyMapping(@Nullable YAMLValue node, @Nonnull String keyText) {
+        if (!(node instanceof YAMLMapping)) {
+            return null;
+        }
+        return ((YAMLMapping) node).getKeyValueByKey(keyText);
     }
 
-    @Nullable
-    public static Pair<PsiElement, String> getValue(final YAMLFile file, String... key) {
+    public static @Nullable Pair<PsiElement, String> getValue(final YAMLFile file, String... key) {
         final YAMLKeyValue record = getQualifiedKeyInFile(file, key);
         if (record != null) {
             final PsiElement psiValue = record.getValue();
@@ -91,60 +126,7 @@ public class YAMLUtil {
         return null;
     }
 
-    //public List<String> getAllKeys(final YAMLFile file){
-    //  return getAllKeys(file, ArrayUtil.EMPTY_STRING_ARRAY);
-    //}
-    //
-    //public List<String> getAllKeys(final YAMLFile file, final String[] key){
-    //  final YAMLPsiElement record = getQualifiedKeyInFile(file, key);
-    //  if (record == null){
-    //    return Collections.emptyList();
-    //  }
-    //  PsiElement psiValue = ((YAMLKeyValue)record).getValue();
-    //
-    //  final StringBuilder builder = new StringBuilder();
-    //  for (String keyPart : key) {
-    //    if (builder.length() != 0){
-    //      builder.append(".");
-    //    }
-    //    builder.append(keyPart);
-    //  }
-    //
-    //  final ArrayList<String> list = new ArrayList<String>();
-    //
-    //  addKeysRec(builder.toString(), psiValue, list);
-    //  return list;
-    //}
-
-    //private static void addKeysRec(final String prefix, final PsiElement element, final List<String> list) {
-    //  if (element instanceof YAMLCompoundValue){
-    //    for (YAMLPsiElement child : ((YAMLCompoundValue)element).getYAMLElements()) {
-    //      addKeysRec(prefix, child, list);
-    //    }
-    //  }
-    //  if (element instanceof YAMLKeyValue){
-    //    final YAMLKeyValue yamlKeyValue = (YAMLKeyValue)element;
-    //    final PsiElement psiValue = yamlKeyValue.getValue();
-    //    String key = yamlKeyValue.getKeyText();
-    //    if (prefix.length() > 0){
-    //      key = prefix + "." + key;
-    //    }
-    //    if (YAMLUtil.isScalarOrEmptyCompoundValue(psiValue)) {
-    //      list.add(key);
-    //    } else {
-    //      addKeysRec(key, psiValue, list);
-    //    }
-    //  }
-    //}
-
-    @RequiredWriteAction
-    public YAMLKeyValue createI18nRecord(final YAMLFile file, final String key, final String text) {
-        return createI18nRecord(file, key.split("\\."), text);
-    }
-
-    @Nullable
-    @RequiredReadAction
-    public static YAMLKeyValue createI18nRecord(final YAMLFile file, final String[] key, final String text) {
+    public static @Nonnull YAMLKeyValue createI18nRecord(final YAMLFile file, final String[] key, final String text) {
         final YAMLDocument root = file.getDocuments().get(0);
         assert root != null;
         assert key.length > 0;
@@ -152,9 +134,9 @@ public class YAMLUtil {
         YAMLMapping rootMapping = PsiTreeUtil.findChildOfType(root, YAMLMapping.class);
         if (rootMapping == null) {
             final YAMLFile yamlFile = YAMLElementGenerator.getInstance(file.getProject()).createDummyYamlWithText(key[0] + ":");
-            final YAMLMapping mapping = (YAMLMapping)yamlFile.getDocuments().get(0).getTopLevelValue();
+            final YAMLMapping mapping = (YAMLMapping) yamlFile.getDocuments().get(0).getTopLevelValue();
             assert mapping != null;
-            rootMapping = ((YAMLMapping)root.add(mapping));
+            rootMapping = ((YAMLMapping) root.add(mapping));
         }
 
         YAMLMapping current = rootMapping;
@@ -194,19 +176,20 @@ public class YAMLUtil {
             final YAMLKeyValue dummyKeyValue = dummyMapping.getKeyValues().iterator().next();
             current.putKeyValue(dummyKeyValue);
 
-            if (dummyKeyValue.getValue() instanceof YAMLMapping mapping) {
-                current = mapping;
-            }
-            else {
+            if (!(dummyKeyValue.getValue() instanceof YAMLMapping)) {
                 return dummyKeyValue;
             }
+            else {
+                current = ((YAMLMapping) dummyKeyValue.getValue());
+            }
+
         }
 
         // Conflict with existing value
         final StringBuilder builder = new StringBuilder();
         final int top = Math.min(i + 1, keyLength);
         for (int j = 0; j < top; j++) {
-            if (builder.length() > 0) {
+            if (!builder.isEmpty()) {
                 builder.append('.');
             }
             builder.append(key[j]);
@@ -214,29 +197,7 @@ public class YAMLUtil {
         throw new IncorrectOperationException(YAMLLocalize.newNameConflictsWith(builder.toString()).get());
     }
 
-    //public static void removeI18nRecord(final YAMLFile file, final String[] key){
-    //  PsiElement element = getQualifiedKeyInFile(file, key);
-    //  while (element != null){
-    //    final PsiElement parent = element.getParent();
-    //    if (parent instanceof YAMLDocument) {
-    //      ((YAMLKeyValue)element).getValue().delete();
-    //      return;
-    //    }
-    //    if (parent instanceof YAMLCompoundValue) {
-    //      if (((YAMLCompoundValue)parent).getYAMLElements().size() > 1) {
-    //        element.delete();
-    //        return;
-    //      }
-    //    }
-    //    element = parent;
-    //  }
-    //}
-
-    @RequiredWriteAction
     public static PsiElement rename(final YAMLKeyValue element, final String newName) {
-        if (newName.contains(".")) {
-            throw new IncorrectOperationException(YAMLLocalize.renameWrongName().get());
-        }
         if (newName.equals(element.getName())) {
             throw new IncorrectOperationException(YAMLLocalize.renameSameName().get());
         }
@@ -250,8 +211,7 @@ public class YAMLUtil {
         return element;
     }
 
-    @RequiredReadAction
-    public static int getIndentInThisLine(@Nonnull final PsiElement elementInLine) {
+    public static int getIndentInThisLine(final @Nonnull PsiElement elementInLine) {
         PsiElement currentElement = elementInLine;
         while (currentElement != null) {
             final IElementType type = currentElement.getNode().getElementType();
@@ -267,18 +227,96 @@ public class YAMLUtil {
         return 0;
     }
 
-    public static int getIndentToThisElement(@Nonnull final PsiElement element) {
+    public static int getIndentToThisElement(@Nonnull PsiElement element) {
+        if (element instanceof YAMLBlockMappingImpl) {
+            try {
+                element = ((YAMLBlockMappingImpl) element).getFirstKeyValue();
+            }
+            catch (IllegalStateException e) {
+                // Spring Boot plug-in modifies PSI-tree into invalid state
+                // This is a workaround over EA-133507 IDEA-210113
+                if (!e.getMessage().equals(YAMLBlockMappingImpl.EMPTY_MAP_MESSAGE)) {
+                    throw e;
+                }
+                else {
+                    Logger.getInstance(YAMLUtil.class).error(YAMLBlockMappingImpl.EMPTY_MAP_MESSAGE);
+                }
+            }
+        }
         int offset = element.getTextOffset();
 
         PsiElement currentElement = element;
         while (currentElement != null) {
             final IElementType type = currentElement.getNode().getElementType();
-            if (type == YAMLTokenTypes.EOL) {
-                return offset - currentElement.getTextOffset() - 1;
+            if (YAMLElementTypes.EOL_ELEMENTS.contains(type)) {
+                return offset - currentElement.getTextOffset() - currentElement.getTextLength();
             }
 
             currentElement = PsiTreeUtil.prevLeaf(currentElement);
         }
         return offset;
+    }
+
+    public static boolean psiAreAtTheSameLine(@Nonnull PsiElement psi1, @Nonnull PsiElement psi2) {
+        PsiElement leaf = firstLeaf(psi1);
+        PsiElement lastLeaf = firstLeaf(psi2);
+        while (leaf != null) {
+            if (PsiUtilCore.getElementType(leaf) == YAMLTokenTypes.EOL) {
+                return false;
+            }
+            if (leaf == lastLeaf) {
+                return true;
+            }
+            leaf = PsiTreeUtil.nextLeaf(leaf);
+        }
+        // It is a kind of magic, normally we should return from the `while` above
+        return false;
+    }
+
+    private static @Nullable PsiElement firstLeaf(PsiElement psi1) {
+        LeafElement leaf = TreeUtil.findFirstLeaf(psi1.getNode());
+        if (leaf != null) {
+            return leaf.getPsi();
+        }
+        else {
+            return null;
+        }
+    }
+
+
+    /**
+     * Deletes surrounding whitespace contextually. First attempts to delete {@link YAMLTokenTypes#COMMENT}s on the same line and
+     * {@link YAMLElementTypes#SPACE_ELEMENTS} forward, otherwise it will delete {@link YAMLElementTypes#SPACE_ELEMENTS} backward.
+     * <p>
+     * This is useful for maintaining consistent formatting.
+     * <p>
+     * E.g.,
+     * <pre>{@code
+     * foo:
+     *   bar: value1 # Same line comment
+     *   # Next line comment
+     *   baz: value2
+     * }</pre>
+     * becomes
+     * <pre>{@code
+     * foo:
+     *   bar: value1 # Next line comment
+     *   baz: value2
+     * }</pre>
+     */
+    public static void deleteSurroundingWhitespace(final @Nonnull PsiElement element) {
+        if (element.getNextSibling() != null) {
+            deleteElementsOfType(element::getNextSibling, BLANK_LINE_ELEMENTS);
+            deleteElementsOfType(element::getNextSibling, YAMLElementTypes.SPACE_ELEMENTS);
+        }
+        else {
+            deleteElementsOfType(element::getPrevSibling, YAMLElementTypes.SPACE_ELEMENTS);
+        }
+    }
+
+    private static void deleteElementsOfType(final @Nonnull Supplier<? extends PsiElement> element, final @Nonnull TokenSet types) {
+        while (element.get() != null && types.contains(PsiUtilCore.getElementType(element.get()))) {
+            element.get().delete();
+        }
     }
 }

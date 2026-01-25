@@ -1,41 +1,49 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.yaml.psi.impl;
 
-import consulo.annotation.access.RequiredReadAction;
+import consulo.application.util.NotNullLazyValue;
 import consulo.document.util.TextRange;
 import consulo.language.ast.ASTNode;
+import consulo.language.psi.PsiElementVisitor;
 import consulo.util.lang.ObjectUtil;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
-import consulo.util.lang.lazy.LazyValue;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import jakarta.annotation.Nonnull;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.YAMLUtil;
 import org.jetbrains.yaml.lexer.YAMLGrammarCharUtil;
 import org.jetbrains.yaml.psi.YAMLQuotedText;
+import org.jetbrains.yaml.psi.YamlPsiElementVisitor;
 
-import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 
-public class YAMLQuotedTextImpl extends YAMLScalarImpl implements YAMLQuotedText {
+public final class YAMLQuotedTextImpl extends YAMLScalarImpl implements YAMLQuotedText {
     private final boolean myIsSingleQuoted;
 
     public YAMLQuotedTextImpl(@Nonnull ASTNode node) {
         super(node);
-        myIsSingleQuoted = getNode().getFirstChildNode().getElementType() == YAMLTokenTypes.SCALAR_STRING;
+        final ASTNode firstContentNode = getFirstContentNode();
+        myIsSingleQuoted = firstContentNode != null && firstContentNode.getElementType() == YAMLTokenTypes.SCALAR_STRING;
     }
 
-    @Nonnull
     @Override
-    @RequiredReadAction
-    public List<TextRange> getContentRanges() {
-        List<TextRange> result = new ArrayList<>();
+    public @Nonnull List<TextRange> getContentRanges() {
+        final ASTNode firstContentNode = getFirstContentNode();
+        if (firstContentNode == null) {
+            return Collections.emptyList();
+        }
 
-        final List<String> lines = StringUtil.split(getText(), "\n", true, false);
+        List<TextRange> result = new ArrayList<>();
+        TextRange contentRange = TextRange.create(firstContentNode.getStartOffset(), getTextRange().getEndOffset())
+            .shiftRight(-getTextRange().getStartOffset());
+
+        final List<String> lines = StringUtil.split(contentRange.substring(getText()), "\n", false, false);
         // First line has opening quote
-        int cumulativeOffset = 0;
+        int cumulativeOffset = contentRange.getStartOffset();
         for (int i = 0; i < lines.size(); ++i) {
             final String line = lines.get(i);
 
@@ -60,25 +68,15 @@ public class YAMLQuotedTextImpl extends YAMLScalarImpl implements YAMLQuotedText
             }
 
             result.add(TextRange.create(lineStart, lineEnd).shiftRight(cumulativeOffset));
-            cumulativeOffset += line.length() + 1;
+            cumulativeOffset += line.length();
         }
 
         return result;
     }
 
-    @Nonnull
     @Override
-    protected String getRangesJoiner(@Nonnull CharSequence text, @Nonnull List<TextRange> contentRanges, int indexBefore) {
-        final TextRange leftRange = contentRanges.get(indexBefore);
-        if (leftRange.isEmpty() || !isSingleQuote() && text.charAt(leftRange.getEndOffset() - 1) == '\\') {
-            return "\n";
-        }
-        else if (contentRanges.get(indexBefore + 1).isEmpty()) {
-            return "";
-        }
-        else {
-            return " ";
-        }
+    public @Nonnull YamlScalarTextEvaluator getTextEvaluator() {
+        return new YAMLQuotedTextTextEvaluator(this);
     }
 
     @SuppressWarnings("AssignmentToForLoopParameter")
@@ -94,14 +92,14 @@ public class YAMLQuotedTextImpl extends YAMLScalarImpl implements YAMLQuotedText
             }
             else if (!isSingleQuote() && input.charAt(i) == '\\') {
                 if (input.charAt(i + 1) == '\n') {
-                    result.add(Pair.create(TextRange.from(i, 2), ""));
+                    result.add(Pair.create(TextRange.from(i, 2), i > 0 || input.length() > i + 2 ? "" : "\n"));
                     i++;
                     continue;
                 }
                 final int length = Escaper.findEscapementLength(input, i);
                 final int charCode = Escaper.toUnicodeChar(input, i, length);
                 final TextRange range = TextRange.create(i, Math.min(i + length + 1, input.length()));
-                result.add(Pair.create(range, Character.toString((char)charCode)));
+                result.add(Pair.create(range, Character.toString((char) charCode)));
                 i += range.getLength() - 1;
             }
         }
@@ -130,11 +128,11 @@ public class YAMLQuotedTextImpl extends YAMLScalarImpl implements YAMLQuotedText
                 if (!isSingleQuote() && i + 1 < input.length() && YAMLGrammarCharUtil.isSpaceLike(input.charAt(i + 1))) {
                     result.add(Pair.create(TextRange.from(i, 1), "\\n\\\n" + indentString + "\\"));
                 }
-                else if (!isSingleQuote() && i + 1 < input.length() && input.charAt(i + 1) == '\n') {
+                else if (!isSingleQuote() && i + 1 < input.length() && input.charAt(i + 1) == '\n' && i > 0) {
                     result.add(Pair.create(TextRange.from(i, 1), "\\\n" + indentString + "\\n"));
                 }
                 else {
-                    result.add(Pair.create(TextRange.from(i, 1), "\n\n" + indentString));
+                    result.add(Pair.create(TextRange.from(i, 1), "\n" + indentString));
                 }
                 currentLength = 0;
                 continue;
@@ -177,7 +175,6 @@ public class YAMLQuotedTextImpl extends YAMLScalarImpl implements YAMLQuotedText
     }
 
     @Override
-    @RequiredReadAction
     public boolean isMultiline() {
         return textContains('\n');
     }
@@ -192,7 +189,7 @@ public class YAMLQuotedTextImpl extends YAMLScalarImpl implements YAMLQuotedText
         return "YAML quoted text";
     }
 
-    private static class Escaper {
+    private static final class Escaper {
         private static final int[][] ONE_LETTER_CONVERSIONS = new int[][]{
             {'0', 0},
             {'a', 7},
@@ -214,18 +211,10 @@ public class YAMLQuotedTextImpl extends YAMLScalarImpl implements YAMLQuotedText
             {'P', 8233},
         };
 
-        private static final Supplier<Map<Integer, Integer>> ESC_TO_CODE = LazyValue.notNull(() -> {
-            final HashMap<Integer, Integer> map = new HashMap<>(ONE_LETTER_CONVERSIONS.length);
+        private static final NotNullLazyValue<Int2IntMap> ESC_TO_CODE = NotNullLazyValue.createValue(() -> {
+            Int2IntMap map = new Int2IntOpenHashMap(ONE_LETTER_CONVERSIONS.length);
             for (int[] conversion : ONE_LETTER_CONVERSIONS) {
                 map.put(conversion[0], conversion[1]);
-            }
-            return map;
-        });
-
-        private static final Supplier<Map<Integer, Integer>> CODE_TO_ESC = LazyValue.notNull(() -> {
-            final HashMap<Integer, Integer> map = new HashMap<>(ONE_LETTER_CONVERSIONS.length);
-            for (int[] conversion : ONE_LETTER_CONVERSIONS) {
-                map.put(conversion[1], conversion[2]);
             }
             return map;
         });
@@ -257,13 +246,23 @@ public class YAMLQuotedTextImpl extends YAMLScalarImpl implements YAMLQuotedText
                     return Integer.parseInt(s.toString(), 16);
                 }
                 catch (NumberFormatException e) {
-                    return (int)'?';
+                    return '?';
                 }
             }
             else {
-                final Integer result = ESC_TO_CODE.get().get((int)text.charAt(pos + 1));
-                return ObjectUtil.notNull(result, (int)text.charAt(pos + 1));
+                final Integer result = ESC_TO_CODE.getValue().get(text.charAt(pos + 1));
+                return ObjectUtil.notNull(result, (int) text.charAt(pos + 1));
             }
+        }
+    }
+
+    @Override
+    public void accept(@Nonnull PsiElementVisitor visitor) {
+        if (visitor instanceof YamlPsiElementVisitor) {
+            ((YamlPsiElementVisitor) visitor).visitQuotedText(this);
+        }
+        else {
+            super.accept(visitor);
         }
     }
 }

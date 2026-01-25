@@ -1,3 +1,65 @@
+YAMLDuplicatedKeysInspection.duplicated.key:
+    text: Key ''{0}'' is duplicated
+YAMLDuplicatedKeysInspection.merge.quickfix.name:
+    text: Merge duplicated sections
+YAMLDuplicatedKeysInspection.remove.key.quickfix.name:
+    text: Remove key
+YamlBooleanType.validation.error.quoted.value:
+    text: Boolean value expected
+YamlDeprecatedKeysInspectionBase.deprecated.key:
+    text: Key ''{0}'' is deprecated
+YamlDeprecatedKeysInspectionBase.deprecated.value:
+    text: Value ''{0}'' is deprecated
+YamlEnumType.validation.error.value.unknown:
+    text: Value ''{0}'' is not expected here
+YamlEnumType.validation.warning.value.deprecated:
+    text: Value ''{0}'' is deprecated
+YamlIntegerType.error.integer.value:
+    text: Integer value expected
+YamlMetaClass.error.scalar.value:
+    text: Scalar value is not allowed here
+YamlMissingKeysInspectionBase.add.missing.keys.quickfix.name:
+    text: Add missing keys
+YamlMissingKeysInspectionBase.missing.keys:
+    text: 'Missing required key(s): ''''{0}'''''
+YamlNonEditableKeyInspectionBase.strip.noneditable.keys.quickfix.name:
+    text: Remove all non-editable keys from the file
+YamlNonEditableKeysInspectionBase.noneditable.key:
+    text: Key ''{0}'' is not modifiable by user
+YamlNumberType.error.numeric.value:
+    text: Numeric value expected
+YamlScalarType.error.scalar.value:
+    text: Scalar value expected
+YamlUnknownKeysInspectionBase.unknown.key:
+    text: Key ''{0}'' is not expected here
+YamlUnknownValuesInspectionBase.error.array.is.required:
+    text: Array is required
+YamlUnknownValuesInspectionBase.error.array.not.allowed:
+    text: Single value is expected
+YamlUnknownValuesInspectionBase.error.value.is.required:
+    text: Value is required
+annotator.same.line.composed.value.message:
+    text: It is forbidden to specify block composed value at the same line as key
+codestyle.align.options.colon:
+    text: On colon
+codestyle.align.options.no:
+    text: Do not align
+codestyle.align.options.value:
+    text: On value
+codestyle.align.values:
+    text: Align values in maps
+codestyle.autoinsert.sequence.marker:
+    text: Automatically insert hyphen on enter
+codestyle.block.mapping.on.new.line:
+    text: Block mapping on new line
+codestyle.group.sequence.value:
+    text: Sequence value
+codestyle.indent.sequence.value:
+    text: Indent sequence value
+codestyle.label.before:
+    text: Before ':'
+codestyle.sequence.on.new.line:
+    text: Sequence on new line
 color.settings.yaml.comment:
     text: Comment
 color.settings.yaml.dstring:
@@ -16,10 +78,70 @@ color.settings.yaml.string:
     text: String
 color.settings.yaml.text:
     text: Text
+element.presentation.document.type:
+    text: YAML Document
 filetype.description.yaml:
     text: YAML files
+find.usages.document:
+    text: document
+find.usages.key.value:
+    text: key-value
+find.usages.mapping:
+    text: mapping
+find.usages.scalar:
+    text: scalar
+find.usages.sequence:
+    text: sequence
+find.usages.unnamed:
+    text: <unnamed>
+inspections.duplicated.keys.name:
+    text: Duplicated YAML keys
+inspections.incompatible.types.message:
+    text: The type of value is ''{0}'' while other values use type ''{1}''
+inspections.incompatible.types.quickfix.wrap.all.quotes.message:
+    text: Wrap all scalars in sequence with quotes
+inspections.incompatible.types.quickfix.wrap.quotes.message:
+    text: Wrap with quotes
+inspections.invalid.child.in.block.mapping:
+    text: Invalid child element in a block mapping
+inspections.invalid.child.in.block.sequence:
+    text: Invalid child element in a block sequence
+inspections.invalid.key.indent:
+    text: Invalid block mapping key indent
+inspections.invalid.list.item.indent:
+    text: Invalid list item indent
+inspections.recursive.alias.message:
+    text: Alias can't be recursive
+inspections.recursive.alias.name:
+    text: Recursive alias
+inspections.schema.deprecation.name:
+    text: Deprecated YAML key
+inspections.schema.deprecation.text:
+    text: 'Key ''''{0}'''' is deprecated: {1}'
+inspections.schema.validation.name:
+    text: Validation by JSON Schema
+inspections.schema.validation.prefix:
+    text: 'Schema validation:'
+inspections.types.mismatch.name:
+    text: Suspicious type mismatch
+inspections.unresolved.alias.message:
+    text: Can''t resolve alias {0}
+inspections.unresolved.alias.name:
+    text: Unresolved alias
+inspections.unused.anchor.message:
+    text: Anchor {0} is never used
+inspections.unused.anchor.name:
+    text: Unused anchor
+inspections.unused.anchor.quickfix.name:
+    text: Remove anchor
 new.name.conflicts.with:
     text: 'Key conflicts with existing one: ''''{0}'''''
+parser.invalid.header.symbols:
+    text: Invalid block scalar header
+parser.multiple.anchors:
+    text: Multiple anchors are not permitted
+parser.multiple.tags:
+    text: Multiple tags are not permitted
 parsing.error.sequence.item.expected:
     text: Sequence item expected
 rename.same.name:

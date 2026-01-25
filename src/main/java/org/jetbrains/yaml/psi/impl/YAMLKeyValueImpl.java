@@ -1,30 +1,30 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.yaml.psi.impl;
 
-import consulo.annotation.access.RequiredReadAction;
-import consulo.annotation.access.RequiredWriteAction;
+import consulo.document.util.TextRange;
 import consulo.language.ast.ASTNode;
-import consulo.language.icon.IconDescriptorUpdaters;
-import consulo.language.psi.PsiElement;
-import consulo.language.psi.PsiReference;
-import consulo.language.psi.ReferenceProvidersRegistry;
+import consulo.language.pom.PsiDeclaredTarget;
+import consulo.language.psi.*;
 import consulo.language.util.IncorrectOperationException;
 import consulo.navigation.ItemPresentation;
+import consulo.navigation.ItemPresentationProvider;
+import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.ui.image.Image;
 import consulo.util.lang.ObjectUtil;
 import consulo.util.lang.StringUtil;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.yaml.YAMLElementGenerator;
+import org.jetbrains.yaml.YAMLElementTypes;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.YAMLUtil;
 import org.jetbrains.yaml.psi.*;
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
+public class YAMLKeyValueImpl extends YAMLPsiElementImpl implements YAMLKeyValue, PsiDeclaredTarget {
+    public static final Image YAML_KEY_ICON = PlatformIconGroup.nodesProperty();
 
-/**
- * @author oleg
- */
-public class YAMLKeyValueImpl extends YAMLPsiElementImpl implements YAMLKeyValue {
-    public YAMLKeyValueImpl(@Nonnull final ASTNode node) {
+    public YAMLKeyValueImpl(final @Nonnull ASTNode node) {
         super(node);
     }
 
@@ -33,79 +33,81 @@ public class YAMLKeyValueImpl extends YAMLPsiElementImpl implements YAMLKeyValue
         return "YAML key value";
     }
 
-    @Nullable
     @Override
-    @RequiredReadAction
-    public PsiElement getKey() {
-        final PsiElement result = findChildByType(YAMLTokenTypes.SCALAR_KEY);
-        if (result != null) {
-            return result;
+    public @Nullable PsiElement getKey() {
+        PsiElement colon = findChildByType(YAMLTokenTypes.COLON);
+        if (colon == null) {
+            return null;
         }
-        if (isExplicit()) {
-            return findChildByClass(YAMLCompoundValue.class);
+        ASTNode node = colon.getNode();
+        do {
+            node = node.getTreePrev();
         }
-        return null;
+        while (YAMLElementTypes.BLANK_ELEMENTS.contains(PsiUtilCore.getElementType(node)));
+
+        if (node == null || PsiUtilCore.getElementType(node) == YAMLTokenTypes.QUESTION) {
+            return null;
+        }
+        else {
+            return node.getPsi();
+        }
     }
 
-    @Nullable
     @Override
-    public YAMLMapping getParentMapping() {
+    public @Nullable YAMLMapping getParentMapping() {
         return ObjectUtil.tryCast(super.getParent(), YAMLMapping.class);
     }
 
-    @Nullable
     @Override
-    @RequiredReadAction
-    public String getName() {
+    public @Nullable String getName() {
         return getKeyText();
     }
 
-    @Nonnull
     @Override
-    @RequiredReadAction
-    public String getKeyText() {
+    public @Nonnull String getKeyText() {
         final PsiElement keyElement = getKey();
         if (keyElement == null) {
             return "";
         }
 
-        if (keyElement instanceof YAMLCompoundValue compoundValue) {
-            return compoundValue.getTextValue();
+        if (keyElement instanceof YAMLScalar) {
+            return ((YAMLScalar) keyElement).getTextValue();
+        }
+        if (keyElement instanceof YAMLCompoundValue) {
+            return ((YAMLCompoundValue) keyElement).getTextValue();
         }
 
         final String text = keyElement.getText();
-        return StringUtil.unquoteString(text.substring(0, text.length() - 1));
+        return StringUtil.unquoteString(text);
     }
 
-    @Nullable
     @Override
-    @RequiredReadAction
-    public YAMLValue getValue() {
+    public @Nullable YAMLValue getValue() {
         for (PsiElement child = getLastChild(); child != null; child = child.getPrevSibling()) {
-            if (child instanceof YAMLValue value) {
-                return value;
+            if (PsiUtilCore.getElementType(child) == YAMLTokenTypes.COLON) {
+                return null;
+            }
+            if (child instanceof YAMLValue) {
+                return ((YAMLValue) child);
             }
         }
         return null;
     }
 
-    @Nonnull
     @Override
-    @RequiredReadAction
-    public String getValueText() {
+    public @Nonnull String getValueText() {
         final YAMLValue value = getValue();
-        if (value instanceof YAMLScalar scalar) {
-            return scalar.getTextValue();
+        if (value instanceof YAMLScalar) {
+            return ((YAMLScalar) value).getTextValue();
         }
-        else if (value instanceof YAMLCompoundValue compoundValue) {
-            return compoundValue.getTextValue();
+        else if (value instanceof YAMLCompoundValue) {
+            return ((YAMLCompoundValue) value).getTextValue();
         }
         return "";
     }
 
 
     @Override
-    @RequiredWriteAction
     public void setValue(@Nonnull YAMLValue value) {
         adjustWhitespaceToContentType(value instanceof YAMLScalar);
 
@@ -127,61 +129,56 @@ public class YAMLKeyValueImpl extends YAMLPsiElementImpl implements YAMLKeyValue
         }
     }
 
-    @RequiredWriteAction
     private void adjustWhitespaceToContentType(boolean isScalar) {
-        assert getKey() != null;
-        PsiElement key = getKey();
+        PsiElement colon = findChildByType(YAMLTokenTypes.COLON);
+        assert colon != null;
 
-        if (key.getNextSibling() != null && key.getNextSibling().getNode().getElementType() == YAMLTokenTypes.COLON) {
-            key = key.getNextSibling();
-        }
-
-        while (key.getNextSibling() != null && !(key.getNextSibling() instanceof YAMLValue)) {
-            key.getNextSibling().delete();
+        while (colon.getNextSibling() != null && !(colon.getNextSibling() instanceof YAMLValue)) {
+            colon.getNextSibling().delete();
         }
         final YAMLElementGenerator generator = YAMLElementGenerator.getInstance(getProject());
         if (isScalar) {
-            addAfter(generator.createSpace(), key);
+            addAfter(generator.createSpace(), colon);
         }
         else {
             final int indent = YAMLUtil.getIndentToThisElement(this);
-            addAfter(generator.createIndent(indent + 2), key);
-            addAfter(generator.createEol(), key);
+            addAfter(generator.createIndent(indent + 2), colon);
+            addAfter(generator.createEol(), colon);
         }
     }
 
     @Override
-    @RequiredReadAction
     public ItemPresentation getPresentation() {
-        final YAMLFile yamlFile = (YAMLFile)getContainingFile();
+        ItemPresentation custom = ItemPresentationProvider.getItemPresentation(this);
+        if (custom != null) {
+            return custom;
+        }
+        final YAMLFile yamlFile = (YAMLFile) getContainingFile();
         final PsiElement value = getValue();
         return new ItemPresentation() {
             @Override
-            @RequiredReadAction
             public String getPresentableText() {
                 if (value instanceof YAMLScalar) {
-                    return getValueText();
+                    ItemPresentation presentation = ((YAMLScalar) value).getPresentation();
+                    return presentation != null ? presentation.getPresentableText() : getValueText();
                 }
                 return getName();
             }
 
             @Override
-            @RequiredReadAction
             public String getLocationString() {
-                return "[" + yamlFile.getName() + "]";
+                return yamlFile.getName();
             }
 
             @Override
-            @RequiredReadAction
             public Image getIcon() {
-                return IconDescriptorUpdaters.getIcon(YAMLKeyValueImpl.this, 0);
+                return PlatformIconGroup.nodesProperty();
             }
         };
     }
 
     @Override
-    @RequiredWriteAction
-    public PsiElement setName(@Nonnull String newName) throws IncorrectOperationException {
+    public PsiElement setName(@NonNls @Nonnull String newName) throws IncorrectOperationException {
         return YAMLUtil.rename(this, newName);
     }
 
@@ -189,8 +186,8 @@ public class YAMLKeyValueImpl extends YAMLPsiElementImpl implements YAMLKeyValue
      * Provide reference contributor with given method registerReferenceProviders implementation:
      * registrar.registerReferenceProvider(PlatformPatterns.psiElement(YAMLKeyValue.class), ReferenceProvider);
      */
-    @Nonnull
     @Override
+    @Nonnull
     public PsiReference[] getReferences() {
         return ReferenceProvidersRegistry.getReferencesFromProviders(this);
     }
@@ -198,5 +195,21 @@ public class YAMLKeyValueImpl extends YAMLPsiElementImpl implements YAMLKeyValue
     private boolean isExplicit() {
         final ASTNode child = getNode().getFirstChildNode();
         return child != null && child.getElementType() == YAMLTokenTypes.QUESTION;
+    }
+
+    @Override
+    public void accept(@Nonnull PsiElementVisitor visitor) {
+        if (visitor instanceof YamlPsiElementVisitor) {
+            ((YamlPsiElementVisitor) visitor).visitKeyValue(this);
+        }
+        else {
+            super.accept(visitor);
+        }
+    }
+
+    @Override
+    public @Nullable TextRange getNameIdentifierRange() {
+        PsiElement key = getKey();
+        return key == null ? null : key.getTextRangeInParent();
     }
 }

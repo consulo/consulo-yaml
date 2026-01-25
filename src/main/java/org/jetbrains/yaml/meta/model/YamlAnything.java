@@ -1,0 +1,56 @@
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package org.jetbrains.yaml.meta.model;
+
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+import org.jetbrains.yaml.psi.YAMLMapping;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * Like {@link YamlUnstructuredClass} but allows scalar values
+ */
+public class YamlAnything extends YamlMetaType {
+    private static final YamlAnything ourInstance = new YamlAnything();
+
+    private static final Field ourAnyField = new Field("<any-key>", ourInstance)
+        .withAnyName()
+        .withRelationSpecificType(Field.Relation.SEQUENCE_ITEM, ourInstance)
+        .withRelationSpecificType(Field.Relation.SCALAR_VALUE, ourInstance)
+        .withEmptyValueAllowed(true);
+
+    public YamlAnything() {
+        super("yaml:anything");
+    }
+
+    @Override
+    public @Nullable Field findFeatureByName(@Nonnull String name) {
+        return ourAnyField;
+    }
+
+    @Override
+    public @Nonnull List<String> computeMissingFields(@Nonnull Set<String> existingFields) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public @Nonnull List<Field> computeKeyCompletions(@Nullable YAMLMapping existingMapping) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public void buildInsertionSuffixMarkup(@Nonnull YamlInsertionMarkup markup,
+                                           @Nonnull Field.Relation relation,
+                                           @Nonnull ForcedCompletionPath.Iteration iteration) {
+        markup.append(": ");
+        if (iteration.isEndOfPathReached()) {
+            markup.appendCaret();
+        }
+    }
+
+    public static YamlMetaType getInstance() {
+        return ourInstance;
+    }
+}

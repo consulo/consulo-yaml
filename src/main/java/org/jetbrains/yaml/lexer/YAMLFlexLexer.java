@@ -1,14 +1,12 @@
+// Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.yaml.lexer;
 
 import consulo.language.ast.TokenSet;
+import consulo.language.lexer.FlexAdapter;
 import consulo.language.lexer.MergingLexerAdapter;
+import jakarta.annotation.Nonnull;
 import org.jetbrains.yaml.YAMLTokenTypes;
 
-import jakarta.annotation.Nonnull;
-
-/**
- * @author oleg
- */
 public class YAMLFlexLexer extends MergingLexerAdapter {
     private static final TokenSet TOKENS_TO_MERGE = TokenSet.create(YAMLTokenTypes.TEXT);
 
@@ -19,16 +17,20 @@ public class YAMLFlexLexer extends MergingLexerAdapter {
     }
 
     private static class MyFlexAdapter extends FlexAdapter {
-        private boolean myStateCleanliness = false;
 
-        public MyFlexAdapter(_YAMLLexer flex) {
+        MyFlexAdapter(_YAMLLexer flex) {
             super(flex);
+        }
+
+        @Override
+        public _YAMLLexer getFlex() {
+            return (_YAMLLexer) super.getFlex();
         }
 
         @Override
         public void start(@Nonnull CharSequence buffer, int startOffset, int endOffset, int initialState) {
             if (initialState != DIRTY_STATE) {
-                ((_YAMLLexer)getFlex()).cleanMyState();
+                getFlex().cleanMyState();
             }
             else {
                 // That should not occur normally, but some complex lexers (e.g. black and white lexer)
@@ -43,16 +45,10 @@ public class YAMLFlexLexer extends MergingLexerAdapter {
         @Override
         public int getState() {
             final int state = super.getState();
-            if (state != 0 || myStateCleanliness) {
+            if (state != 0 || getFlex().isCleanState()) {
                 return state;
             }
             return DIRTY_STATE;
-        }
-
-        @Override
-        protected void locateToken() {
-            myStateCleanliness = ((_YAMLLexer)getFlex()).isCleanState();
-            super.locateToken();
         }
     }
 }

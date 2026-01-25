@@ -1,15 +1,12 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.yaml.psi.impl;
 
 import consulo.language.ast.ASTNode;
+import jakarta.annotation.Nonnull;
 import org.jetbrains.yaml.psi.YAMLSequence;
 
-import jakarta.annotation.Nonnull;
-
-/**
- * @author oleg
- */
 public class YAMLArrayImpl extends YAMLSequenceImpl implements YAMLSequence {
-    public YAMLArrayImpl(@Nonnull final ASTNode node) {
+    public YAMLArrayImpl(final @Nonnull ASTNode node) {
         super(node);
     }
 

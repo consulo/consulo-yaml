@@ -10,6 +10,8 @@ module org.jetbrains.plugins.yaml {
     requires consulo.language.code.style.ui.api;
     requires consulo.language.impl;
 
+    requires it.unimi.dsi.fastutil;
+
     exports consulo.yaml;
     exports consulo.yaml.icon;
     exports consulo.yaml.localize;
@@ -17,4 +19,6 @@ module org.jetbrains.plugins.yaml {
     exports org.jetbrains.yaml;
     exports org.jetbrains.yaml.lexer;
     exports org.jetbrains.yaml.psi;
+
+    opens org.jetbrains.yaml.resolve to consulo.application.impl;
 }

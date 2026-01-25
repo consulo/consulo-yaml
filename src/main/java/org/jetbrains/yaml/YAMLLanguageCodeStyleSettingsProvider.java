@@ -3,11 +3,15 @@ package org.jetbrains.yaml;
 import consulo.annotation.component.ExtensionImpl;
 import consulo.application.localize.ApplicationLocalize;
 import consulo.language.Language;
+import consulo.language.codeStyle.CodeStyleSettings;
 import consulo.language.codeStyle.CommonCodeStyleSettings;
+import consulo.language.codeStyle.CustomCodeStyleSettings;
 import consulo.language.codeStyle.setting.IndentOptionsEditor;
 import consulo.language.codeStyle.setting.LanguageCodeStyleSettingsProvider;
-
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+import org.jetbrains.yaml.formatter.YAMLCodeStyleSettings;
+
 import javax.swing.*;
 
 /**
@@ -42,6 +46,12 @@ public class YAMLLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
             "  version: 8\n" +
             "  vendor: JetBrains\n" +
             "  url: \"https://www.jetbrains.com/ruby\"";
+    }
+
+    @Override
+    @Nullable
+    public CustomCodeStyleSettings createCustomSettings(@Nonnull CodeStyleSettings settings) {
+        return new YAMLCodeStyleSettings(settings);
     }
 
     private class YAMLIndentOptionsEditor extends IndentOptionsEditor {

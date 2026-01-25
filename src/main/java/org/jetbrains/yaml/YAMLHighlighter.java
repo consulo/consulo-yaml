@@ -29,7 +29,8 @@ public class YAMLHighlighter {
     public static final TextAttributesKey COMMENT = TextAttributesKey.of("YAML_COMMENT", COMMENT_DEFAULT_ATTRS);
     public static final TextAttributesKey TEXT = TextAttributesKey.of("YAML_TEXT", TEXT_DEFAULT_ATTRS);
     public static final TextAttributesKey SIGN = TextAttributesKey.of("YAML_SIGN", SIGN_DEFAULT_ATTRS);
-
+    public static final TextAttributesKey ANCHOR = TextAttributesKey.of("YAML_ANCHOR", DefaultLanguageHighlighterColors.IDENTIFIER);
+    
     private YAMLHighlighter() {
     }
 }

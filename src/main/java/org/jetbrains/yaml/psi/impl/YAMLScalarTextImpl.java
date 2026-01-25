@@ -1,71 +1,95 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.yaml.psi.impl;
 
-import consulo.annotation.access.RequiredReadAction;import consulo.document.util.TextRange;
+import consulo.document.util.TextRange;
 import consulo.language.ast.ASTNode;
 import consulo.language.ast.IElementType;
+import consulo.language.psi.PsiElementVisitor;
 import consulo.util.lang.Pair;
 import consulo.util.lang.StringUtil;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import org.jetbrains.yaml.YAMLTokenTypes;
 import org.jetbrains.yaml.YAMLUtil;
 import org.jetbrains.yaml.lexer.YAMLGrammarCharUtil;
+import org.jetbrains.yaml.psi.YAMLBlockScalar;
 import org.jetbrains.yaml.psi.YAMLScalarText;
+import org.jetbrains.yaml.psi.YamlPsiElementVisitor;
 
-import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author oleg
- */
-public class YAMLScalarTextImpl extends YAMLBlockScalarImpl implements YAMLScalarText {
-    public YAMLScalarTextImpl(@Nonnull final ASTNode node) {
+
+public class YAMLScalarTextImpl extends YAMLBlockScalarImpl implements YAMLScalarText, YAMLBlockScalar {
+    public YAMLScalarTextImpl(final @Nonnull ASTNode node) {
         super(node);
     }
 
-    @Nonnull
     @Override
-    protected IElementType getContentType() {
+    protected @Nonnull IElementType getContentType() {
         return YAMLTokenTypes.SCALAR_TEXT;
     }
 
-    @Nonnull
     @Override
-    protected String getRangesJoiner(@Nonnull CharSequence text, @Nonnull List<TextRange> contentRanges, int indexBefore) {
-        final TextRange leftRange = contentRanges.get(indexBefore);
-        final TextRange rightRange = contentRanges.get(indexBefore + 1);
-        if (leftRange.isEmpty()) {
-            return "\n";
-        }
-        if (startsWithWhitespace(text, leftRange) || startsWithWhitespace(text, rightRange)) {
-            return "\n";
-        }
-        if (rightRange.isEmpty()) {
-            int i = indexBefore + 2;
-            // Unfortunately we need to scan to the nearest non-empty line to understand
-            // whether we should add a line here
-            while (i < contentRanges.size() && contentRanges.get(i).isEmpty()) {
-                i++;
+    public @Nonnull YamlScalarTextEvaluator<YAMLScalarTextImpl> getTextEvaluator() {
+        return new YAMLBlockScalarTextEvaluator<>(this) {
+
+            @Override
+            protected @Nonnull String getRangesJoiner(@Nonnull CharSequence text, @Nonnull List<TextRange> contentRanges, int indexBefore) {
+                final TextRange leftRange = contentRanges.get(indexBefore);
+                final TextRange rightRange = contentRanges.get(indexBefore + 1);
+                if (leftRange.isEmpty()) {
+                    if (rightRange.getLength() == 1 &&
+                        text.charAt(rightRange.getStartOffset()) == '\n' &&
+                        getChompingIndicator() != ChompingIndicator.KEEP)
+                        return "";
+                    return "\n";
+                }
+                if (startsWithWhitespace(text, leftRange) || startsWithWhitespace(text, rightRange)) {
+                    return "\n";
+                }
+                if (rightRange.isEmpty()) {
+                    int i = indexBefore + 2;
+                    // Unfortunately we need to scan to the nearest non-empty line to understand
+                    // whether we should add a line here
+                    while (i < contentRanges.size() && contentRanges.get(i).isEmpty()) {
+                        i++;
+                    }
+                    if (i >= contentRanges.size()) {
+                        // empty lines until the end
+                        if (getChompingIndicator() == ChompingIndicator.KEEP) {
+                            return "\n";
+                        }
+                    }
+                    else if (startsWithWhitespace(text, contentRanges.get(i))) {
+                        return "\n";
+                    }
+                    return "";
+                }
+                return " ";
             }
-            if (i < contentRanges.size() && startsWithWhitespace(text, contentRanges.get(i))) {
-                return "\n";
+
+            @Override
+            public @Nonnull String getTextValue(@Nullable TextRange rangeInHost) {
+                String value = super.getTextValue(rangeInHost);
+                if (!StringUtil.isEmptyOrSpaces(value) && getChompingIndicator() != ChompingIndicator.STRIP && isEnding(rangeInHost)) {
+                    value += "\n";
+                }
+                return value;
             }
-            else {
-                return "";
+
+            private static boolean startsWithWhitespace(@Nonnull CharSequence text, @Nonnull TextRange range) {
+                if (range.isEmpty()) {
+                    return false;
+                }
+                final char c = text.charAt(range.getStartOffset());
+                return c == ' ' || c == '\t';
             }
-        }
-        return " ";
+        };
     }
 
-    private static boolean startsWithWhitespace(@Nonnull CharSequence text, @Nonnull TextRange range) {
-        if (range.isEmpty()) {
-            return false;
-        }
-        final char c = text.charAt(range.getStartOffset());
-        return c == ' ' || c == '\t';
-    }
-
     @Override
-    protected List<Pair<TextRange, String>> getEncodeReplacements(@Nonnull CharSequence input) throws IllegalArgumentException {
+    protected @Nonnull List<Pair<TextRange, String>> getEncodeReplacements(@Nonnull CharSequence input) throws IllegalArgumentException {
         if (!StringUtil.endsWithChar(input, '\n')) {
             throw new IllegalArgumentException("Should end with a line break");
         }
@@ -79,27 +103,14 @@ public class YAMLScalarTextImpl extends YAMLBlockScalarImpl implements YAMLScala
         final List<Pair<TextRange, String>> result = new ArrayList<>();
 
         int currentLength = 0;
-        boolean currentLineIsIndented = input.length() > 0 && input.charAt(0) == ' ';
         for (int i = 0; i < input.length(); ++i) {
             if (input.charAt(i) == '\n') {
-                final String replacement;
-                if (i + 1 >= input.length() ||
-                    YAMLGrammarCharUtil.isSpaceLike(input.charAt(i + 1)) ||
-                    input.charAt(i + 1) == '\n' ||
-                    currentLineIsIndented) {
-                    replacement = "\n" + indentString;
-                }
-                else {
-                    replacement = "\n\n" + indentString;
-                }
-
-                result.add(Pair.create(TextRange.from(i, 1), replacement));
+                result.add(Pair.create(TextRange.from(i, 1), "\n" + indentString));
                 currentLength = 0;
-                currentLineIsIndented = i + 1 < input.length() && input.charAt(i + 1) == ' ';
                 continue;
             }
 
-            if (currentLength > MAX_SCALAR_LENGTH_PREDEFINED &&
+            if (currentLength > YAMLScalarImpl.MAX_SCALAR_LENGTH_PREDEFINED &&
                 input.charAt(i) == ' ' && i + 1 < input.length() && YAMLGrammarCharUtil.isNonSpaceChar(input.charAt(i + 1))) {
                 result.add(Pair.create(TextRange.from(i, 1), "\n" + indentString));
                 currentLength = 0;
@@ -112,15 +123,18 @@ public class YAMLScalarTextImpl extends YAMLBlockScalarImpl implements YAMLScala
         return result;
     }
 
-    @Nonnull
-    @Override
-    @RequiredReadAction
-    public String getTextValue() {
-        return super.getTextValue() + "\n";
-    }
-
     @Override
     public String toString() {
         return "YAML scalar text";
+    }
+
+    @Override
+    public void accept(@Nonnull PsiElementVisitor visitor) {
+        if (visitor instanceof YamlPsiElementVisitor) {
+            ((YamlPsiElementVisitor) visitor).visitScalarText(this);
+        }
+        else {
+            super.accept(visitor);
+        }
     }
 }

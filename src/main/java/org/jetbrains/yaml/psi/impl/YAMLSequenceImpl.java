@@ -1,11 +1,14 @@
+// Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.yaml.psi.impl;
 
-import consulo.annotation.access.RequiredReadAction;import consulo.language.ast.ASTNode;
+import consulo.language.ast.ASTNode;
+import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.util.PsiTreeUtil;
+import jakarta.annotation.Nonnull;
 import org.jetbrains.yaml.psi.YAMLSequence;
 import org.jetbrains.yaml.psi.YAMLSequenceItem;
+import org.jetbrains.yaml.psi.YamlPsiElementVisitor;
 
-import jakarta.annotation.Nonnull;
 import java.util.List;
 
 public abstract class YAMLSequenceImpl extends YAMLCompoundValueImpl implements YAMLSequence {
@@ -13,21 +16,28 @@ public abstract class YAMLSequenceImpl extends YAMLCompoundValueImpl implements 
         super(node);
     }
 
-    @Nonnull
     @Override
-    public List<YAMLSequenceItem> getItems() {
+    public @Nonnull List<YAMLSequenceItem> getItems() {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, YAMLSequenceItem.class);
     }
 
-    @Nonnull
     @Override
-    @RequiredReadAction
-    public String getTextValue() {
+    public @Nonnull String getTextValue() {
         return "<sequence:" + Integer.toHexString(getText().hashCode()) + ">";
     }
 
     @Override
     public String toString() {
         return "YAML sequence";
+    }
+
+    @Override
+    public void accept(@Nonnull PsiElementVisitor visitor) {
+        if (visitor instanceof YamlPsiElementVisitor) {
+            ((YamlPsiElementVisitor) visitor).visitSequence(this);
+        }
+        else {
+            super.accept(visitor);
+        }
     }
 }
