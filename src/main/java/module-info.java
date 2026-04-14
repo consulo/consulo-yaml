@@ -9,6 +9,7 @@ module org.jetbrains.plugins.yaml {
     requires consulo.ide.api;
     requires consulo.language.code.style.ui.api;
     requires consulo.language.impl;
+    requires consulo.language.spellchecker.api;
 
     requires it.unimi.dsi.fastutil;
 

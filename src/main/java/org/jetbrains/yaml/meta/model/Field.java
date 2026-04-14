@@ -1,12 +1,12 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.yaml.meta.model;
 
-import consulo.execution.debug.icon.ExecutionDebugIconGroup;
 import consulo.language.editor.completion.lookup.LookupElementBuilder;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiReference;
 import consulo.ui.image.Image;
 import consulo.util.lang.Pair;
+import consulo.yaml.icon.YAMLIconGroup;
 import jakarta.annotation.Nonnull;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
@@ -276,7 +276,7 @@ public class Field {
   }
 
   public @Nullable Image getLookupIcon() {
-    return myIsMany ? ExecutionDebugIconGroup.nodeArray() : getMainType().getIcon();
+    return myIsMany ? YAMLIconGroup.array() : getMainType().getIcon();
   }
 
   public @Nonnull Field resolveToSpecializedField(@Nonnull YAMLValue element) {
