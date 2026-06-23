@@ -3,19 +3,11 @@
   "server" : "https://i.verbaria.org/",
   "project" : "consulo-yaml",
   "projectVersion" : "master",
-  "generatedAt" : "2026-06-23T21:26:28.091713348Z",
+  "generatedAt" : "2026-06-23T21:27:21.305993107Z",
   "documents" : {
     "consulo.yaml.YAMLLocalize" : {
       "source" : {
         "revision" : 1
-      },
-      "translations" : {
-        "en-US" : {
-          "sig" : "5c215a316ef115ee5e50403502a7f34b",
-          "state" : "Approved",
-          "total" : 76,
-          "translators" : [ "Valery Semenchuk <vistall.valeriy@gmail.com>" ]
-        }
       }
     }
   }
