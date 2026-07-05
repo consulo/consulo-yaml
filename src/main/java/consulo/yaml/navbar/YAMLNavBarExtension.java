@@ -5,10 +5,10 @@ import consulo.annotation.component.ExtensionImpl;
 import consulo.application.ui.UISettings;
 import consulo.codeEditor.Editor;
 import consulo.dataContext.DataContext;
-import consulo.ide.navigationToolbar.AbstractNavBarModelExtension;
 import consulo.language.psi.PsiElement;
 import consulo.language.psi.PsiFile;
 import consulo.language.psi.util.PsiTreeUtil;
+import consulo.language.ui.navigationBar.NavBarModelExtension;
 import consulo.util.lang.StringUtil;
 import org.jetbrains.yaml.YAMLLanguage;
 import org.jetbrains.yaml.psi.*;
@@ -22,7 +22,7 @@ import java.util.List;
  * @since 17/01/2021
  */
 @ExtensionImpl
-public class YAMLNavBarExtension extends AbstractNavBarModelExtension {
+public class YAMLNavBarExtension implements NavBarModelExtension {
     private final static int SCALAR_MAX_LENGTH = 20;
 
     @Override
@@ -57,7 +57,7 @@ public class YAMLNavBarExtension extends AbstractNavBarModelExtension {
             }
             return parent;
         }
-        return super.getParent(psiElement);
+        return null;
     }
 
     @Nullable

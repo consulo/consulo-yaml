@@ -6,7 +6,7 @@ module org.jetbrains.plugins.yaml {
     // TODO remove in future
     requires java.desktop;
 
-    requires consulo.ide.api;
+    requires consulo.language.ui.api;
     requires consulo.language.code.style.ui.api;
     requires consulo.language.impl;
     requires consulo.language.spellchecker.api;
