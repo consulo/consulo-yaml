@@ -1,9 +1,11 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.yaml.psi.impl;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.PsiElementVisitor;
 import consulo.language.psi.util.PsiTreeUtil;
+import consulo.localize.LocalizeValue;
 import consulo.navigation.ItemPresentation;
 import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.ui.image.Image;
@@ -15,7 +17,7 @@ import org.jetbrains.yaml.psi.YAMLValue;
 import org.jetbrains.yaml.psi.YamlPsiElementVisitor;
 
 public class YAMLDocumentImpl extends YAMLPsiElementImpl implements YAMLDocument {
-    public YAMLDocumentImpl(final @Nonnull ASTNode node) {
+    public YAMLDocumentImpl(@Nonnull ASTNode node) {
         super(node);
     }
 
@@ -25,14 +27,15 @@ public class YAMLDocumentImpl extends YAMLPsiElementImpl implements YAMLDocument
     }
 
     @Override
+    @RequiredReadAction
     public @Nullable YAMLValue getTopLevelValue() {
         return PsiTreeUtil.findChildOfType(this, YAMLValue.class);
     }
 
     @Override
     public void accept(@Nonnull PsiElementVisitor visitor) {
-        if (visitor instanceof YamlPsiElementVisitor) {
-            ((YamlPsiElementVisitor) visitor).visitDocument(this);
+        if (visitor instanceof YamlPsiElementVisitor yamlPsiElementVisitor) {
+            yamlPsiElementVisitor.visitDocument(this);
         }
         else {
             super.accept(visitor);
@@ -43,11 +46,12 @@ public class YAMLDocumentImpl extends YAMLPsiElementImpl implements YAMLDocument
     public ItemPresentation getPresentation() {
         return new ItemPresentation() {
             @Override
-            public @Nonnull String getPresentableText() {
-                return YAMLLocalize.elementPresentationDocumentType().get();
+            public LocalizeValue getPresentableText() {
+                return YAMLLocalize.elementPresentationDocumentType();
             }
 
             @Override
+            @RequiredReadAction
             public @Nonnull String getLocationString() {
                 return getContainingFile().getName();
             }
