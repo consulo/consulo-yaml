@@ -1,14 +1,15 @@
 // Copyright 2000-2024 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
 package org.jetbrains.yaml.psi.impl;
 
+import consulo.annotation.access.RequiredReadAction;
 import consulo.document.util.TextRange;
 import consulo.language.ast.ASTNode;
 import consulo.language.psi.*;
+import consulo.localize.LocalizeValue;
 import consulo.navigation.ItemPresentation;
 import consulo.platform.base.icon.PlatformIconGroup;
 import consulo.ui.image.Image;
 import consulo.util.lang.Pair;
-import consulo.util.lang.StringUtil;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import org.jetbrains.yaml.YAMLElementTypes;
@@ -50,7 +51,7 @@ public abstract class YAMLScalarImpl extends YAMLValueImpl implements YAMLScalar
 
     @Override
     public PsiReference getReference() {
-        final PsiReference[] references = getReferences();
+        PsiReference[] references = getReferences();
         return references.length == 1 ? references[0] : null;
     }
 
@@ -75,8 +76,10 @@ public abstract class YAMLScalarImpl extends YAMLValueImpl implements YAMLScalar
         return new MyLiteralTextEscaper(this);
     }
 
-    static @Nonnull String processReplacements(@Nonnull CharSequence input,
-                                               @Nonnull List<? extends Pair<TextRange, String>> replacements) throws IndexOutOfBoundsException {
+    static @Nonnull String processReplacements(
+        @Nonnull CharSequence input,
+        @Nonnull List<? extends Pair<TextRange, String>> replacements
+    ) throws IndexOutOfBoundsException {
         StringBuilder result = new StringBuilder();
         int currentOffset = 0;
         for (Pair<TextRange, String> replacement : replacements) {
@@ -94,10 +97,11 @@ public abstract class YAMLScalarImpl extends YAMLValueImpl implements YAMLScalar
     }
 
     @Nullable
+    @RequiredReadAction
     protected final ASTNode getFirstContentNode() {
         ASTNode node = getNode().getFirstChildNode();
-        while (node != null && (
-            node.getElementType() == YAMLTokenTypes.TAG || YAMLElementTypes.BLANK_ELEMENTS.contains(node.getElementType()))) {
+        while (node != null
+            && (node.getElementType() == YAMLTokenTypes.TAG || YAMLElementTypes.BLANK_ELEMENTS.contains(node.getElementType()))) {
             node = node.getTreeNext();
         }
         return node;
@@ -112,6 +116,7 @@ public abstract class YAMLScalarImpl extends YAMLValueImpl implements YAMLScalar
         private List<TextRange> contentRanges;
 
         @Override
+        @RequiredReadAction
         public boolean decode(@Nonnull TextRange rangeInsideHost, @Nonnull StringBuilder outChars) {
             text = myHost.getText();
             contentRanges = myHost.getContentRanges();
@@ -145,8 +150,8 @@ public abstract class YAMLScalarImpl extends YAMLValueImpl implements YAMLScalar
             int currentOffsetInDecoded = 0;
 
             TextRange last = null;
-            for (int i = 0; i < contentRanges.size(); i++) {
-                final TextRange range = rangeInsideHost.intersection(contentRanges.get(i));
+            for (TextRange contentRange : contentRanges) {
+                TextRange range = rangeInsideHost.intersection(contentRange);
                 if (range == null) {
                     continue;
                 }
@@ -154,10 +159,10 @@ public abstract class YAMLScalarImpl extends YAMLValueImpl implements YAMLScalar
 
                 String curString = range.subSequence(text).toString();
 
-                final List<Pair<TextRange, String>> replacementsForThisLine = myHost.getDecodeReplacements(curString);
+                List<Pair<TextRange, String>> replacementsForThisLine = myHost.getDecodeReplacements(curString);
                 int encodedOffsetInCurrentLine = 0;
                 for (Pair<TextRange, String> replacement : replacementsForThisLine) {
-                    final int deltaLength = replacement.getFirst().getStartOffset() - encodedOffsetInCurrentLine;
+                    int deltaLength = replacement.getFirst().getStartOffset() - encodedOffsetInCurrentLine;
                     int currentOffsetBeforeReplacement = currentOffsetInDecoded + deltaLength;
                     if (currentOffsetBeforeReplacement > offsetInDecoded) {
                         return range.getStartOffset() + encodedOffsetInCurrentLine + (offsetInDecoded - currentOffsetInDecoded);
@@ -169,7 +174,7 @@ public abstract class YAMLScalarImpl extends YAMLValueImpl implements YAMLScalar
                     encodedOffsetInCurrentLine += deltaLength + replacement.getFirst().getLength();
                 }
 
-                final int deltaLength = curString.length() - encodedOffsetInCurrentLine;
+                int deltaLength = curString.length() - encodedOffsetInCurrentLine;
                 if (currentOffsetInDecoded + deltaLength > offsetInDecoded) {
                     return range.getStartOffset() + encodedOffsetInCurrentLine + (offsetInDecoded - currentOffsetInDecoded);
                 }
@@ -187,8 +192,8 @@ public abstract class YAMLScalarImpl extends YAMLValueImpl implements YAMLScalar
 
     @Override
     public void accept(@Nonnull PsiElementVisitor visitor) {
-        if (visitor instanceof YamlPsiElementVisitor) {
-            ((YamlPsiElementVisitor) visitor).visitScalar(this);
+        if (visitor instanceof YamlPsiElementVisitor psiElementVisitor) {
+            psiElementVisitor.visitScalar(this);
         }
         else {
             super.accept(visitor);
@@ -199,11 +204,12 @@ public abstract class YAMLScalarImpl extends YAMLValueImpl implements YAMLScalar
     public ItemPresentation getPresentation() {
         return new ItemPresentation() {
             @Override
-            public @Nonnull String getPresentableText() {
-                return StringUtil.shortenTextWithEllipsis(getTextValue(), 20, 0, true);
+            public LocalizeValue getPresentableText() {
+                return LocalizeValue.of(getTextValue()).truncateWithEllipsis(20);
             }
 
             @Override
+            @RequiredReadAction
             public @Nonnull String getLocationString() {
                 return getContainingFile().getName();
             }
