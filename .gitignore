@@ -4,3 +4,6 @@
 /out
 /target
 sandbox/
+/plugin/target
+/json-schema/target
+/api/target
